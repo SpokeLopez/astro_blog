@@ -1,0 +1,151 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'CSS Grid en 5 minutos: Lo esencial'
+description: 'Domina CSS Grid con este tutorial rapido. Aprende las propiedades mas importantes para crear layouts modernos.'
+date: '2026-03-15'
+tags: ['CSS', 'Tutorial']
+category: 'tutorial'
+readingTime: '5 min'
+
+---
+
+import CodePen from '../../components/CodePen.astro';
+
+CSS Grid es la forma más poderosa de crear layouts en la web. Aquí te enseño lo esencial para empezar a usarlo hoy.
+
+## Activar Grid
+
+Solo necesitas una línea:
+
+```css
+.container {
+  display: grid;
+}
+```
+
+## Definir columnas y filas
+
+```css
+.container {
+  display: grid;
+  
+  /* 3 columnas de 1fr cada una (fracciones iguales) */
+  grid-template-columns: 1fr 1fr 1fr;
+  
+  /* O usando repeat() */
+  grid-template-columns: repeat(3, 1fr);
+  
+  /* Columnas de diferentes tamaños */
+  grid-template-columns: 200px 1fr 100px;
+  
+  /* Filas */
+  grid-template-rows: auto 1fr auto;
+}
+```
+
+## La unidad `fr`
+
+`fr` significa "fracción del espacio disponible":
+
+```css
+.container {
+  /* La segunda columna es el doble de ancha */
+  grid-template-columns: 1fr 2fr 1fr;
+}
+```
+
+## Espacio entre elementos (gap)
+
+```css
+.container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  
+  /* Espacio entre filas y columnas */
+  gap: 20px;
+  
+  /* O por separado */
+  row-gap: 20px;
+  column-gap: 10px;
+}
+```
+
+## Grid responsivo automático
+
+Esta es la propiedad mágica para grids responsivos sin media queries:
+
+```css
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+```
+
+Esto crea columnas que:
+- Tienen **mínimo 250px** de ancho
+- Se expanden para llenar el espacio (`1fr`)
+- Se ajustan automáticamente según el viewport
+
+## Demo en vivo
+
+<CodePen id="xbEBxOo" user="kevinpowell" title="CSS Grid Layout" height={500} defaultTab="result" />
+
+## Posicionar elementos
+
+Puedes controlar dónde va cada elemento:
+
+```css
+.item {
+  /* Empieza en línea 1, termina en línea 3 */
+  grid-column: 1 / 3;
+  
+  /* Abreviatura: ocupa 2 columnas */
+  grid-column: span 2;
+  
+  /* Lo mismo para filas */
+  grid-row: 1 / 2;
+}
+```
+
+## Ejemplo: Layout de página completa
+
+```css
+.page {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
+}
+
+.header {
+  grid-column: 1 / -1; /* Ocupa todo el ancho */
+}
+
+.sidebar {
+  grid-row: 2;
+}
+
+.main {
+  grid-row: 2;
+}
+
+.footer {
+  grid-column: 1 / -1;
+}
+```
+
+## Cheatsheet rápido
+
+| Propiedad | Qué hace |
+|-----------|----------|
+| `display: grid` | Activa grid |
+| `grid-template-columns` | Define columnas |
+| `grid-template-rows` | Define filas |
+| `gap` | Espacio entre elementos |
+| `grid-column` | Posición horizontal del item |
+| `grid-row` | Posición vertical del item |
+
+---
+
+Con estas propiedades básicas puedes crear el 90% de los layouts que necesites. ¡A practicar!

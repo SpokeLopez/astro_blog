@@ -1,0 +1,107 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'Unidades de medida en CSS: px, em y rem'
+description: 'Diferencias entre medidas absolutas y relativas en CSS. Cuándo usar px, em o rem y por qué importa para el diseño responsivo.'
+date: '2022-05-17'
+tags: ['CSS']
+category: 'tutorial'
+readingTime: '5 min'
+---
+
+La mayoría de desarrolladores frontend usamos `px` porque es lo que conocemos y lo que nos entregan los diseños. Pero CSS tiene otras unidades que se adaptan mejor al entorno del usuario. Aquí están las que realmente importan.
+
+## Medidas absolutas
+
+No dependen de ningún otro valor: siempre miden lo mismo sin importar el dispositivo o la configuración del usuario.
+
+### px — Píxeles
+
+La unidad más usada. Un píxel CSS no es exactamente un píxel físico de pantalla — el navegador lo ajusta según la densidad de la pantalla y la distancia estimada al usuario.
+
+```css
+.titulo {
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+```
+
+**Cuándo usarlos:** bordes, sombras, valores que no deben escalar (`border: 1px solid`). Para tipografía y espaciado, las unidades relativas son mejor opción.
+
+### pt — Points
+
+Unidad heredada del mundo impreso. La verás en wireframes de diseño (Figma, Sketch), pero **nunca se recomienda para maquetar web**. Conviértela a `px` al implementar.
+
+---
+
+## Medidas relativas
+
+Se calculan en relación a otro valor, lo que las hace más flexibles para diseño responsivo.
+
+### em
+
+Se calcula en relación al `font-size` del **elemento padre**. Si el padre tiene `font-size: 20px`, entonces `1em = 20px` en los hijos.
+
+```css
+.contenedor {
+  font-size: 20px;
+}
+
+.contenedor p {
+  font-size: 1.5em;  /* 30px */
+  margin-bottom: 1em; /* 30px */
+}
+```
+
+**Ventaja:** cambiar el `font-size` del padre reescala todo lo que está dentro.
+
+**Desventaja:** en elementos anidados el valor se multiplica en cascada, lo que puede generar resultados inesperados.
+
+```css
+/* Si cada nivel tiene font-size: 1.5em y el root es 16px */
+.nivel-1 { font-size: 1.5em; } /* 24px */
+.nivel-2 { font-size: 1.5em; } /* 36px — ya se disparó */
+.nivel-3 { font-size: 1.5em; } /* 54px */
+```
+
+### rem — Root em
+
+Funciona igual que `em` pero siempre en relación al `font-size` del elemento **`html`** (el root), no del padre. Esto elimina el problema de la cascada.
+
+Por defecto los navegadores definen `font-size: 16px` en `html`, así que `1rem = 16px`.
+
+Un truco común para hacer los cálculos más intuitivos:
+
+```css
+html {
+  font-size: 62.5%; /* 10px — 62.5% de 16px */
+}
+
+h1 { font-size: 2.4rem; } /* 24px */
+p  { font-size: 1.6rem; } /* 16px */
+```
+
+Con esto `1rem = 10px` y puedes leer los valores directamente.
+
+> **Nota:** este truco tiene un efecto secundario: si el usuario tiene configurado un tamaño de fuente mayor en su navegador (por accesibilidad), el `62.5%` lo reduce igualmente. Una alternativa más respetuosa es dejar el `font-size` del `html` sin modificar y trabajar con los valores reales de `rem`.
+
+---
+
+## Demo interactivo
+
+Mueve el slider para cambiar el `font-size` del elemento padre y observa cómo reacciona cada unidad: `px` y `rem` no se inmutan, mientras que `em` escala junto con el padre.
+
+import CodePen from '../../components/CodePen.astro';
+
+<CodePen id="raMRMOa" user="SpokeLopez-1471233183" title="CSS Units: px vs em vs rem" height={420} defaultTab="result" />
+
+---
+
+## Resumen: ¿cuándo usar cada una?
+
+| Unidad | Relativa a | Úsala para |
+|---|---|---|
+| `px` | — | Bordes, sombras, valores fijos |
+| `em` | Elemento padre | Padding/margin que escale con el texto del componente |
+| `rem` | Elemento `html` | Tipografía y espaciado global consistente |
+
+No hay una unidad "correcta" para todo. En la práctica, la combinación más común es `rem` para tipografía y espaciado general, y `px` para detalles visuales que no deben escalar.

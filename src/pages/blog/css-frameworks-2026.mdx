@@ -1,0 +1,150 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'Los mejores frameworks CSS en 2026'
+description: 'El ecosistema CSS cambió mucho en 6 años. Tailwind lidera, Bootstrap sigue siendo relevante y han aparecido nuevas opciones. Mi lista actualizada para 2026.'
+date: '2026-04-17'
+tags: ['CSS']
+category: 'tutorial'
+readingTime: '7 min'
+---
+
+Hace 6 años escribí una lista de frameworks CSS donde Bulma era mi favorito y Bootstrap el rey indiscutible. El ecosistema cambió bastante. Esta es la versión actualizada para 2026.
+
+## 1: Tailwind CSS
+
+[Tailwind](https://tailwindcss.com) es el framework dominante en 2026. Con 31 millones de descargas semanales en npm y el 37% de adopción en el State of CSS 2025, pasó de ser una propuesta controversial a ser el estándar de facto en proyectos nuevos.
+
+La idea es diferente a los frameworks tradicionales: en lugar de componentes predefinidos, te da clases de utilidad que aplicas directamente en el HTML.
+
+```html
+<button class="bg-cyan-400 text-black font-semibold px-6 py-3 rounded-lg hover:bg-cyan-300 transition">
+  Botón
+</button>
+```
+
+**Pros:**
+- Sin CSS muerto en producción — solo genera las clases que usas.
+- Tailwind v4 (2025) reescribió el motor: compilación hasta 5x más rápida, configuración en CSS en lugar de JS.
+- Ecosistema enorme: shadcn/ui, DaisyUI, Headless UI y cientos de librerías construidas encima.
+
+**Contras:**
+- El HTML se llena de clases. Requiere disciplina o componentes para mantenerlo legible.
+- Curva de aprendizaje si vienes de CSS tradicional.
+
+**Para quién:** prácticamente cualquier proyecto nuevo. Es la opción más segura en 2026.
+
+---
+
+## 2: Bootstrap
+
+[Bootstrap](https://getbootstrap.com) sigue siendo el framework más instalado del mundo — presente en el 36% de los sitios que usan algún framework CSS. No creció tanto como Tailwind en proyectos nuevos, pero su base instalada es enorme y v5 es una versión sólida.
+
+```html
+<button class="btn btn-primary">Botón</button>
+<div class="row">
+  <div class="col-md-6">Columna</div>
+  <div class="col-md-6">Columna</div>
+</div>
+```
+
+**Pros:**
+- Componentes completos listos para usar: modales, dropdowns, tooltips, formularios.
+- Documentación excelente y comunidad masiva.
+- Ideal para prototipos rápidos y paneles de administración.
+
+**Contras:**
+- Los sitios se ven similares entre sí si no personalizas.
+- Bundle más pesado que Tailwind si no configuras el purge correctamente.
+
+**Para quién:** proyectos donde la velocidad de desarrollo importa más que el diseño personalizado. Sigue siendo mi recomendación para paneles de admin internos.
+
+---
+
+## 3: shadcn/ui
+
+[shadcn/ui](https://ui.shadcn.com) es la novedad más interesante de los últimos años y el #4 en el State of CSS 2025. No es un framework en el sentido tradicional — es una colección de componentes que **copias a tu proyecto** en lugar de instalar como dependencia.
+
+```bash
+npx shadcn@latest add button
+```
+
+Esto genera el componente directamente en tu código, con acceso total para modificarlo.
+
+**Pros:**
+- Los componentes son tuyos — los modificas como quieras sin pelear con overrides.
+- Accesibilidad de primera clase (construido sobre Radix UI).
+- Integración perfecta con React, Next.js y ahora con otros frameworks.
+- Muy popular en proyectos con IA — OpenAI, Vercel y otros lo usan.
+
+**Contras:**
+- Requiere React (o un framework compatible).
+- No es un framework CSS puro — es una capa de componentes sobre Tailwind.
+
+**Para quién:** proyectos React/Next.js donde necesitas componentes accesibles y personalizables sin depender de una librería externa.
+
+---
+
+## 4: DaisyUI
+
+[DaisyUI](https://daisyui.com) es la capa de componentes más popular construida sobre Tailwind. Si Tailwind te parece demasiado verboso pero quieres sus ventajas, DaisyUI agrega nombres de componentes semánticos.
+
+```html
+<!-- En lugar de 15 clases de Tailwind -->
+<button class="btn btn-primary">Botón</button>
+
+<!-- Con temas integrados -->
+<div data-theme="dark">...</div>
+```
+
+**Pros:**
+- 35 temas integrados que puedes cambiar con un atributo.
+- Reduce drásticamente las clases en el HTML.
+- v5 mejoró el sistema de temas con soporte nativo para CSS variables.
+
+**Contras:**
+- Depende de Tailwind — no funciona sin él.
+- Menos flexible que usar Tailwind puro para diseños muy personalizados.
+
+**Para quién:** proyectos Tailwind donde quieres componentes rápidos sin escribir todo desde cero.
+
+---
+
+## 5: Pico CSS
+
+[Pico CSS](https://picocss.com) es la opción minimalista de la lista. Sin clases, sin configuración — aplica estilos directamente a los elementos HTML semánticos.
+
+```html
+<!-- Sin clases — Pico estiliza el HTML semántico directamente -->
+<article>
+  <header>Título</header>
+  <p>Contenido</p>
+  <footer>Footer</footer>
+</article>
+```
+
+**Pros:**
+- ~10KB minificado y comprimido.
+- Cero configuración — funciona con HTML limpio.
+- Modo oscuro automático según preferencia del sistema.
+
+**Contras:**
+- Muy limitado para diseños complejos o personalizados.
+- No tiene sistema de componentes.
+
+**Para quién:** proyectos pequeños, documentación, prototipos rápidos donde no quieres pensar en CSS.
+
+---
+
+## ¿Cuál usar en 2026?
+
+| Framework | Mejor para |
+|---|---|
+| **Tailwind CSS** | Cualquier proyecto nuevo con diseño personalizado |
+| **Bootstrap** | Prototipos rápidos, paneles de admin, proyectos legacy |
+| **shadcn/ui** | Apps React/Next.js con componentes accesibles |
+| **DaisyUI** | Proyectos Tailwind que quieren componentes rápidos |
+| **Pico CSS** | Proyectos pequeños, documentación, HTML semántico |
+
+La respuesta sigue siendo la misma que hace 6 años: **ninguno es el mejor para todo**. La diferencia es que hoy el ecosistema está más fragmentado y especializado. Tailwind ganó la guerra de los proyectos nuevos, pero Bootstrap sigue siendo la opción más pragmática para muchos contextos.
+
+Mi elección personal en 2026: **Tailwind + shadcn/ui** para proyectos React, y **Bootstrap** cuando necesito velocidad sin pensar demasiado en el diseño.

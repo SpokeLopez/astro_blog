@@ -1,0 +1,116 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'Media queries en Magento 2: breakpoints y separación de estilos'
+description: 'Cómo usar el sistema de media queries de Magento 2 con Less: variables de breakpoints, el mixin .media-width() y la separación automática de estilos por dispositivo.'
+date: '2022-06-27'
+tags: ['Magento', 'Ecommerce', 'CSS']
+category: 'magento'
+readingTime: '5 min'
+---
+
+Magento 2 no usa media queries de CSS directamente en los temas: tiene su propio sistema basado en **Less** que abstrae los breakpoints y separa los estilos compilados por dispositivo. Si vienes del desarrollo frontend tradicional, entender esta diferencia te ahorra mucho tiempo.
+
+## Breakpoints disponibles
+
+Los temas Blank y Luma definen estas variables en `lib/web/css/source/lib/variables/_responsive.less`:
+
+| Variable | Valor |
+|---|---|
+| `@screen__xxs` | 320px |
+| `@screen__xs` | 480px |
+| `@screen__s` | 640px |
+| `@screen__m` | 768px |
+| `@screen__l` | 1024px |
+| `@screen__xl` | 1440px |
+
+El breakpoint `@screen__m` (768px) es el punto de corte principal entre móvil y escritorio en los temas oficiales.
+
+> Puedes sobreescribir estas variables en tu tema personalizado, pero no es recomendable modificar directamente el archivo de la librería.
+
+## El mixin `.media-width()`
+
+En lugar de escribir `@media (min-width: 768px) { ... }`, Magento usa el mixin `.media-width()` con tres parámetros:
+
+```less
+.media-width(@extremum, @break) {
+  // tus estilos aquí
+}
+```
+
+- **`@extremum`** — `min` o `max`, equivale a `min-width` o `max-width`.
+- **`@break`** — la variable de breakpoint contra la que comparar.
+
+### Ejemplos de uso
+
+Estilos solo en móvil (hasta 767px):
+
+```less
+.media-width(max, @screen__m) {
+  .mi-elemento {
+    display: none;
+  }
+}
+```
+
+Estilos solo en escritorio (desde 768px):
+
+```less
+.media-width(min, @screen__m) {
+  .mi-elemento {
+    display: flex;
+  }
+}
+```
+
+## Separación de archivos por dispositivo
+
+Aquí está la parte que más diferencia a Magento del desarrollo frontend convencional. Al compilar, Magento genera **dos archivos CSS separados**:
+
+- **`styles-m.css`** — estilos base + estilos específicos de móvil.
+- **`styles-l.css`** — estilos específicos de escritorio (768px en adelante).
+
+El navegador solo descarga el archivo que corresponde al dispositivo, lo que mejora el rendimiento de carga.
+
+Para controlar en qué archivo termina cada bloque de estilos se usan dos variables adicionales:
+
+- **`@media-common`** — si es `true`, los estilos van al archivo común (cargado en todos los dispositivos).
+- **`@media-target`** — define el destino: `all`, `desktop` o `mobile`.
+
+### Ejemplo completo
+
+```less
+// Estilos comunes (van en styles-m.css)
+& when (@media-common = true) {
+  .mi-componente {
+    padding: 16px;
+  }
+}
+
+// Solo móvil
+.media-width(max, @screen__m) {
+  & when (@media-target = 'mobile'), (@media-target = 'all') {
+    .mi-componente {
+      font-size: 14px;
+    }
+  }
+}
+
+// Solo escritorio
+.media-width(min, @screen__m) {
+  & when (@media-target = 'desktop'), (@media-target = 'all') {
+    .mi-componente {
+      font-size: 16px;
+    }
+  }
+}
+```
+
+## En resumen
+
+| Necesitas | Usa |
+|---|---|
+| Estilos en todos los dispositivos | `@media-common: true` |
+| Solo móvil | `.media-width(max, @screen__m)` + `@media-target: mobile` |
+| Solo escritorio | `.media-width(min, @screen__m)` + `@media-target: desktop` |
+
+La [documentación oficial de Magento](https://devdocs.magento.com/guides/v2.4/frontend-dev-guide/responsive-web-design/rwd_css.html) cubre todos los casos edge, pero con estos patrones cubres el 90% del trabajo diario en temas personalizados.

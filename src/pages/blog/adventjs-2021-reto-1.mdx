@@ -1,0 +1,73 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'AdventJS 2021 — Reto 1: Ovejas rojas con «a» y «n»'
+description: 'Filtra un array de ovejas por color rojo y por nombre que incluya las letras a y n. Solución con filter, every e includes; enlace al código en GitHub y al video en TikTok.'
+date: '2024-12-01'
+tags: ['JavaScript', 'AdventJS', 'Retos']
+category: 'adventjs'
+challengeNumber: 1
+readingTime: '5 min'
+tiktokUrl: 'https://www.tiktok.com/@spokelopez/video/7440568686081215799'
+---
+
+El [primer reto del AdventJS 2021](https://2021.adventjs.dev/challenges/01) no pide contar booleanos: pide **filtrar objetos** en un array. Cada oveja tiene `name` y `color`; debes quedarte solo con las de color **rojo** cuyo nombre contenga **las dos letras** `a` y `n` (da igual el orden, mayúsculas o espacios en el nombre).
+
+## Enunciado resumido
+
+- Entrada: array de `{ name, color }`.
+- Salida: array con las ovejas que cumplan **ambas** condiciones:
+  1. `color` es rojo (comparación prudente con el texto del reto).
+  2. El `name` incluye `a` **y** incluye `n`.
+
+Ejemplo del propio reto: de una lista de varias ovejas rojas, solo califican **Navidad** y **Ki Na Ma**; **Euge** no es roja, **AAAAAaaaaa** no tiene `n`, **Nnnnnnnn** no tiene `a`.
+
+## Estrategia
+
+1. Recorrer solo las que interesan con **`filter`**.
+2. Para el color, normalizar con **`toLowerCase()`** y comparar con `'rojo'`.
+3. Para el nombre, trabajar en minúsculas y comprobar que **`a` y `n` estén presentes**. Una forma clara es un array `['a', 'n']` y **`every`** sobre **`includes`**: así obligas a que existan las dos letras sin escribir dos condiciones largas repetidas.
+
+## Solución (repo)
+
+Esta es la versión que tengo en el repositorio [adventjs21](https://github.com/SpokeLopez/adventjs21) ([archivo `01-conteo-ovejas.js`](https://github.com/SpokeLopez/adventjs21/blob/main/01-conteo-ovejas.js)):
+
+```javascript
+export default function contarOvejas(ovejas) {
+  return ovejas.filter(({ name, color }) =>
+    color.toLowerCase() === 'rojo' &&
+    ['a', 'n'].every((letra) => name.toLowerCase().includes(letra))
+  );
+}
+```
+
+- **`{ name, color }`** — desestructuración en el callback de `filter`; el código se lee alineado con la forma de cada oveja.
+- **`color.toLowerCase() === 'rojo'`** — evita fallos si el reto mezcla mayúsculas.
+- **`['a', 'n'].every(...)`** — documenta la regla del enunciado (“debe tener ambas”) y escala mejor si un día piden más letras.
+
+## Por qué no basta con un solo `includes`
+
+Si solo buscaras la subcadena `"an"`, fallarías con nombres válidos como **"Ki Na Ma"**, donde las letras están separadas. Por eso conviene exigir cada letra por separado.
+
+## Variante equivalente
+
+Si prefieres no usar `every`:
+
+```javascript
+const lower = name.toLowerCase();
+return lower.includes('a') && lower.includes('n');
+```
+
+Misma lógica; elige la que te resulte más legible en equipo o en entrevistas.
+
+## Video en TikTok
+
+En [este video](https://www.tiktok.com/@spokelopez/video/7440568686081215799) resumo el reto y la idea de la solución en formato corto. Arriba en la cabecera del artículo también tienes el enlace **Ver en TikTok** para abrirlo rápido.
+
+## Recursos
+
+- [Reto 1 — AdventJS 2021](https://2021.adventjs.dev/challenges/01) (enunciado y tests en el editor).
+- [Código en GitHub](https://github.com/SpokeLopez/adventjs21/blob/main/01-conteo-ovejas.js).
+
+---
+
+AdventJS es una buena excusa para practicar `filter`, condiciones sobre strings y lectura fina del enunciado: aquí la “trampa” era la pareja de letras, no el array en sí.

@@ -1,0 +1,119 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'Cómo crear un tema hijo en Magento 2'
+description: 'Guía paso a paso para crear un tema hijo en Magento 2: estructura de archivos, theme.xml, registration.php, composer.json y activación desde el admin.'
+date: '2021-03-30'
+tags: ['Magento', 'Ecommerce']
+category: 'magento'
+readingTime: '6 min'
+---
+
+La regla de oro en Magento: **nunca modifiques el tema padre directamente**. Si lo haces y llega una actualización, puedes perder todos tus cambios o romper la estructura del sitio. La solución es crear un tema hijo que herede todo del padre y donde hagas tus personalizaciones de forma segura.
+
+## Estructura de archivos
+
+En este ejemplo el proveedor se llama `Comsoft` y el tema `luma_child` hereda de `Magento/luma`. Crea la siguiente carpeta:
+
+```
+app/design/frontend/Comsoft/luma_child/
+```
+
+Dentro necesitas tres archivos obligatorios.
+
+### 1. `theme.xml`
+
+Declara el tema y apunta al padre del que hereda:
+
+```xml
+<theme xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="urn:magento:framework:Config/etc/theme.xsd">
+    <title>Luma Child</title>
+    <parent>Magento/luma</parent>
+    <media>
+        <preview_image>media/preview.png</preview_image>
+    </media>
+</theme>
+```
+
+La etiqueta `<parent>` es la clave: indica de qué tema hereda estilos, layouts y templates.
+
+### 2. `registration.php`
+
+Registra el tema en el sistema de componentes de Magento:
+
+```php
+<?php
+\Magento\Framework\Component\ComponentRegistrar::register(
+    \Magento\Framework\Component\ComponentRegistrar::THEME,
+    'frontend/Comsoft/luma_child',
+    __DIR__
+);
+```
+
+La ruta `frontend/Comsoft/luma_child` debe coincidir exactamente con la estructura de carpetas, respetando mayúsculas.
+
+### 3. `composer.json`
+
+Define las dependencias del tema:
+
+```json
+{
+    "name": "comsoft/theme-frontend-luma-child",
+    "description": "Luma Child Theme",
+    "require": {
+        "php": "~7.4.0|~8.1.0",
+        "magento/theme-frontend-luma": "*",
+        "magento/framework": "*"
+    },
+    "type": "magento2-theme",
+    "version": "1.0.0",
+    "license": ["OSL-3.0", "AFL-3.0"],
+    "autoload": {
+        "files": ["registration.php"]
+    }
+}
+```
+
+### Estructura de carpetas completa
+
+```
+app/design/frontend/Comsoft/luma_child/
+├── web/
+│   ├── css/
+│   │   └── source/
+│   │       ├── _theme.less
+│   │       └── _variables.less
+│   ├── fonts/
+│   ├── images/
+│   └── js/
+├── composer.json
+├── registration.php
+└── theme.xml
+```
+
+Los archivos `.less` en `css/source/` son donde irán tus personalizaciones de estilos.
+
+## Activar el tema
+
+**1. Permisos** — desde la raíz del proyecto:
+
+```bash
+sudo chmod -R 777 app/design/frontend/Comsoft/luma_child
+```
+
+**2. Verificar en el admin** — ve a **Contenido > Temas**. Tu tema debe aparecer en el listado. Si no aparece, revisa que `registration.php` esté correcto.
+
+**3. Asignar el tema** — ve a **Contenido > Diseño > Configuración**, selecciona la vista de tienda y en *Tema aplicado* elige `Luma Child`.
+
+**4. Desplegar archivos estáticos** — desde la raíz del proyecto:
+
+```bash
+sudo php bin/magento setup:static-content:deploy
+sudo php bin/magento cache:flush
+```
+
+Esto genera la estructura del tema en `pub/static/` y limpia la caché para que los cambios sean visibles en el frontend.
+
+---
+
+Con esto ya tienes un tema hijo funcional. Cualquier archivo que agregues en `luma_child` sobreescribe el equivalente del tema padre; lo que no sobreescribas se hereda automáticamente. Es el punto de partida para cualquier personalización de frontend en Magento 2.

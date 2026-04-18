@@ -1,0 +1,64 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import Pagination from '../../components/Pagination.astro';
+
+const allPosts = await Astro.glob('./*.mdx');
+const magentoPosts = allPosts
+  .filter(post => post.frontmatter.category === 'magento')
+  .sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime());
+---
+
+<BaseLayout title="Magento | SpokeLopez" description="Artículos sobre desarrollo de temas y personalización en Magento 2.">
+  <div class="page-header">
+    <span class="page-tag">Magento</span>
+    <h1>Magento 2</h1>
+    <p class="page-description">Desarrollo de temas, personalización y tips para trabajar con Magento 2.</p>
+  </div>
+
+  <div class="posts-grid">
+    {magentoPosts.length > 0 ? (
+      magentoPosts.map(post => (
+        <PostCard
+          title={post.frontmatter.title}
+          description={post.frontmatter.description}
+          date={new Date(post.frontmatter.date)}
+          slug={post.file.split('/').pop()?.replace('.mdx', '') || ''}
+          tags={post.frontmatter.tags}
+          readingTime={post.frontmatter.readingTime}
+        />
+      ))
+    ) : (
+      <p class="no-posts">Próximamente nuevos artículos de Magento...</p>
+    )}
+  </div>
+
+  <Pagination totalPosts={magentoPosts.length} />
+</BaseLayout>
+
+<script>
+  const PAGE_SIZE = 9;
+  let currentPage = 0;
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('.posts-grid .post-card'));
+  const prevBtn = document.querySelector<HTMLButtonElement>('.prev-btn');
+  const nextBtn = document.querySelector<HTMLButtonElement>('.next-btn');
+  const pageNums = document.querySelectorAll<HTMLButtonElement>('.page-num');
+  const totalPages = Math.ceil(cards.length / PAGE_SIZE);
+
+  function render() {
+    cards.forEach((c, i) => {
+      c.style.display = i >= currentPage * PAGE_SIZE && i < (currentPage + 1) * PAGE_SIZE ? '' : 'none';
+    });
+    prevBtn && (prevBtn.disabled = currentPage === 0);
+    nextBtn && (nextBtn.disabled = currentPage >= totalPages - 1);
+    pageNums.forEach((btn, i) => btn.classList.toggle('active', i === currentPage));
+  }
+
+  prevBtn?.addEventListener('click', () => { currentPage--; render(); });
+  nextBtn?.addEventListener('click', () => { currentPage++; render(); });
+  pageNums.forEach(btn => {
+    btn.addEventListener('click', () => { currentPage = Number(btn.dataset.page); render(); });
+  });
+
+  render();
+</script>

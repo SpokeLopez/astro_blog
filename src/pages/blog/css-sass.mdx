@@ -1,0 +1,149 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'SASS: CSS con superpoderes'
+description: 'Qué es SASS, por qué vale la pena aprenderlo y las 5 funcionalidades que más uso en el día a día: variables, anidamiento, extends, funciones y debug.'
+date: '2021-02-06'
+tags: ['CSS']
+category: 'tutorial'
+readingTime: '6 min'
+---
+
+SASS es un preprocesador de CSS: escribes en su sintaxis y lo compilas a CSS estándar. El resultado es el mismo archivo `.css` de siempre, pero el proceso de escribirlo es mucho más cómodo.
+
+## ¿Qué es un preprocesador?
+
+Un programa que genera CSS a partir de una sintaxis propia. Además de SASS existen **Less** (que usa Magento) y **Stylus**. Los tres compilan a CSS, pero SASS es el más extendido en proyectos frontend modernos.
+
+Hoy puedes compilar SASS directamente con Node sin herramientas extra:
+
+```bash
+npm install -g sass
+sass input.scss output.css --watch
+```
+
+## ¿Por qué aprender SASS?
+
+**Ventajas:**
+- Sintaxis más legible, familiar si vienes de cualquier lenguaje de programación.
+- Manejo de especificidad y cascada más ordenado gracias al anidamiento.
+- Menos código repetido con variables, extends y funciones.
+
+**Desventajas:**
+- Requiere un paso de compilación.
+- Una herramienta más que aprender.
+
+Con el ecosistema actual (Vite, webpack, etc.) la compilación está integrada y el costo de entrada es mínimo.
+
+## Las 5 funcionalidades que más uso
+
+### 1. Variables
+
+Centraliza valores que se repiten: colores, tamaños, fuentes. Si cambias la variable, cambia en todo el proyecto.
+
+```scss
+$color-primary: #22d3ee;
+$font-size-base: 1rem;
+$spacing-md: 1.5rem;
+
+.boton {
+  background-color: $color-primary;
+  font-size: $font-size-base;
+  padding: $spacing-md;
+}
+```
+
+> Con CSS moderno puedes hacer lo mismo con custom properties (`--color-primary`). La diferencia es que las variables SASS no existen en runtime — se resuelven en compilación, lo que las hace útiles para lógica condicional dentro del propio SASS.
+
+### 2. Anidamiento
+
+Agrupa los estilos de un componente sin repetir el selector padre. Especialmente útil con media queries.
+
+```scss
+.card {
+  padding: 1.5rem;
+  border-radius: 8px;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  .card__title {
+    font-size: 1.25rem;
+    color: $color-primary;
+  }
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+}
+```
+
+El `&` es el *parent selector*: se reemplaza por el selector padre en la compilación, generando `.card:hover`.
+
+### 3. Extends
+
+Herencia de reglas. Si varios elementos comparten los mismos estilos base, defines un placeholder `%` y lo extiendes.
+
+```scss
+%flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero {
+  @extend %flex-center;
+  min-height: 100vh;
+}
+
+.modal {
+  @extend %flex-center;
+  position: fixed;
+  inset: 0;
+}
+```
+
+El CSS compilado agrupa los selectores en lugar de duplicar las reglas.
+
+### 4. Funciones (mixins)
+
+Los mixins son bloques reutilizables que aceptan argumentos, como funciones en programación.
+
+```scss
+@mixin truncate($lines: 1) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.descripcion {
+  @include truncate(2); // Corta a 2 líneas
+}
+
+.titulo-corto {
+  @include truncate();  // Por defecto: 1 línea
+}
+```
+
+### 5. Debug
+
+Equivalente al `console.log` de JavaScript. Útil para inspeccionar valores de variables durante el desarrollo.
+
+```scss
+$espaciado: 1.5rem;
+
+@debug $espaciado;
+// DEBUG: 1.5rem — aparece en la consola al compilar
+
+@warn "Revisa el valor de $espaciado si cambias la base";
+@error "Esta variable es obligatoria";
+```
+
+---
+
+Estas cinco funcionalidades cubren la mayoría del trabajo diario. La [documentación oficial de SASS](https://sass-lang.com/documentation) es excelente si quieres profundizar en funciones de color, loops (`@each`, `@for`) o módulos (`@use`, `@forward`).
+
+## ¿Vale la pena en 2024?
+
+Con CSS moderno (custom properties, `@layer`, `@container`) muchas cosas que antes requerían SASS ahora son nativas. Aun así, el anidamiento nativo de CSS todavía tiene limitaciones, y los mixins no tienen equivalente directo. En proyectos grandes SASS sigue siendo una herramienta que ahorra tiempo real.

@@ -1,0 +1,115 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'BEM, OOCSS y Atomic Design: metodologías CSS que debes conocer'
+description: 'Cómo BEM, OOCSS y Atomic Design resuelven el problema del CSS difícil de mantener. Ejemplos prácticos de cada metodología y cuándo usar cada una.'
+date: '2020-09-10'
+tags: ['CSS']
+category: 'tutorial'
+readingTime: '7 min'
+---
+
+import CodePen from '../../components/CodePen.astro';
+
+Escribir CSS es fácil. Mantenerlo en un proyecto grande con varios desarrolladores es otra historia. Las metodologías CSS existen para resolver exactamente ese problema: hacer el código más predecible, reutilizable y escalable.
+
+Estas son las tres que más he usado en proyectos reales.
+
+## BEM — Block, Element, Modifier
+
+BEM es una convención de nomenclatura de clases. La idea es que el nombre de cada clase describa su rol en la interfaz:
+
+- **Block** — componente independiente: `.card`, `.button`, `.nav`
+- **Element** — parte de un bloque: `.card__title`, `.card__image`
+- **Modifier** — variante o estado: `.button--primary`, `.button--disabled`
+
+```css
+/* Bloque */
+.button { padding: 0.75rem 1.5rem; border-radius: 6px; }
+
+/* Modificadores del bloque */
+.button--primary { background: #22d3ee; color: #000; }
+.button--outline { background: transparent; border: 1px solid #22d3ee; }
+.button--disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Elemento dentro del bloque */
+.button__icon { margin-right: 0.5rem; }
+```
+
+**Por qué funciona:** nunca hay conflictos de especificidad porque solo usas clases. El nombre de la clase es autodocumentado — al leer `.card__title--featured` sabes exactamente qué es y dónde vive.
+
+**Cuándo usarlo:** proyectos con componentes bien definidos, equipos donde varios desarrolladores tocan el mismo CSS.
+
+## OOCSS — CSS Orientado a Objetos
+
+OOCSS tiene dos principios:
+
+**1. Separar estructura de apariencia.** Los estilos que definen el layout (tamaño, posición, display) van separados de los que definen la apariencia visual (colores, tipografía, bordes).
+
+```css
+/* ❌ Sin OOCSS — estilos mezclados y no reutilizables */
+.btn-hero {
+  display: inline-flex;
+  padding: 0.75rem 1.5rem;
+  background: #22d3ee;
+  color: #000;
+  border-radius: 6px;
+}
+
+.btn-sidebar {
+  display: inline-flex;
+  padding: 0.75rem 1.5rem;
+  background: #a855f7;  /* Solo cambia el color */
+  color: #fff;
+  border-radius: 6px;
+}
+
+/* ✅ Con OOCSS — estructura separada de apariencia */
+.btn {
+  display: inline-flex;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+}
+
+.skin-cyan  { background: #22d3ee; color: #000; }
+.skin-purple { background: #a855f7; color: #fff; }
+```
+
+**2. Separar contenedor del contenido.** Los estilos no deben depender de dónde está el elemento en el DOM.
+
+```css
+/* ❌ El h3 depende del sidebar — no reutilizable */
+.sidebar h3 { font-size: 1.25rem; font-weight: 600; }
+
+/* ✅ Clase independiente — funciona en cualquier contexto */
+.section-title { font-size: 1.25rem; font-weight: 600; }
+```
+
+**Cuándo usarlo:** proyectos con muchos componentes que comparten estilos visuales. Reduce drásticamente el CSS duplicado.
+
+## Atomic Design
+
+Atomic Design no es solo una metodología CSS — es una forma de pensar la interfaz como un sistema de componentes en cinco niveles:
+
+| Nivel | Qué es | Ejemplo |
+|---|---|---|
+| **Átomos** | Elemento HTML básico | `<button>`, `<input>`, `<label>` |
+| **Moléculas** | Combinación de átomos | Campo de búsqueda (input + botón) |
+| **Organismos** | Sección compleja | Header (logo + nav + búsqueda) |
+| **Plantillas** | Layout sin contenido real | Wireframe de la página |
+| **Páginas** | Plantilla con contenido real | La página final que ve el usuario |
+
+La clave es que cada nivel solo conoce a los niveles inferiores. Un organismo usa moléculas, una molécula usa átomos — nunca al revés.
+
+**Cuándo usarlo:** proyectos con design system, cuando trabajas de la mano con equipos de UX/UI. Es la metodología más estructurada de las tres y la que más beneficia a equipos grandes.
+
+## Demo: BEM en práctica
+
+El ejemplo más visual es BEM porque la nomenclatura se ve directamente en el HTML. Aquí un componente de tarjeta con sus variantes:
+
+<CodePen id="WbGmZpr" user="SpokeLopez-1471233183" title="BEM CSS Methodology" height={420} defaultTab="result" />
+
+## ¿Cuál usar?
+
+No son excluyentes. En la práctica, la combinación más común es **BEM para nombrar clases** + **principios de OOCSS para organizar los estilos** + **Atomic Design como guía mental para estructurar componentes**.
+
+Lo importante es adoptar alguna convención y que todo el equipo la siga. Un CSS sin metodología en un proyecto grande termina siendo imposible de mantener.

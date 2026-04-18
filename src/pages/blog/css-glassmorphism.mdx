@@ -1,0 +1,114 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'Crea un efecto glassmorphism con CSS puro'
+description: 'Guía práctica: fondo con gradiente, formas animadas y tarjeta con backdrop-filter. Incluye demo en CodePen y claves de legibilidad y compatibilidad.'
+date: '2026-03-20'
+tags: ['CSS', 'Tutorial']
+category: 'tutorial'
+readingTime: '7 min'
+
+---
+
+import CodePen from '../../components/CodePen.astro';
+
+El **glassmorphism** (o “cristal esmerilado”) es un estilo de interfaz que superpone capas semitransparentes y desenfoca lo que hay detrás. El resultado transmite profundidad y jerarquía sin recargar el diseño. En este tutorial desglosamos el Pen que acompaña al artículo: solo HTML y CSS, sin JavaScript.
+
+## Qué hace que se vea bien
+
+El truco no es solo `backdrop-filter`. Necesitas **algo visible detrás de la capa de vidrio**: un degradado, una foto o formas de color. Si el fondo es plano y del mismo tono que el cristal, el efecto casi desaparece.
+
+En el demo, el `body` usa un gradiente diagonal y tres círculos con animación `float` para que, al aplicar el blur, el usuario perciba movimiento y contraste detrás de la tarjeta.
+
+## Estructura del HTML
+
+La jerarquía es sencilla:
+
+1. Un **contenedor** a pantalla completa con `position: relative` y la tarjeta centrada con flexbox.
+2. Capa **`.background-shapes`** en posición absoluta, debajo de la tarjeta (`z-index` menor).
+3. La **`.glass-card`** con `position: relative` y `z-index: 1` para quedar por encima del fondo animado.
+
+Así el desenfoque actúa sobre el gradiente y las formas, no sobre un vacío uniforme.
+
+## La tarjeta de cristal
+
+Las piezas que definen el glassmorphism en el Pen son:
+
+| Propiedad | Rol |
+|-----------|-----|
+| `background: rgba(255, 255, 255, 0.15)` | Capa blanca muy suave; deja pasar el color de fondo |
+| `backdrop-filter` + `-webkit-backdrop-filter` | Desenfoque real del contenido detrás (Safari necesita el prefijo) |
+| `border: 1px solid rgba(255, 255, 255, 0.2)` | Borde luminoso que separa la tarjeta del fondo |
+| `box-shadow` | Profundidad sin opacar del todo |
+| `border-radius: 20px` | Esquinas redondeadas acordes al estilo “burbuja” |
+
+```css
+.glass-card {
+  position: relative;
+  z-index: 1;
+  padding: 40px;
+  max-width: 400px;
+  text-align: center;
+
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+}
+```
+
+El texto del bloque usa blanco y blanco semitransparente para mantener **contraste WCAG** sobre fondos claros/violetas; si cambias el fondo a uno muy claro, revisa colores del título y del párrafo.
+
+## Botón secundario “glass”
+
+El botón **Explorar** repite la idea con un blur más ligero (`blur(4px)`), borde un poco más marcado y un hover que sube opacidad y añade sombra. Sirve como CTA sin competir visualmente con el borde de la tarjeta.
+
+## Formas de fondo (opcional pero recomendable)
+
+Las clases `.shape-1`, `.shape-2` y `.shape-3` son círculos con gradientes distintos y `animation: float` con `animation-delay` escalonado. No son obligatorias para el glassmorphism, pero refuerzan la sensación de profundidad cuando mueves la vista por la página.
+
+## Cómo afinar el efecto
+
+1. **Blur** — Más px = más “vidrio esmerilado”, menos detalle del fondo. En el Pen: `12px` en la tarjeta.
+2. **Opacidad del `background`** — Más baja = más translúcido; sube un poco si el texto pierde legibilidad.
+3. **Borde** — Aumenta ligeramente la opacidad del blanco en el `border` si la tarjeta se confunde con el fondo.
+
+```css
+/* Más sutil */
+.glass-subtle {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Más marcado */
+.glass-strong {
+  background: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+```
+
+## Demo en vivo
+
+Puedes ver el resultado, copiar el código y variar valores en el editor:
+
+<CodePen
+  id="RNGBJbg"
+  user="SpokeLopez-1471233183"
+  title="Crea un efecto glassmorphism"
+  height={480}
+  defaultTab="result"
+/>
+
+## Compatibilidad y fallback
+
+`backdrop-filter` tiene [buen soporte en navegadores actuales](https://caniuse.com/css-backdrop-filter). Mantén siempre `-webkit-backdrop-filter` para Safari.
+
+Si necesitas un fallback muy defensivo, puedes ofrecer un fondo sólido semitransparente cuando no haya soporte (por ejemplo con `@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)))`), aunque en la mayoría de proyectos el degradado + capa ya se ven aceptables sin blur.
+
+---
+
+¿Te gustó este tutorial? En TikTok subo versiones cortas del mismo tema; aquí profundizamos con el Pen y el código completo.

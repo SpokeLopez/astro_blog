@@ -1,0 +1,73 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: '3 formas de declarar funciones en JavaScript'
+description: 'Función declarativa, expresiva y arrow function: cuándo usar cada una y en qué se diferencian.'
+date: '2022-11-03'
+tags: ['JavaScript']
+category: 'tutorial'
+readingTime: '4 min'
+---
+
+En JavaScript las funciones son objetos, y eso las hace más flexibles que en otros lenguajes. Hay tres formas principales de declararlas y cada una tiene su comportamiento.
+
+## 1. Función declarativa
+
+La forma clásica: palabra reservada `function`, nombre e instrucciones entre llaves.
+
+```javascript
+function saludar(nombre) {
+  return `Hola ${nombre}`;
+}
+
+saludar('Eduardo'); // "Hola Eduardo"
+```
+
+**Ventaja clave:** admite *hoisting*, puedes llamarla antes de que aparezca en el código.
+
+## 2. Función expresiva
+
+La función se asigna a una variable. Puede tener nombre o ser anónima.
+
+```javascript
+const saludar = function(nombre) {
+  return `Hola ${nombre}`;
+};
+
+saludar('Eduardo'); // "Hola Eduardo"
+```
+
+**Diferencia respecto a la declarativa:** no tiene hoisting — si la llamas antes de declararla obtienes `ReferenceError`.
+
+## 3. Arrow function
+
+Introducida en ES6. Sintaxis más corta con `=>`.
+
+```javascript
+const saludar = (nombre) => `Hola ${nombre}`;
+
+saludar('Eduardo'); // "Hola Eduardo"
+```
+
+Si el cuerpo tiene más de una línea necesitas llaves y `return` explícito:
+
+```javascript
+const saludar = (nombre) => {
+  const mensaje = `Hola ${nombre}`;
+  return mensaje;
+};
+```
+
+**Diferencias importantes frente a las anteriores:**
+- No tiene su propio `this` — hereda el del contexto donde fue creada.
+- Siempre es anónima.
+- No puede usarse como constructor (`new`).
+
+## ¿Cuándo usar cada una?
+
+| | Declarativa | Expresiva | Arrow |
+|---|---|---|---|
+| Hoisting | ✅ | ❌ | ❌ |
+| Propio `this` | ✅ | ✅ | ❌ |
+| Sintaxis corta | ❌ | ❌ | ✅ |
+
+En la práctica: usa **arrow functions** para callbacks y funciones cortas, y **declarativas** para funciones principales de un módulo donde el nombre importa para el stack trace.

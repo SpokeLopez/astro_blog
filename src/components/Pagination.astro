@@ -1,0 +1,81 @@
+---
+interface Props {
+  totalPosts: number;
+  pageSize?: number;
+}
+const { totalPosts, pageSize = 9 } = Astro.props;
+const totalPages = Math.ceil(totalPosts / pageSize);
+---
+
+{totalPages > 1 && (
+  <nav class="pagination" aria-label="Paginación" data-page-size={pageSize}>
+    <button class="page-btn prev-btn" disabled aria-label="Página anterior">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </button>
+    <div class="page-numbers">
+      {Array.from({ length: totalPages }, (_, i) => (
+        <button class:list={['page-btn page-num', { active: i === 0 }]} data-page={i}>
+          {i + 1}
+        </button>
+      ))}
+    </div>
+    <button class:list={['page-btn next-btn', { disabled: totalPages <= 1 }]} aria-label="Página siguiente" disabled={totalPages <= 1}>
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </button>
+  </nav>
+)}
+
+<style>
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-xl);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .page-numbers {
+    display: flex;
+    gap: var(--space-xs);
+  }
+
+  .page-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 var(--space-sm);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg-card);
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    font-family: var(--font-sans);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .page-btn:hover:not(:disabled) {
+    border-color: var(--color-border-hover);
+    color: var(--color-text);
+  }
+
+  .page-btn.active {
+    background-color: var(--color-accent-muted);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+
+  .page-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+</style>

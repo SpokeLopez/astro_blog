@@ -1,0 +1,511 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const projects = [
+  {
+    title: 'Hamo',
+    description: 'Marketplace exclusivo para creadores y artesanos mexicanos. Plataforma donde el talento local encuentra su espacio digital con herramientas de venta optimizadas.',
+    image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/hamo-Cmpg1wzDGTEoI8NLJfMBzK89JQFp1m.png',
+    tags: ['Shopify', 'Liquid', 'E-commerce'],
+    category: 'E-commerce',
+    link: 'https://hamo.mx',
+    github: null
+  },
+  {
+    title: 'Doite Chile',
+    description: 'Tienda online para la marca lider en equipamiento outdoor y deportivo en Chile. Catalogo robusto con checkout optimizado para alta conversion.',
+    image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/doite-jB2NNIt1ElSvgIO2CYSXq9QbFatmC7.jpg',
+    tags: ['Shopify', 'JavaScript', 'E-commerce'],
+    category: 'E-commerce',
+    link: 'https://doite.cl',
+    github: null
+  },
+  {
+    title: 'Soy Intenso',
+    description: 'Portal de noticias regional con alto trafico. Desarrollo de tema personalizado WordPress con optimizacion SEO y velocidad de carga.',
+    image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/soyintenso-sJLMVPplwN51UnaPSFVFlizzjXNKWC.png',
+    tags: ['WordPress', 'PHP', 'SEO'],
+    category: 'Web',
+    link: 'https://soyintenso.mx',
+    github: null
+  },
+  {
+    title: 'Guup',
+    description: 'E-commerce vibrante de fundas y accesorios para celular. Disenos unicos con experiencia de compra fluida y catalogo dinamico.',
+    image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/gupp-uIJ57zudfjK9GAnAhwVYnKr1P3QZod.png',
+    tags: ['Shopify', 'Liquid', 'E-commerce'],
+    category: 'E-commerce',
+    link: 'https://guup.mx',
+    github: null
+  },
+  {
+    title: 'Terra Natura',
+    description: 'Tienda de productos organicos y naturales importados. Integracion completa con pasarelas de pago y logistica de envios nacionales.',
+    image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/terranatura-OaxySi4pPMj2hG1xEC3y6v5FweZOvr.jpg',
+    tags: ['Shopify', 'Liquid', 'E-commerce'],
+    category: 'E-commerce',
+    link: 'https://terranatura.com.mx',
+    github: null
+  },
+  {
+    title: 'Comsoft Mexico',
+    description: 'Blog tecnico con tutoriales de desarrollo web, JavaScript y PHP. Contenido educativo para la comunidad hispanohablante.',
+    image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/comsoft-eXJ9bJ85LF1tyASKuzNRrajvzDWFyd.jpg',
+    tags: ['WordPress', 'PHP', 'Blog'],
+    category: 'Web',
+    link: 'https://comsoft-mexico.com',
+    github: null
+  },
+  {
+    title: 'Weather App',
+    description: 'Consulta el clima de cualquier ciudad del mundo en tiempo real. Desarrollada con Vue.js consumiendo la API de OpenWeather para mostrar temperatura, humedad y condiciones atmosfericas.',
+    image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/clima-app-W3oS7ObTzgoz8UFB7S2pYBK1U73fSn.jpg',
+    tags: ['Vue.js', 'API', 'JavaScript'],
+    category: 'Web App',
+    link: 'https://app-clima-6bdda.web.app',
+    github: 'https://github.com/spokelopez/weather-app'
+  },
+  {
+    title: 'Platzi Exchange',
+    description: 'Dashboard de criptomonedas con datos en tiempo real. Visualiza rankings, precios actualizados y capitalizacion de mercado de las principales criptos.',
+    image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/exchange-ll3bbQil2ZVQwwNCivYnBzPFpskdYM.jpg',
+    tags: ['Vue.js', 'API', 'JavaScript'],
+    category: 'Web App',
+    link: null,
+    github: 'https://github.com/SpokeLopez/PlatziExchange'
+  },
+  {
+    title: 'Countries API',
+    description: 'Explora informacion detallada de todos los paises del mundo. Busqueda y filtrado por region usando REST Countries API con interfaz moderna.',
+    image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/countries-api-RH4W8zc2iKmxaQ3w4rUzTrKaR9uJz9.png',
+    tags: ['JavaScript', 'API', 'CSS'],
+    category: 'Web App',
+    link: null,
+    github: 'https://github.com/SpokeLopez/CountriesAPI'
+  },
+  {
+    title: 'CasaIdeas Chile',
+    description: 'E-commerce de gran escala para cadena de tiendas de decoracion. Optimizacion de rendimiento en Magento 2 con miles de productos.',
+    image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/casaideas-ZvIUtMIMm0eINGtgpzXlBJuIBhWMPn.jpg',
+    tags: ['Magento', 'PHP', 'E-commerce'],
+    category: 'E-commerce',
+    link: 'https://casaideas.cl',
+    github: null
+  },
+  {
+    title: 'Ontu',
+    description: 'Plataforma para empresa de energia solar con calculadora de ahorro y metricas de impacto ambiental en tiempo real.',
+    image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/ontu-Mtpy3J5qvbOM6j81egKG7PjS79lm7z.jpg',
+    tags: ['WordPress', 'PHP', 'Landing'],
+    category: 'Web',
+    link: 'https://ontu.mx',
+    github: null
+  },
+  {
+    title: 'AdsProject Media',
+    description: 'Sitio corporativo para agencia de marketing politico. Diseno dark mode con animaciones y presentacion de casos de exito.',
+    image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/adsproject-eUYp0X3Wxxolc8c8mMrNJHSWMVE39v.jpg',
+    tags: ['WordPress', 'PHP', 'Marketing'],
+    category: 'Web',
+    link: 'https://adsprojectmedia.com',
+    github: null
+  },
+  {
+    title: 'Todo Muebles',
+    description: 'Marketplace de muebles con mas de 10,000 productos. Sistema completo de filtros, comparador y cotizador integrado.',
+    image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/todomuebles-nL9QxSmpRtVDeSELvDlzOe2G6D5NnD.jpg',
+    tags: ['Magento', 'PHP', 'E-commerce'],
+    category: 'E-commerce',
+    link: 'https://todomuebles.mx',
+    github: null
+  },
+  {
+    title: 'Email Validation Module',
+    description: 'Modulo open source para PrestaShop 8.x que valida correos electronicos antes del registro, reduciendo cuentas falsas.',
+    image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/emailvalidation-D0oCNDc8TUrgZycUekGOWsRrxTZ5pg.png',
+    tags: ['PrestaShop', 'PHP', 'Module'],
+    category: 'Open Source',
+    link: null,
+    github: 'https://github.com/edulopezdacodes/emailvalidation'
+  },
+  {
+    title: 'Email Verification Module',
+    description: 'Sistema de verificacion obligatoria por correo para PrestaShop. Aumenta la calidad de leads y seguridad de la tienda.',
+    image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/emailverification-guXnziDLn3tp2hRAWe5GlVzscMMCuO.png',
+    tags: ['PrestaShop', 'PHP', 'Module'],
+    category: 'Open Source',
+    link: null,
+    github: 'https://github.com/SpokeLopez/emailverification'
+  },
+  {
+    title: 'Delos App',
+    description: 'Aplicacion movil empresarial para control de acceso y gestion de personal. Autenticacion segura con registro biometrico.',
+    image: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/cynthus-YZfOJWuTdxzULCt95JfDr7Z45VeF4H.png',
+    tags: ['Mobile', 'Android', 'Java'],
+    category: 'Mobile',
+    link: null,
+    github: null
+  }
+];
+
+const categories = ['Todos', ...new Set(projects.map(p => p.category))];
+---
+
+<BaseLayout title="Proyectos | SpokeLopez" description="Proyectos de desarrollo web y e-commerce realizados por Eduardo Lopez (SpokeLopez)">
+  <main class="projects-page">
+    <section class="page-header">
+      <span class="section-tag">PORTAFOLIO</span>
+      <h1>Mis Proyectos</h1>
+      <p class="page-description">
+        Proyectos reales de e-commerce, sitios web y aplicaciones 
+        que he desarrollado para clientes y como side projects.
+      </p>
+    </section>
+
+    <!-- Filters -->
+    <section class="filters-section">
+      <div class="filter-tags">
+        {categories.map((category, index) => (
+          <button 
+            class={`filter-tag ${index === 0 ? 'active' : ''}`}
+            data-category={category}
+          >
+            {category}
+          </button>
+        ))}
+      </div>
+    </section>
+
+    <!-- Projects Grid -->
+    <section class="projects-section">
+      <div class="projects-grid">
+        {projects.map((project) => (
+          <article class="project-card" data-category={project.category}>
+            <div class="project-image">
+              <img src={project.image} alt={project.title} loading="lazy" />
+              <div class="project-overlay">
+                <div class="project-links">
+                  {project.link && project.link !== '#' && (
+                    <a href={project.link} class="project-link" target="_blank" rel="noopener noreferrer" aria-label="Ver proyecto">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                      </svg>
+                    </a>
+                  )}
+                  {project.github && (
+                    <a href={project.github} class="project-link" target="_blank" rel="noopener noreferrer" aria-label="Ver codigo">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                      </svg>
+                    </a>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div class="project-content">
+              <span class="project-category">{project.category}</span>
+              <h3 class="project-title">{project.title}</h3>
+              <p class="project-description">{project.description}</p>
+              <div class="project-tags">
+                {project.tags.map((tag) => (
+                  <span class="project-tag">{tag}</span>
+                ))}
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+      <h2>Tienes un proyecto en mente?</h2>
+      <p>Desarrollo e-commerce, sitios web y aplicaciones a medida. Hablemos de tu idea.</p>
+      <a href="mailto:elopez@comsoft-mexico.com" class="cta-button">Iniciar conversacion</a>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const filterTags = document.querySelectorAll('.filter-tag');
+    const projectCards = document.querySelectorAll('.project-card');
+
+    filterTags.forEach(tag => {
+      tag.addEventListener('click', () => {
+        // Update active state
+        filterTags.forEach(t => t.classList.remove('active'));
+        tag.classList.add('active');
+
+        const category = tag.dataset.category;
+
+        // Filter projects
+        projectCards.forEach(card => {
+          if (category === 'Todos' || card.dataset.category === category) {
+            card.style.display = 'block';
+            card.style.animation = 'fadeIn 0.3s ease';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+  });
+</script>
+
+<style>
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .projects-page {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: var(--space-xl) var(--space-md);
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: var(--space-xl);
+  }
+
+  .section-tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--color-accent);
+    margin-bottom: var(--space-sm);
+  }
+
+  .page-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: var(--space-md);
+  }
+
+  .page-description {
+    font-size: 1.125rem;
+    color: var(--color-text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* Filters */
+  .filters-section {
+    margin-bottom: var(--space-xl);
+  }
+
+  .filter-tags {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
+  .filter-tag {
+    padding: 0.5em 1.25em;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .filter-tag:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .filter-tag.active {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+    color: white;
+  }
+
+  /* Projects Grid */
+  .projects-section {
+    margin-bottom: var(--space-3xl);
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
+  }
+
+  .project-card {
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .project-card:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  }
+
+  .project-image {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 16 / 10;
+  }
+
+  .project-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    transition: transform 0.3s ease;
+  }
+
+  .project-card:hover .project-image img {
+    transform: scale(1.05);
+  }
+
+  .project-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .project-card:hover .project-overlay {
+    opacity: 1;
+  }
+
+  .project-links {
+    display: flex;
+    gap: var(--space-md);
+  }
+
+  .project-link {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-bg-card);
+    color: var(--color-text);
+    border-radius: 50%;
+    transition: all 0.2s ease;
+  }
+
+  .project-link:hover {
+    background-color: var(--color-accent);
+    color: white;
+  }
+
+  .project-content {
+    padding: var(--space-lg);
+  }
+
+  .project-category {
+    display: inline-block;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-accent);
+    margin-bottom: var(--space-xs);
+  }
+
+  .project-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: var(--space-sm);
+    color: var(--color-text);
+  }
+
+  .project-description {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: var(--space-md);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+  }
+
+  .project-tag {
+    font-size: 0.6875rem;
+    padding: 0.25em 0.75em;
+    background-color: var(--color-bg-secondary);
+    color: var(--color-text-muted);
+    border-radius: var(--radius-sm);
+  }
+
+  /* CTA */
+  .cta-section {
+    text-align: center;
+    padding: var(--space-3xl) var(--space-xl);
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .cta-section h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: var(--space-sm);
+  }
+
+  .cta-section p {
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-lg);
+  }
+
+  .cta-button {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-xl);
+    background-color: var(--color-accent);
+    color: white;
+    font-weight: 600;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+  }
+
+  .cta-button:hover {
+    background-color: var(--color-accent-hover);
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 900px) {
+    .projects-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .page-header h1 {
+      font-size: 2rem;
+    }
+
+    .projects-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

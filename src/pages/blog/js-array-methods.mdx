@@ -1,0 +1,104 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: '3 metodos de Array que debes dominar'
+description: 'Filter, map y reduce son los metodos mas potentes de JavaScript. Aprende a usarlos con ejemplos practicos.'
+date: '2026-03-18'
+tags: ['JavaScript', 'Tutorial']
+category: 'tutorial'
+readingTime: '5 min'
+
+---
+
+import CodePen from '../../components/CodePen.astro';
+
+Si quieres escribir JavaScript moderno y limpio, necesitas dominar estos tres métodos de Array: **filter**, **map** y **reduce**.
+
+## 1. Filter - Filtrar elementos
+
+`filter()` crea un nuevo array con los elementos que cumplan una condición.
+
+```javascript
+const numeros = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+// Obtener solo los números pares
+const pares = numeros.filter(num => num % 2 === 0);
+console.log(pares); // [2, 4, 6, 8, 10]
+
+// Filtrar usuarios activos
+const usuarios = [
+  { nombre: 'Ana', activo: true },
+  { nombre: 'Luis', activo: false },
+  { nombre: 'María', activo: true }
+];
+
+const activos = usuarios.filter(user => user.activo);
+// [{ nombre: 'Ana', activo: true }, { nombre: 'María', activo: true }]
+```
+
+## 2. Map - Transformar elementos
+
+`map()` crea un nuevo array transformando cada elemento.
+
+```javascript
+const precios = [10, 20, 30, 40, 50];
+
+// Aplicar 20% de descuento
+const conDescuento = precios.map(precio => precio * 0.8);
+console.log(conDescuento); // [8, 16, 24, 32, 40]
+
+// Extraer solo los nombres
+const usuarios = [
+  { nombre: 'Ana', edad: 25 },
+  { nombre: 'Luis', edad: 30 },
+  { nombre: 'María', edad: 28 }
+];
+
+const nombres = usuarios.map(user => user.nombre);
+console.log(nombres); // ['Ana', 'Luis', 'María']
+```
+
+## 3. Reduce - Acumular valores
+
+`reduce()` reduce el array a un solo valor.
+
+```javascript
+const numeros = [1, 2, 3, 4, 5];
+
+// Sumar todos los números
+const suma = numeros.reduce((total, num) => total + num, 0);
+console.log(suma); // 15
+
+// Contar ocurrencias
+const frutas = ['manzana', 'banana', 'manzana', 'naranja', 'banana', 'manzana'];
+
+const conteo = frutas.reduce((acc, fruta) => {
+  acc[fruta] = (acc[fruta] || 0) + 1;
+  return acc;
+}, {});
+
+console.log(conteo); 
+// { manzana: 3, banana: 2, naranja: 1 }
+```
+
+## Combinándolos
+
+La magia está en encadenarlos:
+
+```javascript
+const productos = [
+  { nombre: 'Laptop', precio: 1000, enStock: true },
+  { nombre: 'Mouse', precio: 25, enStock: false },
+  { nombre: 'Teclado', precio: 75, enStock: true },
+  { nombre: 'Monitor', precio: 300, enStock: true }
+];
+
+// Total de productos en stock
+const totalEnStock = productos
+  .filter(p => p.enStock)           // Solo en stock
+  .map(p => p.precio)               // Obtener precios
+  .reduce((sum, precio) => sum + precio, 0); // Sumar
+
+console.log(totalEnStock); // 1375
+```
+
+Practica estos métodos y verás cómo tu código se vuelve más limpio y expresivo.

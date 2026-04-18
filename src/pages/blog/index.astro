@@ -1,0 +1,204 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import Pagination from '../../components/Pagination.astro';
+
+const allPosts = await Astro.glob('./*.mdx');
+const sortedPosts = allPosts.sort(
+  (a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime()
+);
+
+const allTags = [...new Set(sortedPosts.flatMap(post => post.frontmatter.tags))];
+const PAGE_SIZE = 9;
+---
+
+<BaseLayout title="Blog | SpokeLopez">
+  <div class="blog-page">
+    <header class="blog-header">
+      <h1>Blog</h1>
+      <p>Artículos sobre desarrollo web: CSS, JavaScript, Magento y más.</p>
+    </header>
+
+    <div class="blog-filters">
+      <div class="tags-list">
+        <span class="filter-label">Filtrar por:</span>
+        {allTags.map(tag => (
+          <button class="filter-tag" data-tag={tag.toLowerCase()}>
+            {tag}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <div class="posts-grid">
+      {sortedPosts.map((post, i) => (
+        <PostCard
+          title={post.frontmatter.title}
+          description={post.frontmatter.description}
+          date={new Date(post.frontmatter.date)}
+          slug={post.file.split('/').pop()?.replace('.mdx', '') || ''}
+          tags={post.frontmatter.tags}
+          readingTime={post.frontmatter.readingTime}
+          data-index={i}
+        />
+      ))}
+    </div>
+
+    {sortedPosts.length === 0 && (
+      <div class="empty-state">
+        <p>No hay tutoriales todavía. ¡Próximamente!</p>
+      </div>
+    )}
+
+    <Pagination totalPosts={sortedPosts.length} pageSize={PAGE_SIZE} />
+  </div>
+</BaseLayout>
+
+<style>
+  .blog-page {
+    max-width: var(--max-width-wide);
+    margin: 0 auto;
+  }
+
+  .blog-header {
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+  }
+
+  .blog-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: var(--space-sm);
+  }
+
+  .blog-header p {
+    font-size: 1.125rem;
+    color: var(--color-text-secondary);
+  }
+
+  .blog-filters {
+    margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .tags-list {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+  }
+
+  .filter-label {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    margin-right: var(--space-sm);
+  }
+
+  .filter-tag {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    padding: 0.375em 0.875em;
+    border-radius: var(--radius-md);
+    background-color: var(--color-bg-card);
+    color: var(--color-text-secondary);
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .filter-tag:hover {
+    border-color: var(--color-border-hover);
+    color: var(--color-text);
+  }
+
+  .filter-tag.active {
+    background-color: var(--color-accent-muted);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: var(--space-lg);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: var(--space-3xl);
+    color: var(--color-text-muted);
+  }
+
+  @media (max-width: 768px) {
+    .blog-header h1 {
+      font-size: 2rem;
+    }
+
+    .posts-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  const PAGE_SIZE = 9;
+  let currentPage = 0;
+  let activeTag = '';
+
+  const filterTags = document.querySelectorAll<HTMLElement>('.filter-tag');
+  const allCards = Array.from(document.querySelectorAll<HTMLElement>('.posts-grid .post-card'));
+  const pagination = document.querySelector('.pagination');
+  const prevBtn = document.querySelector<HTMLButtonElement>('.prev-btn');
+  const nextBtn = document.querySelector<HTMLButtonElement>('.next-btn');
+  const pageNums = document.querySelectorAll<HTMLButtonElement>('.page-num');
+
+  function getVisible() {
+    return activeTag
+      ? allCards.filter(card =>
+          Array.from(card.querySelectorAll('.tag'))
+            .some(t => t.textContent?.toLowerCase().trim() === activeTag)
+        )
+      : allCards;
+  }
+
+  function render() {
+    const visible = getVisible();
+    const totalPages = Math.ceil(visible.length / PAGE_SIZE);
+    currentPage = Math.min(currentPage, Math.max(0, totalPages - 1));
+
+    allCards.forEach(c => (c.style.display = 'none'));
+    visible.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE)
+           .forEach(c => (c.style.display = ''));
+
+    // Pagination visibility
+    if (pagination) {
+      (pagination as HTMLElement).style.display = totalPages > 1 ? '' : 'none';
+    }
+    prevBtn && (prevBtn.disabled = currentPage === 0);
+    nextBtn && (nextBtn.disabled = currentPage >= totalPages - 1);
+    pageNums.forEach((btn, i) => {
+      btn.classList.toggle('active', i === currentPage);
+      btn.style.display = i < totalPages ? '' : 'none';
+    });
+  }
+
+  filterTags.forEach(tag => {
+    tag.addEventListener('click', () => {
+      const isActive = tag.classList.contains('active');
+      filterTags.forEach(t => t.classList.remove('active'));
+      activeTag = isActive ? '' : (tag.dataset.tag ?? '');
+      if (!isActive) tag.classList.add('active');
+      currentPage = 0;
+      render();
+    });
+  });
+
+  prevBtn?.addEventListener('click', () => { currentPage--; render(); });
+  nextBtn?.addEventListener('click', () => { currentPage++; render(); });
+  pageNums.forEach(btn => {
+    btn.addEventListener('click', () => { currentPage = Number(btn.dataset.page); render(); });
+  });
+
+  render();
+</script>

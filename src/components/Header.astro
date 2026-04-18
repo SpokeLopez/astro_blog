@@ -1,0 +1,311 @@
+---
+const currentPath = Astro.url.pathname;
+
+const navLinks = [
+  { href: '/', label: 'Inicio' },
+  { 
+    href: '/blog', 
+    label: 'Blog',
+    submenu: [
+      { href: '/blog', label: 'Todos' },
+      { href: '/blog/tutoriales', label: 'Tutoriales' },
+      { href: '/blog/adventjs', label: 'AdventJS' },
+      { href: '/blog/magento', label: 'Magento' },
+    ]
+  },
+  { href: '/proyectos', label: 'Proyectos' },
+  { href: '/recursos', label: 'Recursos' },
+];
+---
+
+<header class="header">
+  <div class="header-content">
+    <a href="/" class="logo">
+      <span class="logo-icon">{"</>"}</span>
+      <span class="logo-text">spokelopez</span>
+    </a>
+    
+    <nav class="nav" aria-label="Navegacion principal">
+      <ul class="nav-list">
+        {navLinks.map(link => (
+          <li class:list={['nav-item', { 'has-submenu': link.submenu }]}>
+            <a 
+              href={link.href} 
+              class:list={['nav-link', { active: currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href)) }]}
+            >
+              {link.label}
+              {link.submenu && (
+                <svg class="chevron-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              )}
+            </a>
+            {link.submenu && (
+              <ul class="submenu">
+                {link.submenu.map(sublink => (
+                  <li>
+                    <a 
+                      href={sublink.href} 
+                      class:list={['submenu-link', { active: currentPath === sublink.href }]}
+                    >
+                      {sublink.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <a href="mailto:elopez@comsoft-mexico.com" class="header-btn">Contactar</a>
+      <a href="/cv-eduardo-lopez.pdf" target="_blank" rel="noopener noreferrer" class="header-btn header-btn-outline">CV</a>
+      <button id="theme-toggle" class="theme-toggle" aria-label="Cambiar tema" type="button">
+        <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"></circle>
+          <line x1="12" y1="1" x2="12" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="23"></line>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+          <line x1="1" y1="12" x2="3" y2="12"></line>
+          <line x1="21" y1="12" x2="23" y2="12"></line>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+        <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: var(--header-bg);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    color: var(--color-text-secondary);
+    background: none;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .theme-toggle:hover {
+    color: var(--color-text);
+    background-color: var(--color-bg-secondary);
+  }
+
+  /* Show sun icon in dark mode, hide moon */
+  .icon-moon { display: none; }
+  .icon-sun { display: block; }
+
+  /* In light mode, show moon icon, hide sun */
+  :global([data-theme="light"]) .icon-moon { display: block; }
+  :global([data-theme="light"]) .icon-sun { display: none; }
+
+  .header-content {
+    max-width: var(--max-width-wide);
+    margin: 0 auto;
+    padding: var(--space-md) var(--space-md);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-lg);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    color: var(--color-text);
+    font-weight: 700;
+    font-size: 1.25rem;
+  }
+
+  .logo:hover {
+    color: var(--color-text);
+  }
+
+  .logo-icon {
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 1rem;
+  }
+
+  .nav-list {
+    display: flex;
+    list-style: none;
+    gap: var(--space-xs);
+  }
+
+  .nav-item {
+    position: relative;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-sm) var(--space-md);
+    color: var(--color-text-secondary);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    transition: all 0.2s ease;
+  }
+
+  .nav-link:hover {
+    color: var(--color-text);
+    background-color: var(--color-bg-secondary);
+  }
+
+  .nav-link.active {
+    color: var(--color-accent);
+    background-color: var(--color-accent-muted);
+  }
+
+  .chevron-icon {
+    transition: transform 0.2s ease;
+  }
+
+  .has-submenu:hover .chevron-icon {
+    transform: rotate(180deg);
+  }
+
+  .submenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 160px;
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-xs);
+    list-style: none;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(8px);
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .has-submenu:hover .submenu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(4px);
+  }
+
+  .submenu-link {
+    display: block;
+    padding: var(--space-sm) var(--space-md);
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    border-radius: var(--radius-sm);
+    transition: all 0.15s ease;
+  }
+
+  .submenu-link:hover {
+    color: var(--color-text);
+    background-color: var(--color-bg-secondary);
+  }
+
+  .submenu-link.active {
+    color: var(--color-accent);
+    background-color: var(--color-accent-muted);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .header-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5em 1em;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    background-color: var(--color-accent);
+    color: var(--color-bg);
+    transition: all 0.2s ease;
+  }
+
+  .header-btn:hover {
+    background-color: var(--color-accent-hover);
+    color: var(--color-bg);
+  }
+
+  .header-btn-outline {
+    background-color: transparent;
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+  }
+
+  .header-btn-outline:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    background-color: transparent;
+  }
+
+  @media (max-width: 640px) {
+    .nav-list {
+      gap: 0;
+    }
+    
+    .nav-link {
+      padding: var(--space-sm) var(--space-sm);
+      font-size: 0.875rem;
+    }
+  }
+</style>
+
+<script>
+  function initTheme() {
+    const toggle = document.getElementById('theme-toggle');
+    const html = document.documentElement;
+    
+    // Check saved preference or system preference
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (savedTheme) {
+      html.setAttribute('data-theme', savedTheme);
+    } else if (!prefersDark) {
+      html.setAttribute('data-theme', 'light');
+    }
+    
+    toggle?.addEventListener('click', () => {
+      const currentTheme = html.getAttribute('data-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      
+      if (newTheme === 'dark') {
+        html.removeAttribute('data-theme');
+      } else {
+        html.setAttribute('data-theme', newTheme);
+      }
+      
+      localStorage.setItem('theme', newTheme);
+    });
+  }
+  
+  initTheme();
+  document.addEventListener('astro:after-swap', initTheme);
+</script>

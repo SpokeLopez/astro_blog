@@ -1,0 +1,342 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+
+const allPosts = await Astro.glob('./*.mdx');
+const adventjsPosts = allPosts
+  .filter(post => post.frontmatter.category === 'adventjs')
+  .sort((a, b) => {
+    const numA = a.frontmatter.challengeNumber || 0;
+    const numB = b.frontmatter.challengeNumber || 0;
+    return numA - numB;
+  });
+
+const tiktokVideos = [
+  { id: '7440568686081215799', title: 'AdventJS 2021 - Reto 1', challenge: 1 },
+  { id: '7440979847817465144', title: 'AdventJS 2021 - Reto 2', challenge: 2 },
+  { id: '7442107974421630264', title: 'AdventJS 2021 - Reto 3', challenge: 3 },
+  { id: '7445537831558073606', title: 'AdventJS 2021 - Reto 4', challenge: 4 },
+];
+---
+
+<BaseLayout title="AdventJS | SpokeLopez" description="Soluciones a los retos de AdventJS con explicaciones en TikTok.">
+  <div class="page-header">
+    <span class="page-tag">AdventJS</span>
+    <h1>AdventJS Challenge</h1>
+    <p class="page-description">Mis soluciones a los retos de AdventJS. Retos diarios de JavaScript para mejorar tus habilidades de programación.</p>
+  </div>
+
+  <section class="tiktok-section">
+    <h2>Videos en TikTok - AdventJS 2021</h2>
+    <p class="section-desc">Explicaciones rápidas de cada reto en formato corto</p>
+    
+    <div class="tiktok-grid">
+      {tiktokVideos.map(video => (
+        <div class="tiktok-card">
+          <div class="tiktok-embed-container" data-video-id={video.id}>
+            <div class="tiktok-skeleton">
+              <div class="skeleton-header">
+                <div class="skeleton-avatar"></div>
+                <div class="skeleton-lines">
+                  <div class="skeleton-line skeleton-line--short"></div>
+                  <div class="skeleton-line skeleton-line--xshort"></div>
+                </div>
+              </div>
+              <div class="skeleton-video"></div>
+              <div class="skeleton-footer">
+                <div class="skeleton-line skeleton-line--medium"></div>
+                <div class="skeleton-line skeleton-line--short"></div>
+              </div>
+              <button class="play-btn" aria-label="Cargar video de TikTok">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+                <span>Ver video</span>
+              </button>
+            </div>
+          </div>
+          <div class="tiktok-info">
+            <span class="challenge-badge">Reto {video.challenge}</span>
+            <h3>{video.title}</h3>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {adventjsPosts.length > 0 && (
+    <section class="posts-section">
+      <h2>Posts detallados</h2>
+      <div class="posts-grid">
+        {adventjsPosts.map(post => (
+          <PostCard
+            title={post.frontmatter.title}
+            description={post.frontmatter.description}
+            date={new Date(post.frontmatter.date)}
+            slug={post.file.split('/').pop()?.replace('.mdx', '') || ''}
+            tags={post.frontmatter.tags}
+            readingTime={post.frontmatter.readingTime}
+          />
+        ))}
+      </div>
+    </section>
+  )}
+</BaseLayout>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.tiktok-embed-container').forEach((container) => {
+    const videoId = container.dataset.videoId!;
+
+    new MutationObserver(() => {
+      if (container.querySelector('iframe')) {
+        const skeleton = container.querySelector<HTMLElement>('.tiktok-skeleton');
+        if (skeleton) skeleton.style.display = 'none';
+      }
+    }).observe(container, { childList: true, subtree: true });
+
+    container.querySelector('.play-btn')!.addEventListener('click', () => {
+      // Inyectar el blockquote
+      const bq = document.createElement('blockquote');
+      bq.className = 'tiktok-embed';
+      bq.cite = `https://www.tiktok.com/@spokelopez/video/${videoId}`;
+      bq.dataset.videoId = videoId;
+      bq.innerHTML = `<section><a target="_blank" href="https://www.tiktok.com/@spokelopez/video/${videoId}">Ver en TikTok</a></section>`;
+      container.appendChild(bq);
+
+      // Re-inyectar embed.js para que procese el nuevo blockquote
+      const old = document.querySelector('script[src*="tiktok.com/embed.js"]');
+      if (old) old.remove();
+      const script = document.createElement('script');
+      script.src = 'https://www.tiktok.com/embed.js';
+      document.body.appendChild(script);
+    }, { once: true });
+  });
+</script>
+
+<style>
+  .page-header {
+    text-align: center;
+    margin-bottom: var(--space-3xl);
+    padding-bottom: var(--space-2xl);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .page-tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-accent);
+    margin-bottom: var(--space-md);
+  }
+
+  .page-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: var(--space-md);
+  }
+
+  .page-description {
+    font-size: 1.125rem;
+    color: var(--color-text-muted);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .tiktok-section {
+    margin-bottom: var(--space-3xl);
+  }
+
+  .tiktok-section h2 {
+    font-size: 1.5rem;
+    margin-bottom: var(--space-sm);
+  }
+
+  .section-desc {
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-xl);
+  }
+
+  /* TikTok vertical ~325px: columnas acotadas evitan cinta blanca a la derecha */
+  .tiktok-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 340px));
+    justify-content: center;
+    gap: var(--space-xl);
+  }
+
+  .tiktok-card {
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: all 0.2s ease;
+    width: 100%;
+    max-width: 340px;
+    margin-inline: auto;
+  }
+
+  .tiktok-card:hover {
+    border-color: var(--color-border-hover);
+    transform: translateY(-2px);
+  }
+
+  .tiktok-embed-container {
+    width: 100%;
+    /* Vertical TikTok ~9:16; la altura sale del ancho de la tarjeta (ya no capamos a 400px) */
+    aspect-ratio: 9 / 16;
+    overflow: hidden;
+    background-color: var(--color-bg-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-xs);
+    box-sizing: border-box;
+    position: relative;
+  }
+
+  /* ── Skeleton loader ── */
+  .tiktok-skeleton {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-md);
+    gap: var(--space-sm);
+    background-color: var(--color-bg-secondary);
+    z-index: 1;
+  }
+
+  .skeleton-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .skeleton-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background-color: var(--color-border);
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+  }
+
+  .skeleton-lines {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .skeleton-line {
+    height: 10px;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-border);
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+  }
+  .skeleton-line--xshort { width: 40%; }
+  .skeleton-line--short  { width: 55%; }
+  .skeleton-line--medium { width: 75%; }
+
+  .skeleton-video {
+    flex: 1;
+    border-radius: var(--radius-md);
+    background-color: var(--color-border);
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+  }
+
+  .skeleton-footer {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  @keyframes skeleton-pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.4; }
+  }
+  /* ── fin skeleton ── */
+
+  .play-btn {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    transition: color 0.2s ease;
+    z-index: 2;
+  }
+
+  .play-btn:hover {
+    color: var(--color-accent);
+  }
+
+  .play-btn span {
+    font-size: 0.875rem;
+    font-family: var(--font-sans);
+    font-weight: 500;
+  }
+
+  .tiktok-embed-container blockquote.tiktok-embed {
+    margin: 0 auto !important;
+    width: 100% !important;
+    max-width: 325px;
+    flex: 0 0 auto;
+  }
+
+  .tiktok-embed-container blockquote.tiktok-embed section {
+    width: 100%;
+  }
+
+  /* embed.js inyecta el iframe; solo centramos — TikTok fija width/height inline */
+  .tiktok-embed-container iframe {
+    display: block !important;
+    margin-inline: auto !important;
+    border: 0;
+  }
+
+  .tiktok-info {
+    padding: var(--space-md);
+  }
+
+  .challenge-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25em 0.75em;
+    background-color: var(--color-accent-muted);
+    color: var(--color-accent);
+    border-radius: 999px;
+    margin-bottom: var(--space-sm);
+  }
+
+  .tiktok-info h3 {
+    font-size: 1rem;
+    color: var(--color-text);
+  }
+
+  .posts-section {
+    padding-top: var(--space-2xl);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .posts-section h2 {
+    font-size: 1.5rem;
+    margin-bottom: var(--space-xl);
+  }
+
+  .posts-grid {
+    display: grid;
+    gap: var(--space-xl);
+    max-width: var(--max-width-content);
+  }
+</style>

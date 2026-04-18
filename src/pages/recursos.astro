@@ -1,0 +1,236 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const resources = [
+  {
+    category: 'Herramientas de Desarrollo',
+    items: [
+      { name: 'VS Code', url: 'https://code.visualstudio.com/', description: 'Mi editor de codigo favorito' },
+      { name: 'Warp', url: 'https://warp.dev/', description: 'Terminal moderna con AI' },
+      { name: 'Fig', url: 'https://fig.io/', description: 'Autocompletado para terminal' },
+      { name: 'Postman', url: 'https://postman.com/', description: 'Testing de APIs' },
+    ]
+  },
+  {
+    category: 'Extensiones VS Code',
+    items: [
+      { name: 'GitHub Copilot', url: 'https://github.com/features/copilot', description: 'AI pair programming' },
+      { name: 'Prettier', url: 'https://prettier.io/', description: 'Formateo automatico de codigo' },
+      { name: 'ESLint', url: 'https://eslint.org/', description: 'Linting para JavaScript' },
+      { name: 'Live Server', url: 'https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer', description: 'Servidor local con hot reload' },
+    ]
+  },
+  {
+    category: 'Recursos de Aprendizaje',
+    items: [
+      { name: 'MDN Web Docs', url: 'https://developer.mozilla.org/', description: 'Documentacion web definitiva' },
+      { name: 'JavaScript.info', url: 'https://javascript.info/', description: 'Tutorial moderno de JavaScript' },
+      { name: 'CSS-Tricks', url: 'https://css-tricks.com/', description: 'Trucos y tutoriales de CSS' },
+      { name: 'AdventJS', url: 'https://adventjs.dev/', description: 'Retos diarios de JavaScript' },
+    ]
+  },
+  {
+    category: 'Plataformas E-commerce',
+    items: [
+      { name: 'Magento/Adobe Commerce', url: 'https://business.adobe.com/products/magento/magento-commerce.html', description: 'Plataforma enterprise de e-commerce' },
+      { name: 'Shopify', url: 'https://shopify.com/', description: 'E-commerce SaaS' },
+      { name: 'PrestaShop', url: 'https://prestashop.com/', description: 'E-commerce open source' },
+      { name: 'WooCommerce', url: 'https://woocommerce.com/', description: 'E-commerce para WordPress' },
+    ]
+  },
+  {
+    category: 'Frameworks y Librerias',
+    items: [
+      { name: 'Laravel', url: 'https://laravel.com/', description: 'Framework PHP elegante' },
+      { name: 'Vue.js', url: 'https://vuejs.org/', description: 'Framework JavaScript progresivo' },
+      { name: 'Astro', url: 'https://astro.build/', description: 'Framework para sitios estaticos' },
+      { name: 'Tailwind CSS', url: 'https://tailwindcss.com/', description: 'Framework CSS utility-first' },
+    ]
+  },
+  {
+    category: 'Diseno y UI',
+    items: [
+      { name: 'Figma', url: 'https://figma.com/', description: 'Herramienta de diseno colaborativo' },
+      { name: 'Coolors', url: 'https://coolors.co/', description: 'Generador de paletas de colores' },
+      { name: 'Google Fonts', url: 'https://fonts.google.com/', description: 'Tipografias gratuitas' },
+      { name: 'Heroicons', url: 'https://heroicons.com/', description: 'Iconos SVG por Tailwind' },
+    ]
+  }
+];
+
+const codePenUser = 'SpokeLopez-1471233183';
+---
+
+<BaseLayout title="Recursos | SpokeLopez" description="Herramientas, extensiones y recursos que uso para desarrollo web.">
+  <div class="page-header">
+    <span class="page-tag">Recursos</span>
+    <h1>Herramientas y Recursos</h1>
+    <p class="page-description">Una coleccion de herramientas, extensiones y recursos que uso en mi dia a dia como desarrollador.</p>
+  </div>
+
+  <div class="resources-container">
+    {resources.map(section => (
+      <section class="resource-section">
+        <h2>{section.category}</h2>
+        <div class="resource-grid">
+          {section.items.map(item => (
+            <a href={item.url} target="_blank" rel="noopener noreferrer" class="resource-card">
+              <h3>{item.name}</h3>
+              <p>{item.description}</p>
+              <span class="external-link">
+                Visitar
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+              </span>
+            </a>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+
+  <section class="codepen-section">
+    <h2>Mis CodePens</h2>
+    <p class="section-desc">Demos interactivos y experimentos de codigo</p>
+    <div class="codepen-cta">
+      <a href={`https://codepen.io/${codePenUser}`} target="_blank" rel="noopener noreferrer" class="codepen-link">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M18.144 13.067v-2.134L16.55 12zm1.715 1.135a.46.46 0 0 1-.227-.064l-8.844-5.864a.46.46 0 0 1-.207-.384V2.4a.46.46 0 0 1 .69-.398l8.844 5.108a.46.46 0 0 1 .207.384v6.324a.46.46 0 0 1-.463.46zm-2.042.066l-2.037-1.346 2.037-1.347zm-13.39-1.347l-2.036 1.347v-2.693zm-2.343-1.854a.46.46 0 0 1 .227.064l8.844 5.864a.46.46 0 0 1 .207.384v5.49a.46.46 0 0 1-.69.398L1.828 18.16a.46.46 0 0 1-.207-.384v-6.324a.46.46 0 0 1 .463-.46zm12.017 3.01l-4.097 2.717v-5.434zm.33-4.01L12 12.4l-2.43-2.333L12 7.734zM7.903 12L3.806 9.284v5.433z"/>
+        </svg>
+        Ver mi perfil en CodePen
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .page-header {
+    text-align: center;
+    margin-bottom: var(--space-3xl);
+    padding-bottom: var(--space-2xl);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .page-tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-accent);
+    margin-bottom: var(--space-md);
+  }
+
+  .page-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: var(--space-md);
+  }
+
+  .page-description {
+    font-size: 1.125rem;
+    color: var(--color-text-muted);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .resources-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3xl);
+  }
+
+  .resource-section h2 {
+    font-size: 1.25rem;
+    margin-bottom: var(--space-lg);
+    color: var(--color-text);
+  }
+
+  .resource-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--space-md);
+  }
+
+  .resource-card {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-lg);
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    transition: all 0.2s ease;
+    color: var(--color-text);
+  }
+
+  .resource-card:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-2px);
+    color: var(--color-text);
+  }
+
+  .resource-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: var(--space-xs);
+  }
+
+  .resource-card p {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    flex: 1;
+    margin-bottom: var(--space-md);
+  }
+
+  .external-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: 0.8125rem;
+    color: var(--color-accent);
+    font-weight: 500;
+  }
+
+  .codepen-section {
+    margin-top: var(--space-3xl);
+    padding-top: var(--space-2xl);
+    border-top: 1px solid var(--color-border);
+    text-align: center;
+  }
+
+  .codepen-section h2 {
+    font-size: 1.5rem;
+    margin-bottom: var(--space-sm);
+  }
+
+  .section-desc {
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-xl);
+  }
+
+  .codepen-cta {
+    display: flex;
+    justify-content: center;
+  }
+
+  .codepen-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-md) var(--space-xl);
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    color: var(--color-text);
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .codepen-link:hover {
+    border-color: var(--color-accent);
+    background-color: var(--color-accent-muted);
+    color: var(--color-accent);
+  }
+</style>
