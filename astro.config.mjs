@@ -1,14 +1,9 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
-import node from '@astrojs/node';
+import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  output: 'server',
-  adapter: node({
-    mode: 'standalone'
-  }),
-  integrations: [mdx()],
-  server: {
-    host: true
-  }
+  site: 'https://spokelopez.com',
+  integrations: [mdx(), sitemap()],
+  output: 'static'
 });

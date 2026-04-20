@@ -13,7 +13,7 @@ const magentoPosts = allPosts
   <div class="page-header">
     <span class="page-tag">Magento</span>
     <h1>Magento 2</h1>
-    <p class="page-description">Desarrollo de temas, personalización y tips para trabajar con Magento 2.</p>
+    <p class="page-description">Desarrollo de temas, personalización y tips para trabajar con Magento.</p>
   </div>
 
   <div class="posts-grid">
@@ -62,3 +62,47 @@ const magentoPosts = allPosts
 
   render();
 </script>
+
+<style>
+  .page-header {
+    text-align: center;
+    margin-bottom: var(--space-3xl);
+    padding-bottom: var(--space-2xl);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .page-tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-accent);
+    margin-bottom: var(--space-md);
+  }
+
+  .page-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: var(--space-md);
+  }
+
+  .page-description {
+    font-size: 1.125rem;
+    color: var(--color-text-muted);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .posts-grid {
+    display: grid;
+    gap: var(--space-xl);
+    max-width: var(--max-width-content);
+    margin: 0 auto;
+  }
+
+  .no-posts {
+    text-align: center;
+    color: var(--color-text-muted);
+    padding: var(--space-3xl);
+  }
+</style>
