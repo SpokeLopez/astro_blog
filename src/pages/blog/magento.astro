@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
 import Pagination from '../../components/Pagination.astro';
+import '../../styles/blog-listings.css';
 
 const allPosts = await Astro.glob('./*.mdx');
 const magentoPosts = allPosts
@@ -9,31 +10,38 @@ const magentoPosts = allPosts
   .sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime());
 ---
 
-<BaseLayout title="Magento | SpokeLopez" description="Artículos sobre desarrollo de temas y personalización en Magento 2.">
-  <div class="page-header">
-    <span class="page-tag">Magento</span>
-    <h1>Magento 2</h1>
-    <p class="page-description">Desarrollo de temas, personalización y tips para trabajar con Magento.</p>
-  </div>
+<BaseLayout
+  title="Magento 2 | SpokeLopez"
+  description="Temas hijos, Less, media queries y personalización de storefront en Magento 2."
+>
+  <div class="blog-listing">
+    <div class="page-header">
+      <span class="page-tag">Magento 2</span>
+      <h1>Magento: temas y frontend</h1>
+      <p class="page-description">
+        Cómo extender Luma, organizar el CSS con el sistema de breakpoints del core y cuidar el storefront sin romper actualizaciones.
+      </p>
+    </div>
 
-  <div class="posts-grid">
-    {magentoPosts.length > 0 ? (
-      magentoPosts.map(post => (
-        <PostCard
-          title={post.frontmatter.title}
-          description={post.frontmatter.description}
-          date={new Date(post.frontmatter.date)}
-          slug={post.file.split('/').pop()?.replace('.mdx', '') || ''}
-          tags={post.frontmatter.tags}
-          readingTime={post.frontmatter.readingTime}
-        />
-      ))
-    ) : (
-      <p class="no-posts">Próximamente nuevos artículos de Magento...</p>
-    )}
-  </div>
+    <div class="posts-grid">
+      {magentoPosts.length > 0 ? (
+        magentoPosts.map(post => (
+          <PostCard
+            title={post.frontmatter.title}
+            description={post.frontmatter.description}
+            date={new Date(post.frontmatter.date)}
+            slug={post.file.split('/').pop()?.replace('.mdx', '') || ''}
+            tags={post.frontmatter.tags}
+            readingTime={post.frontmatter.readingTime}
+          />
+        ))
+      ) : (
+        <p class="no-posts">Aún no hay entradas en esta sección. Las nuevas notas de Magento aparecerán aquí.</p>
+      )}
+    </div>
 
-  <Pagination totalPosts={magentoPosts.length} />
+    <Pagination totalPosts={magentoPosts.length} />
+  </div>
 </BaseLayout>
 
 <script>
@@ -62,47 +70,3 @@ const magentoPosts = allPosts
 
   render();
 </script>
-
-<style>
-  .page-header {
-    text-align: center;
-    margin-bottom: var(--space-3xl);
-    padding-bottom: var(--space-2xl);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .page-tag {
-    display: inline-block;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--color-accent);
-    margin-bottom: var(--space-md);
-  }
-
-  .page-header h1 {
-    font-size: 2.5rem;
-    margin-bottom: var(--space-md);
-  }
-
-  .page-description {
-    font-size: 1.125rem;
-    color: var(--color-text-muted);
-    max-width: 600px;
-    margin: 0 auto;
-  }
-
-  .posts-grid {
-    display: grid;
-    gap: var(--space-xl);
-    max-width: var(--max-width-content);
-    margin: 0 auto;
-  }
-
-  .no-posts {
-    text-align: center;
-    color: var(--color-text-muted);
-    padding: var(--space-3xl);
-  }
-</style>

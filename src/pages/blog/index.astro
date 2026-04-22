@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
 import Pagination from '../../components/Pagination.astro';
+import '../../styles/blog-listings.css';
 
 const allPosts = await Astro.glob('./*.mdx');
 const sortedPosts = allPosts.sort(
@@ -12,18 +13,25 @@ const allTags = [...new Set(sortedPosts.flatMap(post => post.frontmatter.tags))]
 const PAGE_SIZE = 9;
 ---
 
-<BaseLayout title="Blog | SpokeLopez">
-  <div class="blog-page">
-    <header class="blog-header">
-      <h1>Blog</h1>
-      <p>Artículos sobre desarrollo web: CSS, JavaScript, Magento y más.</p>
+<BaseLayout
+  title="Blog | SpokeLopez"
+  description="Tutoriales, notas técnicas y retos: CSS, JavaScript, Magento 2, AdventJS y buenas prácticas de desarrollo web."
+>
+  <div class="blog-listing">
+    <header class="page-header">
+      <span class="page-tag">Blog</span>
+      <h1>Artículos y tutoriales</h1>
+      <p class="page-description">
+        Contenido práctico sobre frontend, e-commerce y retos de código. Usa las etiquetas para acotar o recorre todo el archivo.
+      </p>
     </header>
 
     <div class="blog-filters">
+      <p class="filter-intro">Pulsa una etiqueta para filtrar; un segundo clic en la misma la quita.</p>
       <div class="tags-list">
-        <span class="filter-label">Filtrar por:</span>
+        <span class="filter-label">Tema</span>
         {allTags.map(tag => (
-          <button class="filter-tag" data-tag={tag.toLowerCase()}>
+          <button type="button" class="filter-tag" data-tag={tag.toLowerCase()}>
             {tag}
           </button>
         ))}
@@ -45,101 +53,14 @@ const PAGE_SIZE = 9;
     </div>
 
     {sortedPosts.length === 0 && (
-      <div class="empty-state">
-        <p>No hay tutoriales todavía. ¡Próximamente!</p>
+      <div class="empty-state" role="status">
+        <p>Aquí aún no hay publicaciones. En cuanto añada entradas nuevas, las verás en esta lista.</p>
       </div>
     )}
 
     <Pagination totalPosts={sortedPosts.length} pageSize={PAGE_SIZE} />
   </div>
 </BaseLayout>
-
-<style>
-  .blog-page {
-    max-width: var(--max-width-wide);
-    margin: 0 auto;
-  }
-
-  .blog-header {
-    text-align: center;
-    margin-bottom: var(--space-2xl);
-  }
-
-  .blog-header h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: var(--space-sm);
-  }
-
-  .blog-header p {
-    font-size: 1.125rem;
-    color: var(--color-text-secondary);
-  }
-
-  .blog-filters {
-    margin-bottom: var(--space-xl);
-    padding-bottom: var(--space-lg);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .tags-list {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    flex-wrap: wrap;
-  }
-
-  .filter-label {
-    font-size: 0.875rem;
-    color: var(--color-text-muted);
-    margin-right: var(--space-sm);
-  }
-
-  .filter-tag {
-    font-size: 0.8125rem;
-    font-weight: 500;
-    padding: 0.375em 0.875em;
-    border-radius: var(--radius-md);
-    background-color: var(--color-bg-card);
-    color: var(--color-text-secondary);
-    border: 1px solid var(--color-border);
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .filter-tag:hover {
-    border-color: var(--color-border-hover);
-    color: var(--color-text);
-  }
-
-  .filter-tag.active {
-    background-color: var(--color-accent-muted);
-    border-color: var(--color-accent);
-    color: var(--color-accent);
-  }
-
-  .posts-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: var(--space-lg);
-  }
-
-  .empty-state {
-    text-align: center;
-    padding: var(--space-3xl);
-    color: var(--color-text-muted);
-  }
-
-  @media (max-width: 768px) {
-    .blog-header h1 {
-      font-size: 2rem;
-    }
-
-    .posts-grid {
-      grid-template-columns: 1fr;
-    }
-  }
-</style>
 
 <script>
   const PAGE_SIZE = 9;

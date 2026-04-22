@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostCard from '../../components/PostCard.astro';
 import Pagination from '../../components/Pagination.astro';
+import '../../styles/blog-listings.css';
 
 const allPosts = await Astro.glob('./*.mdx');
 const tutorialPosts = allPosts
@@ -9,31 +10,38 @@ const tutorialPosts = allPosts
   .sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime());
 ---
 
-<BaseLayout title="Tutoriales | SpokeLopez" description="Tutoriales de programacion paso a paso. CSS, JavaScript, PHP y mas.">
-  <div class="page-header">
-    <span class="page-tag">Tutoriales</span>
-    <h1>Tutoriales de Programacion</h1>
-    <p class="page-description">Guias paso a paso para aprender desarrollo web. Desde CSS basico hasta tecnicas avanzadas.</p>
-  </div>
+<BaseLayout
+  title="Tutoriales | SpokeLopez"
+  description="Tutoriales paso a paso: HTML, CSS, JavaScript y buenas prácticas de desarrollo web."
+>
+  <div class="blog-listing">
+    <div class="page-header">
+      <span class="page-tag">Tutoriales</span>
+      <h1>Tutoriales de programación</h1>
+      <p class="page-description">
+        Guías detalladas para aprender a tu ritmo: fundamentos, patrones útiles y trucos que aplico en proyectos reales.
+      </p>
+    </div>
 
-  <div class="posts-grid">
-    {tutorialPosts.length > 0 ? (
-      tutorialPosts.map(post => (
-        <PostCard
-          title={post.frontmatter.title}
-          description={post.frontmatter.description}
-          date={new Date(post.frontmatter.date)}
-          slug={post.file.split('/').pop()?.replace('.mdx', '') || ''}
-          tags={post.frontmatter.tags}
-          readingTime={post.frontmatter.readingTime}
-        />
-      ))
-    ) : (
-      <p class="no-posts">Proximamente nuevos tutoriales...</p>
-    )}
-  </div>
+    <div class="posts-grid">
+      {tutorialPosts.length > 0 ? (
+        tutorialPosts.map(post => (
+          <PostCard
+            title={post.frontmatter.title}
+            description={post.frontmatter.description}
+            date={new Date(post.frontmatter.date)}
+            slug={post.file.split('/').pop()?.replace('.mdx', '') || ''}
+            tags={post.frontmatter.tags}
+            readingTime={post.frontmatter.readingTime}
+          />
+        ))
+      ) : (
+        <p class="no-posts">Cuando publique nuevos tutoriales, aparecerán en esta lista.</p>
+      )}
+    </div>
 
-  <Pagination totalPosts={tutorialPosts.length} />
+    <Pagination totalPosts={tutorialPosts.length} />
+  </div>
 </BaseLayout>
 
 <script>
@@ -62,47 +70,3 @@ const tutorialPosts = allPosts
 
   render();
 </script>
-
-<style>
-  .page-header {
-    text-align: center;
-    margin-bottom: var(--space-3xl);
-    padding-bottom: var(--space-2xl);
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .page-tag {
-    display: inline-block;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--color-accent);
-    margin-bottom: var(--space-md);
-  }
-
-  .page-header h1 {
-    font-size: 2.5rem;
-    margin-bottom: var(--space-md);
-  }
-
-  .page-description {
-    font-size: 1.125rem;
-    color: var(--color-text-muted);
-    max-width: 600px;
-    margin: 0 auto;
-  }
-
-  .posts-grid {
-    display: grid;
-    gap: var(--space-xl);
-    max-width: var(--max-width-content);
-    margin: 0 auto;
-  }
-
-  .no-posts {
-    text-align: center;
-    color: var(--color-text-muted);
-    padding: var(--space-3xl);
-  }
-</style>
