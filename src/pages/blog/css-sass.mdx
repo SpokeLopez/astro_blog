@@ -8,6 +8,8 @@ category: 'tutorial'
 readingTime: '6 min'
 ---
 
+import CodePen from '../../components/CodePen.astro';
+
 SASS es un preprocesador de CSS: escribes en su sintaxis y lo compilas a CSS estándar. El resultado es el mismo archivo `.css` de siempre, pero el proceso de escribirlo es mucho más cómodo.
 
 ## ¿Qué es un preprocesador?
@@ -139,6 +141,18 @@ $espaciado: 1.5rem;
 @warn "Revisa el valor de $espaciado si cambias la base";
 @error "Esta variable es obligatoria";
 ```
+
+## Demo en vivo
+
+Para llevar estas ideas a un ejemplo visual, preparé un CodePen pequeño usando **SCSS**. La demo usa variables, anidación, `@extend` y mixins para construir una tarjeta reutilizable con botones y una jerarquía de estilos más limpia.
+
+<CodePen
+  id="RNGzZzg"
+  user="SpokeLopez-1471233183"
+  title="SASS: variables, nesting, extend y mixins"
+  height={460}
+  defaultTab="result"
+/>
 
 ---
 
