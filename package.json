@@ -2,15 +2,15 @@
   "name": "spokelopez-portfolio",
   "type": "module",
   "version": "1.0.0",
-"scripts": {
-  "dev": "astro dev",
-  "build": "astro build",
-  "preview": "astro preview"
-},
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
   "dependencies": {
-    "@vercel/speed-insights": "^2.0.0",
     "@astrojs/mdx": "^4.2.6",
     "@astrojs/sitemap": "^3.3.1",
+    "@vercel/speed-insights": "^2.0.0",
     "astro": "^5.18.1",
     "shiki": "^3.3.0"
   }
