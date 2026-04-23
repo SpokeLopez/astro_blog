@@ -24,44 +24,75 @@ const navLinks = [
       <span class="logo-icon">{"</>"}</span>
       <span class="logo-text">spokelopez</span>
     </a>
-    
-    <nav class="nav" aria-label="Navegacion principal">
-      <ul class="nav-list">
-        {navLinks.map(link => (
-          <li class:list={['nav-item', { 'has-submenu': link.submenu }]}>
-            <a 
-              href={link.href} 
-              class:list={['nav-link', { active: currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href)) }]}
-            >
-              {link.label}
-              {link.submenu && (
-                <svg class="chevron-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-              )}
-            </a>
-            {link.submenu && (
-              <ul class="submenu">
-                {link.submenu.map(sublink => (
-                  <li>
-                    <a 
-                      href={sublink.href} 
-                      class:list={['submenu-link', { active: currentPath === sublink.href }]}
-                    >
-                      {sublink.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </li>
-        ))}
-      </ul>
-    </nav>
 
-    <div class="header-actions">
-      <a href="mailto:elopez@comsoft-mexico.com" class="header-btn">Contactar</a>
-      <a href="/cv-eduardo-lopez.pdf" target="_blank" rel="noopener noreferrer" class="header-btn header-btn-outline">CV</a>
+    <div class="header-bar-end">
+      <button
+        type="button"
+        class="menu-toggle"
+        id="nav-menu-toggle"
+        aria-controls="header-panel"
+        aria-expanded="false"
+        aria-label="Abrir el menú de navegación"
+      >
+        <span class="menu-toggle-box" aria-hidden="true">
+          <span class="menu-toggle-line"></span>
+          <span class="menu-toggle-line"></span>
+          <span class="menu-toggle-line"></span>
+        </span>
+      </button>
+
+      <div class="header-panel" id="header-panel" aria-label="Menú de navegación">
+        <button
+          type="button"
+          class="menu-close"
+          id="nav-menu-close"
+          aria-label="Cerrar el menú de navegación"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+        <nav class="nav" aria-label="Navegación principal">
+          <ul class="nav-list">
+            {navLinks.map(link => (
+              <li class:list={['nav-item', { 'has-submenu': link.submenu }]}>
+                <a
+                  href={link.href}
+                  class:list={['nav-link', { active: currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href)) }]}
+                >
+                  {link.label}
+                  {link.submenu && (
+                    <svg class="chevron-icon" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  )}
+                </a>
+                {link.submenu && (
+                  <ul class="submenu">
+                    {link.submenu.map(sublink => (
+                      <li>
+                        <a
+                          href={sublink.href}
+                          class:list={['submenu-link', { active: currentPath === sublink.href }]}
+                        >
+                          {sublink.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            ))}
+          </ul>
+        </nav>
+
+        <div class="header-actions">
+          <a href="mailto:elopez@comsoft-mexico.com" class="header-btn">Contactar</a>
+          <a href="/cv-eduardo-lopez.pdf" target="_blank" rel="noopener noreferrer" class="header-btn header-btn-outline">CV</a>
+        </div>
+      </div>
+
       <button id="theme-toggle" class="theme-toggle" aria-label="Cambiar tema" type="button">
         <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="5"></circle>
@@ -80,6 +111,7 @@ const navLinks = [
       </button>
     </div>
   </div>
+  <div class="header-backdrop" id="header-backdrop" aria-hidden="true" tabindex="-1"></div>
 </header>
 
 <style>
@@ -92,66 +124,162 @@ const navLinks = [
     border-bottom: 1px solid var(--color-border);
   }
 
-  .theme-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    color: var(--color-text-secondary);
-    background: none;
-    border: none;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    transition: all 0.2s ease;
+  .menu-close {
+    display: none;
   }
 
-  .theme-toggle:hover {
-    color: var(--color-text);
-    background-color: var(--color-bg-secondary);
+  :global(body.nav-open) {
+    overflow: hidden;
+    touch-action: none;
   }
 
-  /* Show sun icon in dark mode, hide moon */
-  .icon-moon { display: none; }
-  .icon-sun { display: block; }
+  /* main queda encima en el apilado; sin esto el backdrop no recibe toques en el área del contenido */
+  :global(body.nav-open) main,
+  :global(body.nav-open) .site-wrapper > footer {
+    pointer-events: none;
+  }
 
-  /* In light mode, show moon icon, hide sun */
-  :global([data-theme="light"]) .icon-moon { display: block; }
-  :global([data-theme="light"]) .icon-sun { display: none; }
+  :global(body.nav-open) .header {
+    z-index: 10000;
+  }
 
   .header-content {
+    position: relative;
+    z-index: 2;
     max-width: var(--max-width-wide);
     margin: 0 auto;
     padding: var(--space-md) var(--space-md);
+    padding-left: max(var(--space-md), env(safe-area-inset-left, 0px));
+    padding-right: max(var(--space-md), env(safe-area-inset-right, 0px));
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-lg);
+    gap: var(--space-md);
+    min-width: 0;
   }
 
   .logo {
     display: flex;
     align-items: center;
     gap: var(--space-sm);
+    min-width: 0;
     color: var(--color-text);
     font-weight: 700;
-    font-size: 1.25rem;
+    font-size: 1.125rem;
+  }
+
+  @media (min-width: 901px) {
+    .logo {
+      font-size: 1.25rem;
+    }
   }
 
   .logo:hover {
     color: var(--color-text);
   }
 
+  .logo-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
   .logo-icon {
     color: var(--color-accent);
     font-family: var(--font-mono);
-    font-size: 1rem;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+  }
+
+  .header-bar-end {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-sm);
+    flex-shrink: 0;
+  }
+
+  .menu-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin: 0;
+    padding: 0;
+    color: var(--color-text);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+  }
+
+  .menu-toggle:hover {
+    background: var(--color-bg-secondary);
+    border-color: var(--color-border-hover);
+  }
+
+  .menu-toggle-box {
+    position: relative;
+    width: 20px;
+    height: 14px;
+    display: block;
+  }
+
+  .menu-toggle-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    border-radius: 1px;
+    background: currentColor;
+    transition: transform 0.2s ease, top 0.2s ease, opacity 0.2s ease;
+  }
+
+  .menu-toggle-line:nth-child(1) {
+    top: 0;
+  }
+
+  .menu-toggle-line:nth-child(2) {
+    top: 6px;
+  }
+
+  .menu-toggle-line:nth-child(3) {
+    top: 12px;
+  }
+
+  .menu-toggle.is-open .menu-toggle-line:nth-child(1) {
+    top: 6px;
+    transform: rotate(45deg);
+  }
+
+  .menu-toggle.is-open .menu-toggle-line:nth-child(2) {
+    opacity: 0;
+  }
+
+  .menu-toggle.is-open .menu-toggle-line:nth-child(3) {
+    top: 6px;
+    transform: rotate(-45deg);
+  }
+
+  .header-panel {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-lg);
+  }
+
+  .header-backdrop {
+    display: none;
   }
 
   .nav-list {
     display: flex;
     list-style: none;
     gap: var(--space-xs);
+    margin: 0;
+    padding: 0;
   }
 
   .nav-item {
@@ -181,6 +309,7 @@ const navLinks = [
   }
 
   .chevron-icon {
+    flex-shrink: 0;
     transition: transform 0.2s ease;
   }
 
@@ -198,6 +327,7 @@ const navLinks = [
     border-radius: var(--radius-md);
     padding: var(--space-xs);
     list-style: none;
+    margin: 0;
     opacity: 0;
     visibility: hidden;
     transform: translateY(8px);
@@ -234,11 +364,13 @@ const navLinks = [
     display: flex;
     align-items: center;
     gap: var(--space-sm);
+    flex-wrap: wrap;
   }
 
   .header-btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     padding: 0.5em 1em;
     font-size: 0.8125rem;
     font-weight: 500;
@@ -265,14 +397,177 @@ const navLinks = [
     background-color: transparent;
   }
 
-  @media (max-width: 640px) {
-    .nav-list {
-      gap: 0;
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: var(--color-text-secondary);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .theme-toggle:hover {
+    color: var(--color-text);
+    background-color: var(--color-bg-secondary);
+  }
+
+  .icon-moon { display: none; }
+  .icon-sun { display: block; }
+  :global([data-theme="light"]) .icon-moon { display: block; }
+  :global([data-theme="light"]) .icon-sun { display: none; }
+
+  @media (max-width: 900px) {
+    .menu-toggle {
+      display: flex;
     }
-    
+
+    .header-backdrop {
+      display: block;
+      position: fixed;
+      z-index: 1;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+      border: 0;
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+
+    .header-backdrop.is-visible {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .menu-close {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: max(var(--space-sm), env(safe-area-inset-top, 0px));
+      right: var(--space-md);
+      z-index: 2;
+      width: 44px;
+      height: 44px;
+      margin: 0;
+      padding: 0;
+      color: var(--color-text);
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .menu-close:hover {
+      background: var(--color-bg-secondary);
+      color: var(--color-accent);
+    }
+
+    .header-panel {
+      position: fixed;
+      z-index: 200;
+      top: 0;
+      right: 0;
+      left: auto;
+      width: min(100%, 20rem);
+      max-width: calc(100vw - 2.5rem);
+      height: 100%;
+      min-height: 100dvh;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      gap: var(--space-lg);
+      padding: calc(3.75rem + env(safe-area-inset-top, 0px)) var(--space-lg) var(--space-xl);
+      padding-left: var(--space-lg);
+      background: var(--color-bg);
+      border-left: 1px solid var(--color-border);
+      box-shadow: -12px 0 40px rgba(0, 0, 0, 0.25);
+      transform: translateX(100%);
+      transition: transform 0.25s ease;
+      overflow-y: auto;
+    }
+
+    .header-panel.is-open {
+      transform: translateX(0);
+    }
+
+    .nav {
+      width: 100%;
+    }
+
+    .nav-list {
+      flex-direction: column;
+      gap: 0;
+      width: 100%;
+    }
+
+    .nav-item {
+      width: 100%;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .nav-item:last-child {
+      border-bottom: none;
+    }
+
     .nav-link {
-      padding: var(--space-sm) var(--space-sm);
-      font-size: 0.875rem;
+      width: 100%;
+      padding: var(--space-md) var(--space-sm);
+      border-radius: 0;
+      font-size: 0.95rem;
+    }
+
+    .has-submenu .chevron-icon {
+      display: none;
+    }
+
+    .submenu {
+      position: static;
+      width: 100%;
+      min-width: 0;
+      margin: var(--space-sm) 0 0 0;
+      padding: var(--space-sm) 0 var(--space-md) var(--space-md);
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      border-radius: 0;
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+    }
+
+    .has-submenu:hover .submenu,
+    .has-submenu .submenu {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .submenu li:first-child .submenu-link {
+      padding-top: var(--space-xs);
+    }
+
+    .header-actions {
+      flex-direction: column;
+      align-items: stretch;
+      width: 100%;
+      margin-top: auto;
+      padding-top: var(--space-md);
+    }
+
+    .header-actions .header-btn,
+    .header-actions .header-btn-outline {
+      width: 100%;
     }
   }
 </style>
@@ -308,4 +603,76 @@ const navLinks = [
   
   initTheme();
   document.addEventListener('astro:after-swap', initTheme);
+
+  function setMobileNavOpen(open: boolean) {
+    const panel = document.getElementById('header-panel');
+    const backdrop = document.getElementById('header-backdrop');
+    const btn = document.getElementById('nav-menu-toggle');
+    if (!panel || !backdrop || !btn) return;
+    if (open) {
+      panel.classList.add('is-open');
+      backdrop.classList.add('is-visible');
+      btn.classList.add('is-open');
+      btn.setAttribute('aria-expanded', 'true');
+      btn.setAttribute('aria-label', 'Cerrar el menú de navegación');
+      document.body.classList.add('nav-open');
+      backdrop.setAttribute('aria-hidden', 'false');
+    } else {
+      panel.classList.remove('is-open');
+      backdrop.classList.remove('is-visible');
+      btn.classList.remove('is-open');
+      btn.setAttribute('aria-expanded', 'false');
+      btn.setAttribute('aria-label', 'Abrir el menú de navegación');
+      document.body.classList.remove('nav-open');
+      backdrop.setAttribute('aria-hidden', 'true');
+    }
+  }
+
+  function initMobileNav() {
+    const headerEl = document.querySelector('header.header') as HTMLElement | null;
+    if (!headerEl || headerEl.dataset.mobileNavBound === '1') return;
+    headerEl.dataset.mobileNavBound = '1';
+
+    const btn = document.getElementById('nav-menu-toggle');
+    const closeBtn = document.getElementById('nav-menu-close');
+    const panel = document.getElementById('header-panel');
+    const backdrop = document.getElementById('header-backdrop');
+    if (!btn || !panel || !backdrop) return;
+
+    const mqDesktop = window.matchMedia('(min-width: 901px)');
+
+    const onBackdropDismiss = (e: MouseEvent | PointerEvent) => {
+      if (e.target === backdrop) setMobileNavOpen(false);
+    };
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      setMobileNavOpen(!panel.classList.contains('is-open'));
+    });
+    closeBtn?.addEventListener('click', () => setMobileNavOpen(false));
+    backdrop.addEventListener('click', onBackdropDismiss);
+
+    panel.querySelectorAll('a[href]').forEach((el) => {
+      el.addEventListener('click', () => {
+        if (mqDesktop.matches) return;
+        setMobileNavOpen(false);
+      });
+    });
+
+    mqDesktop.addEventListener('change', () => {
+      if (mqDesktop.matches) setMobileNavOpen(false);
+    });
+  }
+
+  if (!document.documentElement.dataset.navEscapeBound) {
+    document.documentElement.dataset.navEscapeBound = '1';
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      const p = document.getElementById('header-panel');
+      if (p?.classList.contains('is-open')) setMobileNavOpen(false);
+    });
+  }
+
+  initMobileNav();
+  document.addEventListener('astro:after-swap', initMobileNav);
 </script>
