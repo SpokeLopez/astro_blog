@@ -1,0 +1,182 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'Guía para trabajar con archivos Less'
+description: 'Qué es Less, cómo compilar archivos .less y cuáles son las funciones más útiles para escribir estilos más mantenibles en proyectos frontend y Magento.'
+date: '2022-09-14'
+tags: ['Magento', 'CSS', 'less']
+category: 'magento'
+readingTime: '6 min'
+---
+
+import CodePen from '../../components/CodePen.astro';
+
+Less es uno de esos preprocesadores que te hacen la vida más fácil cuando un archivo CSS empieza a crecer demasiado. Si trabajas con **Magento 2**, además, entenderlo deja de ser opcional: buena parte del sistema de estilos del core y de los temas está construido sobre archivos `.less`.
+
+Tomando como base la [documentación oficial de Less](https://lesscss.org/features/) y esta [guía de IONOS](https://www.ionos.mx/digitalguide/paginas-web/desarrollo-web/less-css-tutorial/), aquí va una introducción práctica para empezar a trabajar con archivos Less sin complicarte de más.
+
+## ¿Qué es Less?
+
+Less es un preprocesador de CSS. En términos simples: escribes estilos en archivos `.less`, usando una sintaxis compatible con CSS pero con extras como variables, mixins, funciones y anidación, y luego esos archivos se compilan a CSS normal.
+
+La gran ventaja es que **cualquier CSS válido también es Less válido**. Eso permite adoptarlo poco a poco, sin tener que reescribir todo desde cero.
+
+## ¿Cómo se usan los archivos `.less`?
+
+La forma recomendada para proyectos reales es compilar Less antes de publicar el sitio. La documentación oficial recomienda la precompilación con Node porque es más confiable y más rápida para producción que compilar en el navegador.
+
+### Instalación con npm
+
+```bash
+npm install -g less
+```
+
+Una vez instalado, puedes convertir un archivo `.less` a `.css` así:
+
+```bash
+lessc estilos.less estilos.css
+```
+
+Si prefieres instalarlo solo dentro del proyecto:
+
+```bash
+npm i less --save-dev
+```
+
+## 1. Variables
+
+La funcionalidad más útil para empezar. Sirven para centralizar colores, espacios, tamaños o rutas.
+
+```less
+@color-primario: #f97316;
+@color-texto: #1f2937;
+@espaciado-base: 16px;
+
+.boton {
+  background: @color-primario;
+  color: white;
+  padding: @espaciado-base;
+}
+
+.card {
+  color: @color-texto;
+  padding: @espaciado-base;
+}
+```
+
+Si cambias `@espaciado-base`, actualizas todos los componentes que dependen de ese valor. En proyectos grandes esto ahorra mucho trabajo manual.
+
+## 2. Anidación
+
+Less permite anidar selectores para que la relación entre componentes quede más clara.
+
+```less
+.menu {
+  display: flex;
+  gap: 12px;
+
+  a {
+    color: #111827;
+    text-decoration: none;
+
+    &:hover {
+      color: @color-primario;
+    }
+  }
+}
+```
+
+Esto compila a selectores CSS normales como `.menu a` y `.menu a:hover`, pero el archivo fuente se siente más ordenado cuando trabajas por componentes.
+
+## 3. Mixins
+
+Los mixins permiten reutilizar bloques de estilos. Son especialmente útiles para patrones repetidos como bordes redondeados, layouts flex o botones.
+
+```less
+.rounded(@radio: 6px) {
+  border-radius: @radio;
+}
+
+.shadow-sm() {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.tarjeta {
+  .rounded(10px);
+  .shadow-sm();
+  padding: 20px;
+}
+```
+
+Aquí hay dos ideas importantes:
+
+- Un mixin puede tener parámetros.
+- También puede definir valores por defecto, así no tienes que repetir argumentos todo el tiempo.
+
+## 4. Operaciones
+
+Less también deja hacer operaciones con valores numéricos y colores. Esto sirve para mantener proporciones consistentes.
+
+```less
+@base: 8px;
+@color-base: #224466;
+
+.hero {
+  padding: @base * 3;
+  margin-bottom: @base * 4;
+  border-color: lighten(@color-base, 15%);
+}
+```
+
+En lugar de calcular todo a mano, puedes construir una escala desde una sola base y dejar que Less resuelva el resultado al compilar.
+
+## 5. Funciones
+
+Además de las operaciones, Less incluye funciones para transformar colores y trabajar valores de forma más flexible.
+
+```less
+@brand: #2563eb;
+
+.alerta {
+  background: lighten(@brand, 35%);
+  border: 1px solid darken(@brand, 10%);
+  color: contrast(@brand, #111, #fff);
+}
+```
+
+Funciones como `lighten()`, `darken()`, `saturate()` o `contrast()` son muy prácticas cuando quieres construir variaciones de una misma paleta sin duplicar valores hexadecimales.
+
+## Demo en vivo
+
+Para aterrizar estas ideas, preparé un ejemplo pequeño en CodePen usando el preprocesador **Less**. La demo muestra una tarjeta sencilla con variables, mixins, anidación y funciones de color para generar hover y jerarquía visual sin repetir reglas.
+
+<CodePen
+  id="JoRQyrP"
+  user="SpokeLopez-1471233183"
+  title="Less: variables, mixins y nesting"
+  height={460}
+  defaultTab="result"
+/>
+
+## ¿Por qué Less sigue siendo útil en Magento?
+
+Aunque hoy CSS ya tiene muchas capacidades nativas, Less sigue teniendo mucho valor dentro del ecosistema Magento:
+
+- Magento 2 usa Less como parte de su sistema base de temas.
+- Muchas personalizaciones de tema viven en archivos `.less`.
+- Variables y mixins ayudan a mantener consistencia entre módulos, layouts y breakpoints.
+
+Si ya trabajas en temas personalizados, dominar lo básico de Less te permite leer mejor el código del core y escribir overrides más limpios.
+
+## Recomendaciones prácticas
+
+Si vas empezando con archivos Less, estas tres reglas te ayudan bastante:
+
+1. Guarda variables globales para colores, espaciados y tipografías.
+2. Usa mixins para patrones repetidos, no para cualquier cosa pequeña.
+3. Evita anidar de más: si el selector se vuelve demasiado largo, el CSS final también se vuelve más difícil de mantener.
+
+## En resumen
+
+Less te da una capa extra de productividad sobre CSS: variables, anidación, mixins, operaciones y funciones. Si trabajas con Magento, aprenderlo no solo te ayuda a escribir mejor CSS, también te ayuda a entender cómo está organizado el sistema de estilos del framework.
+
+Para profundizar, vale la pena revisar la [documentación oficial de Less](https://lesscss.org/usage/), donde se cubren desde la instalación hasta las características más útiles del lenguaje.
