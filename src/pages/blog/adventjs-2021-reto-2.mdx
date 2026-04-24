@@ -1,0 +1,105 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'AdventJS 2021 — Reto 2: Listar y contar regalos'
+description: 'Convierte una carta en texto a un objeto con el conteo de cada regalo, ignorando palabras vacías y regalos tachados con _. Solución con split, filter y reduce; enlace al código y al video en TikTok.'
+date: '2024-12-02'
+tags: ['JavaScript', 'AdventJS', 'Retos']
+category: 'adventjs'
+challengeNumber: 2
+readingTime: '5 min'
+tiktokUrl: 'https://www.tiktok.com/@spokelopez/video/7440979847817465144'
+---
+
+El [segundo reto del AdventJS 2021](https://2021.adventjs.dev/challenges/02) parece pequeño, pero tiene un detalle importante en el enunciado: no basta con separar por espacios y contar palabras. También debes **ignorar espacios vacíos** y descartar los regalos que vengan **tachados con `_`** al inicio.
+
+## Enunciado resumido
+
+- Entrada: una cadena con regalos separados por espacios.
+- Salida: un objeto donde cada clave sea el nombre del regalo y su valor sea el número de veces que aparece.
+- Regla extra: si una palabra empieza con `_`, no se cuenta.
+- Cuidado: puede haber varios espacios seguidos, así que no debes contar strings vacíos.
+
+Ejemplo del reto:
+
+```javascript
+const carta = 'bici coche balón _playstation bici coche peluche';
+
+// Resultado esperado:
+// {
+//   bici: 2,
+//   coche: 2,
+//   balón: 1,
+//   peluche: 1
+// }
+```
+
+## Estrategia
+
+1. Separar la carta en palabras con **`split(' ')`**.
+2. Filtrar lo que no sirve:
+   - strings vacíos
+   - palabras que empiecen con `_`
+3. Recorrer los regalos válidos y acumular el conteo en un objeto.
+
+Aquí lo importante no es solo contar, sino **limpiar la entrada antes** de reducirla.
+
+## Solución (repo)
+
+Esta es la solución que enlazo desde mi repositorio [adventjs21](https://github.com/SpokeLopez/adventjs21) ([archivo `02-conteo-regalos.js`](https://github.com/SpokeLopez/adventjs21/blob/main/02-conteo-regalos.js)):
+
+```javascript
+export default function listGifts(letter) {
+  return letter
+    .split(' ')
+    .filter((gift) => gift !== '' && !gift.startsWith('_'))
+    .reduce((acc, gift) => {
+      acc[gift] = (acc[gift] || 0) + 1;
+      return acc;
+    }, {});
+}
+```
+
+- **`split(' ')`** — separa la carta en tokens.
+- **`gift !== ''`** — evita contar huecos cuando hay espacios dobles o triples.
+- **`!gift.startsWith('_')`** — descarta regalos tachados.
+- **`acc[gift] = (acc[gift] || 0) + 1`** — suma uno al contador actual o arranca en `1` si es la primera vez que aparece.
+
+## Por qué conviene filtrar antes de `reduce`
+
+Podrías intentar resolver todo dentro de `reduce`, pero separar responsabilidades hace el código más legible:
+
+- primero limpias la entrada
+- luego cuentas
+
+Así el `reduce` se dedica solo a una cosa: acumular resultados.
+
+## Variante equivalente
+
+Si quieres hacer la lógica en un solo paso:
+
+```javascript
+export default function listGifts(letter) {
+  return letter.split(' ').reduce((acc, gift) => {
+    if (gift !== '' && !gift.startsWith('_')) {
+      acc[gift] = (acc[gift] || 0) + 1;
+    }
+
+    return acc;
+  }, {});
+}
+```
+
+Funciona igual, pero personalmente me gusta más la versión con `filter` porque deja más visible la intención del código.
+
+## Video en TikTok
+
+En [este video](https://www.tiktok.com/@spokelopez/video/7440979847817465144) resumo la lógica del reto y explico rápido por qué conviene limpiar la cadena antes de contar. En la cabecera del artículo también tienes el enlace **Ver en TikTok**.
+
+## Recursos
+
+- [Reto 2 — AdventJS 2021](https://2021.adventjs.dev/challenges/02)
+- [Código en GitHub](https://github.com/SpokeLopez/adventjs21/blob/main/02-conteo-regalos.js)
+
+---
+
+Este reto es una buena práctica de manipulación de strings y conteo con objetos. La clave real no estaba en `reduce`, sino en leer bien las condiciones del texto: espacios de más y regalos tachados.
