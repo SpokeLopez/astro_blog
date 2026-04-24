@@ -1,0 +1,166 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'Entendiendo la propiedad clip-path de CSS'
+description: 'Qué hace clip-path, qué tipos de formas admite y cómo usarlo para recortar elementos con CSS sin depender de imágenes editadas.'
+date: '2023-01-10'
+tags: ['CSS']
+category: 'tutorial'
+readingTime: '5 min'
+---
+
+import CodePen from '../../components/CodePen.astro';
+
+`clip-path` es una de esas propiedades de CSS que, cuando la descubres, te abre un montón de posibilidades visuales. Sirve para **recortar un elemento con una forma concreta**, de modo que solo se muestre la parte que queda dentro del área definida.
+
+Dicho más simple: con `clip-path` puedes tomar un bloque rectangular normal y convertirlo visualmente en un círculo, un rombo, un triángulo o una forma personalizada, sin editar la imagen original.
+
+Tomando como referencia la guía de [Lenguaje CSS](https://lenguajecss.com/css/mascaras-y-recortes/clip-path/) y la [documentación de MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/clip-path), aquí va una introducción práctica para entender cómo funciona.
+
+## ¿Qué hace `clip-path`?
+
+La propiedad crea una **región de recorte**. Todo lo que queda dentro de esa región se ve; todo lo que queda fuera se oculta.
+
+```css
+.avatar {
+  clip-path: circle(50%);
+}
+```
+
+En este ejemplo, aunque la imagen original siga siendo rectangular, el navegador solo mostrará la parte que cae dentro del círculo.
+
+## Formas más comunes
+
+MDN documenta varios valores posibles para `clip-path`, pero para empezar hay un grupo que cubre casi todo el uso diario:
+
+- `inset()`
+- `circle()`
+- `ellipse()`
+- `polygon()`
+- `path()`
+
+### `circle()`
+
+Sirve para recortar con forma circular.
+
+```css
+.foto {
+  clip-path: circle(40%);
+}
+```
+
+Es útil para avatares, stickers, thumbnails decorativos o composiciones visuales donde quieres salirte del rectángulo clásico.
+
+### `ellipse()`
+
+Es parecida a `circle()`, pero te deja controlar dos radios distintos.
+
+```css
+.banner {
+  clip-path: ellipse(45% 35% at 50% 50%);
+}
+```
+
+Va bien cuando buscas un recorte más orgánico o una silueta horizontal.
+
+### `inset()`
+
+Recorta hacia dentro desde los bordes del elemento.
+
+```css
+.card {
+  clip-path: inset(0 0 20% 0);
+}
+```
+
+Este tipo de recorte es útil cuando quieres ocultar una parte específica del bloque sin meterte todavía en polígonos más complejos.
+
+### `polygon()`
+
+Probablemente es la forma que más se usa cuando quieres algo visualmente interesante. Permite definir una lista de puntos para crear polígonos personalizados.
+
+```css
+.shape {
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+```
+
+Ese ejemplo crea un triángulo. Cada par de valores representa un punto:
+
+- `0 0` -> esquina superior izquierda
+- `100% 0` -> esquina superior derecha
+- `50% 100%` -> punto inferior centrado
+
+Con `polygon()` puedes hacer diagonales, hexágonos, flechas, estrellas simples y muchos cortes decorativos para secciones o imágenes.
+
+### `path()`
+
+Es una opción más avanzada porque permite usar trazos similares a SVG.
+
+```css
+.blob {
+  clip-path: path("M 0 50 Q 25 0 50 50 T 100 50 V 100 H 0 Z");
+}
+```
+
+No suele ser el mejor punto de entrada para aprender la propiedad, pero es potente cuando necesitas una forma muy específica.
+
+## Un ejemplo sencillo
+
+Imagina una imagen destacada en una tarjeta:
+
+```css
+.post-image {
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
+}
+```
+
+Ese recorte genera una diagonal suave en la parte inferior de la imagen. Es un detalle pequeño, pero cambia bastante la percepción visual del componente.
+
+## Demo en vivo
+
+Para verlo más claro, preparé un ejemplo pequeño en CodePen usando `clip-path` con `polygon()`. La idea es simple: tomar una tarjeta normal y darle un recorte diagonal en la imagen superior para que el componente se vea un poco menos rígido sin tocar el archivo original.
+
+<CodePen
+  id="WbGVexa"
+  user="SpokeLopez-1471233183"
+  title="CSS clip-path con polygon()"
+  height={460}
+  defaultTab="result"
+/>
+
+## ¿Cuándo conviene usarlo?
+
+`clip-path` es muy útil cuando quieres:
+
+- recortar imágenes sin editar el archivo original
+- crear héroes o banners con diagonales
+- dar formas distintas a thumbnails o cards
+- construir detalles visuales más expresivos sin depender de assets adicionales
+
+La ventaja es que todo vive en CSS, así que ajustar la forma suele ser mucho más rápido que exportar nuevas imágenes desde una herramienta de diseño.
+
+## Ojo con dos cosas
+
+### 1. El contenido fuera del recorte desaparece
+
+Esto parece obvio, pero conviene recordarlo: la parte recortada no se dibuja. Si tu forma se come texto, iconos o zonas importantes de una imagen, se van a perder visualmente.
+
+### 2. `polygon()` puede volverse difícil de escribir a mano
+
+Cuando la forma tiene muchos puntos, ajustar coordenadas manualmente se vuelve incómodo muy rápido. Para eso hay una herramienta que recomiendo muchísimo:
+
+[Clippy](https://bennettfeely.com/clippy/)
+
+Es un generador visual de `clip-path` muy práctico. Te deja elegir formas predefinidas, mover puntos y copiar el CSS resultante. Para trabajar con `polygon()` ahorra tiempo real.
+
+## Compatibilidad
+
+Según MDN, `clip-path` es una característica ampliamente disponible en navegadores modernos y tiene soporte consistente desde enero de 2020, aunque algunas partes más avanzadas pueden variar según el navegador y la forma usada.
+
+Si tu proyecto apunta a navegadores actuales, puedes usarlo con bastante tranquilidad. Aun así, vale la pena probar formas complejas si estás trabajando con casos más delicados o interfaces muy críticas.
+
+## En resumen
+
+`clip-path` permite recortar elementos con formas geométricas o personalizadas directamente desde CSS. Para empezar, lo más útil es dominar `circle()`, `ellipse()`, `inset()` y sobre todo `polygon()`, que suele ser la puerta de entrada a composiciones más creativas.
+
+Si quieres experimentar sin perder tiempo ajustando puntos a mano, [Clippy](https://bennettfeely.com/clippy/) es de las mejores herramientas para generar el CSS base y luego afinarlo en tu proyecto.
