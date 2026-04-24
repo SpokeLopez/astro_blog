@@ -1,0 +1,87 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import Pagination from '../../components/Pagination.astro';
+import '../../styles/blog-listings.css';
+
+const allPosts = await Astro.glob('./*.mdx');
+
+const hasShopifyTag = (tags: unknown): boolean => {
+  if (!Array.isArray(tags)) return false;
+  return tags.some((t) => String(t).toLowerCase() === 'shopify');
+};
+
+const shopifyPosts = allPosts
+  .filter((post) => hasShopifyTag(post.frontmatter.tags))
+  .sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime());
+---
+
+<BaseLayout
+  title="Shopify | SpokeLopez"
+  description="Temas, Liquid y buenas prácticas para tiendas en Shopify."
+>
+  <div class="blog-listing">
+    <div class="page-header">
+      <span class="page-tag">Shopify</span>
+      <h1>Shopify y Liquid</h1>
+      <p class="page-description">
+        Entradas etiquetadas con Shopify: plantillas Liquid, temas, commerce y lo que vaya sumando al blog.
+      </p>
+    </div>
+
+    <div class="posts-grid">
+      {shopifyPosts.length > 0 ? (
+        shopifyPosts.map((post) => (
+          <PostCard
+            title={post.frontmatter.title}
+            description={post.frontmatter.description}
+            date={new Date(post.frontmatter.date)}
+            slug={post.file.split('/').pop()?.replace('.mdx', '') || ''}
+            tags={post.frontmatter.tags}
+            readingTime={post.frontmatter.readingTime}
+          />
+        ))
+      ) : (
+        <p class="no-posts">Aún no hay entradas con la etiqueta Shopify. Las nuevas aparecerán aquí.</p>
+      )}
+    </div>
+
+    <Pagination totalPosts={shopifyPosts.length} />
+  </div>
+</BaseLayout>
+
+<script>
+  const PAGE_SIZE = 9;
+  let currentPage = 0;
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('.posts-grid .post-card'));
+  const prevBtn = document.querySelector<HTMLButtonElement>('.prev-btn');
+  const nextBtn = document.querySelector<HTMLButtonElement>('.next-btn');
+  const pageNums = document.querySelectorAll<HTMLButtonElement>('.page-num');
+  const totalPages = Math.ceil(cards.length / PAGE_SIZE);
+
+  function render() {
+    cards.forEach((c, i) => {
+      c.style.display = i >= currentPage * PAGE_SIZE && i < (currentPage + 1) * PAGE_SIZE ? '' : 'none';
+    });
+    if (prevBtn) prevBtn.disabled = currentPage === 0;
+    if (nextBtn) nextBtn.disabled = currentPage >= totalPages - 1;
+    pageNums.forEach((btn, i) => btn.classList.toggle('active', i === currentPage));
+  }
+
+  prevBtn?.addEventListener('click', () => {
+    currentPage--;
+    render();
+  });
+  nextBtn?.addEventListener('click', () => {
+    currentPage++;
+    render();
+  });
+  pageNums.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      currentPage = Number(btn.dataset.page);
+      render();
+    });
+  });
+
+  render();
+</script>

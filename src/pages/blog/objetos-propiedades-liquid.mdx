@@ -1,0 +1,245 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'Objetos y propiedades en Liquid'
+description: 'Una introducción práctica a los objetos y propiedades más usados en Shopify Liquid, con ejemplos simples para empezar a leer y escribir templates.'
+date: '2026-04-10'
+tags: ['Shopify', 'Liquid', 'Ecommerce']
+category: 'tutorial'
+readingTime: '6 min'
+---
+
+Si ya entendiste que Liquid sirve para insertar datos dinámicos dentro de un template, el siguiente paso natural es aprender de dónde salen esos datos. Ahí es donde entran los **objetos** y sus **propiedades**.
+
+En Shopify, prácticamente todo lo que imprimes en un tema viene de un objeto: un producto, una colección, el carrito, la tienda o una página. Y cada uno de esos objetos expone propiedades que puedes leer dentro de la plantilla.
+
+Tomando como base la [referencia oficial de Liquid en Shopify](https://shopify.dev/docs/api/liquid), aquí va una guía corta para ubicar los objetos más comunes y entender cómo acceder a sus propiedades.
+
+## ¿Qué es un objeto en Liquid?
+
+Un objeto es una estructura que contiene datos. Puede representar un recurso completo de la tienda o una parte del storefront.
+
+Por ejemplo:
+
+- `product` representa el producto actual
+- `collection` representa la colección actual
+- `cart` representa el carrito del cliente
+- `shop` representa información general de la tienda
+
+Cuando quieres mostrar una propiedad de uno de esos objetos, usas notación con punto:
+
+```liquid
+{{ product.title }}
+{{ collection.title }}
+{{ shop.name }}
+```
+
+La idea es simple:
+
+- `product`, `collection` o `shop` son objetos
+- `title`, `name`, `price` o `handle` son propiedades
+
+## ¿Qué es una propiedad?
+
+Una propiedad es un dato específico dentro del objeto.
+
+Por ejemplo, en este caso:
+
+```liquid
+{{ product.title }}
+```
+
+- `product` es el objeto
+- `title` es la propiedad
+
+Y en este otro:
+
+```liquid
+{{ cart.item_count }}
+```
+
+- `cart` es el objeto
+- `item_count` es la propiedad
+
+## Objetos de Shopify que más vas a usar
+
+No todos los objetos están disponibles en todos los contextos, pero estos son de los más comunes cuando trabajas en temas.
+
+### 1. `product`
+
+Es probablemente el objeto más usado en una ficha de producto.
+
+Propiedades comunes:
+
+- `product.title`
+- `product.price`
+- `product.available`
+- `product.vendor`
+- `product.handle`
+
+Ejemplo:
+
+```liquid
+<h1>{{ product.title }}</h1>
+<p>{{ product.price | money }}</p>
+
+{% if product.available %}
+  <span>Disponible</span>
+{% else %}
+  <span>Agotado</span>
+{% endif %}
+```
+
+Con eso ya puedes mostrar nombre, precio y disponibilidad de un producto en la plantilla.
+
+### 2. `collection`
+
+Representa una colección y se usa mucho en páginas de categoría o listados.
+
+Propiedades comunes:
+
+- `collection.title`
+- `collection.description`
+- `collection.products`
+- `collection.products_count`
+- `collection.url`
+
+Ejemplo:
+
+```liquid
+<h1>{{ collection.title }}</h1>
+<p>{{ collection.description }}</p>
+<p>Total de productos: {{ collection.products_count }}</p>
+```
+
+Y si quieres recorrer sus productos:
+
+```liquid
+{% for product in collection.products %}
+  <h2>{{ product.title }}</h2>
+{% endfor %}
+```
+
+### 3. `cart`
+
+Este objeto contiene la información del carrito actual del cliente.
+
+Propiedades comunes:
+
+- `cart.item_count`
+- `cart.total_price`
+- `cart.items`
+- `cart.note`
+- `cart.currency`
+
+Ejemplo:
+
+```liquid
+<p>Artículos en carrito: {{ cart.item_count }}</p>
+<p>Total: {{ cart.total_price | money }}</p>
+```
+
+Y para recorrer los productos agregados:
+
+```liquid
+{% for item in cart.items %}
+  <p>{{ item.product.title }} x {{ item.quantity }}</p>
+{% endfor %}
+```
+
+### 4. `shop`
+
+Sirve para obtener información general de la tienda.
+
+Propiedades comunes:
+
+- `shop.name`
+- `shop.currency`
+- `shop.description`
+- `shop.url`
+- `shop.collections_count`
+
+Ejemplo:
+
+```liquid
+<footer>
+  <p>{{ shop.name }}</p>
+  <p>Moneda: {{ shop.currency }}</p>
+</footer>
+```
+
+Es un objeto muy útil para footer, textos globales o información base del storefront.
+
+### 5. `page`
+
+Representa una página estática creada en Shopify.
+
+Propiedades comunes:
+
+- `page.title`
+- `page.content`
+- `page.handle`
+- `page.author`
+
+Ejemplo:
+
+```liquid
+<h1>{{ page.title }}</h1>
+<div>{{ page.content }}</div>
+```
+
+Si trabajas con páginas como “Nosotros”, “Preguntas frecuentes” o “Políticas”, este objeto aparece bastante.
+
+### 6. `all_products`
+
+Este objeto permite acceder a un producto por su `handle`, incluso fuera de una página de producto.
+
+Ejemplo:
+
+```liquid
+{{ all_products['mi-producto-destacado'].title }}
+```
+
+Es muy práctico para bloques destacados o recomendaciones manuales. Eso sí, Shopify documenta que `all_products` tiene un límite de **20 handles únicos por página**, así que no conviene usarlo como reemplazo de una colección completa.
+
+## Cómo leer una propiedad anidada
+
+A veces una propiedad te devuelve otro objeto, y desde ahí puedes seguir accediendo a más datos.
+
+Por ejemplo:
+
+```liquid
+{{ item.product.title }}
+```
+
+Aquí:
+
+- `item` es el line item del carrito
+- `product` es un objeto anidado dentro de `item`
+- `title` es la propiedad final que quieres mostrar
+
+Esta forma encadenada es muy común en Liquid y al principio puede marear un poco, pero una vez que identificas objeto -> propiedad -> propiedad, todo se vuelve mucho más legible.
+
+## ¿Cómo sabes qué propiedades tiene cada objeto?
+
+La respuesta corta es: revisando la documentación oficial del objeto en Shopify.
+
+Cada objeto tiene su propia lista de propiedades disponibles, ejemplos de uso y notas importantes de contexto. Eso es clave porque no todos los objetos existen en cualquier template, ni todas las propiedades aparecen en todos los escenarios.
+
+Por ejemplo:
+
+- `product` vive naturalmente en plantillas de producto
+- `collection` aparece en páginas de colección
+- `cart` se usa en el carrito
+- `shop` es global y mucho más amplio
+
+## En resumen
+
+Cuando trabajas con Liquid en Shopify, casi todo se reduce a entender qué objeto tienes disponible y qué propiedad necesitas leer.
+
+Si dominas esa lógica:
+
+- sabes de dónde sale la información
+- puedes imprimir contenido dinámico con más confianza
+- y empiezas a leer templates existentes sin sentir que todo es magia
+
+Mi recomendación es empezar por estos objetos: `product`, `collection`, `cart`, `shop`, `page` y `all_products`. Con eso ya cubres una buena parte del trabajo real en temas de Shopify.

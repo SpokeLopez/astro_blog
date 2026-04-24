@@ -1,0 +1,119 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'Introducción a las plantillas Liquid'
+description: 'Qué es Liquid, cómo funciona su sintaxis básica y por qué es una pieza clave al desarrollar temas para Shopify.'
+date: '2026-04-01'
+tags: ['Shopify', 'Liquid', 'Ecommerce']
+category: 'tutorial'
+readingTime: '5 min'
+---
+
+Liquid es el motor de plantillas creado por Shopify para construir temas dinámicos. Si alguna vez has trabajado con un ecommerce en Shopify, seguramente ya te encontraste con archivos que mezclan HTML con expresiones como `{{ product.title }}` o bloques como `{% if product.available %}`. Esa es la puerta de entrada a Liquid.
+
+Tomando como referencia la [guía de Shopify en español](https://www.shopify.com/es/blog/liquid-lenguaje-para-la-creacion-de-plantillas-en-shopify) y la [referencia oficial de Shopify](https://shopify.dev/docs/api/liquid), aquí va una explicación corta para entender qué hace este lenguaje y por qué vale la pena aprenderlo.
+
+## ¿Qué es Liquid?
+
+Liquid es un **lenguaje de plantillas**. Su trabajo no es reemplazar a HTML, CSS o JavaScript, sino ayudarte a insertar datos dinámicos dentro del marcado.
+
+Piensa en un template de producto. La estructura visual puede ser siempre la misma, pero el título, el precio, la imagen o la disponibilidad cambian según el producto que el usuario está viendo. Liquid actúa como puente entre esa plantilla HTML y los datos de la tienda.
+
+Por eso Shopify lo usa para renderizar temas: escribes una sola plantilla y Shopify la completa con la información correcta en cada página.
+
+## Los dos bloques más importantes
+
+La sintaxis de Liquid gira sobre dos tipos de delimitadores:
+
+- `{{ }}` para **mostrar datos**
+- `{% %}` para **lógica y control del flujo**
+
+### Output
+
+Cuando quieres imprimir un valor en la plantilla, usas dobles llaves:
+
+```liquid
+<h1>{{ product.title }}</h1>
+```
+
+Aquí `product` es el objeto y `title` es una de sus propiedades. Cuando Shopify renderiza la página, ese marcador se reemplaza por el nombre real del producto.
+
+### Tags
+
+Cuando necesitas condiciones, loops o asignaciones, usas tags:
+
+```liquid
+{% if product.available %}
+  <p>Disponible</p>
+{% else %}
+  <p>Agotado</p>
+{% endif %}
+```
+
+Los tags no imprimen texto por sí solos. Más bien le dicen al template qué hacer y cuándo hacerlo.
+
+## Objetos, propiedades y filtros
+
+Liquid trabaja mucho con **objetos**. En Shopify hay objetos muy comunes como `product`, `collection`, `cart`, `shop` o `page`.
+
+Cada objeto tiene propiedades. Por ejemplo:
+
+```liquid
+{{ product.title }}
+{{ product.price }}
+{{ shop.name }}
+```
+
+Además, el valor que imprimes puede pasar por un **filtro** para transformarlo antes de mostrarlo:
+
+```liquid
+{{ product.title | upcase }}
+{{ page_description | truncate: 150 }}
+```
+
+Los filtros sirven para tareas muy concretas: cambiar mayúsculas, truncar texto, formatear dinero, dividir cadenas o adaptar la salida al contexto del template.
+
+## ¿Por qué se siente tan cómodo al leerlo?
+
+Una de las ventajas de Liquid es que su sintaxis es bastante legible. Incluso sin conocerlo a fondo, puedes entender rápido qué hace una plantilla:
+
+- muestra datos con `{{ }}`
+- toma decisiones con `{% if %}`
+- recorre listas con `{% for %}`
+- transforma valores con filtros
+
+Eso lo vuelve muy práctico para trabajar entre diseño y desarrollo, especialmente en temas de Shopify donde el HTML y la lógica de presentación viven muy cerca.
+
+## Un ejemplo sencillo
+
+Este bloque ya junta las piezas básicas:
+
+```liquid
+<h2>{{ product.title }}</h2>
+
+{% if product.available %}
+  <p>{{ product.price | money }}</p>
+{% else %}
+  <p>Producto agotado</p>
+{% endif %}
+```
+
+Aquí Liquid:
+
+- imprime el título del producto
+- revisa si hay disponibilidad
+- muestra el precio con un filtro de formato si el producto está activo
+- o enseña un mensaje alternativo si no lo está
+
+Eso resume bastante bien el rol del lenguaje: no construye la tienda entera por sí solo, pero sí define cómo se renderiza la información dentro del tema.
+
+## ¿Dónde entra Liquid en Shopify?
+
+En Shopify, Liquid vive sobre todo en los archivos del tema: plantillas, secciones, snippets y layouts. Es la capa que conecta los datos del storefront con el HTML que termina viendo el usuario.
+
+También es importante recordar algo: la variante de Liquid que documenta Shopify extiende la versión open source con objetos, tags y filtros propios del ecosistema Shopify. O sea, aprender Liquid “general” ayuda mucho, pero desarrollar temas reales implica conocer también los objetos específicos que Shopify pone a disposición.
+
+## En resumen
+
+Liquid es un lenguaje de plantillas simple, legible y muy útil para construir temas dinámicos en Shopify. Si entiendes sus tres piezas base — **outputs**, **tags** y **filtros** — ya tienes una base muy sólida para empezar a leer y personalizar plantillas.
+
+Más adelante vale la pena profundizar en loops, snippets, secciones y objetos como `product`, `collection` o `cart`, pero para una primera aproximación esto ya te permite entender cómo “respira” un tema hecho con Shopify.
