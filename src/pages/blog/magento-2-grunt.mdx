@@ -1,0 +1,181 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'Cómo usar Grunt en Magento 2'
+description: 'Guía práctica para instalar, configurar y usar Grunt en Magento 2 para compilar Less y acelerar el desarrollo de temas.'
+date: '2022-11-14'
+tags: ['Magento', 'Ecommerce']
+category: 'magento'
+readingTime: '6 min'
+---
+
+Si trabajas con temas en Magento 2, tarde o temprano te cruzas con **Grunt**. Aunque hoy muchas personas piensan antes en Vite, webpack o herramientas más modernas, en Magento 2 Grunt sigue siendo parte importante del flujo clásico de frontend, especialmente cuando estás compilando archivos **Less** y trabajando sobre temas personalizados.
+
+La ventaja de entenderlo no es solo “seguir la documentación”: también te ayuda a hacer cambios de estilos más rápido, republicar assets cuando hace falta y evitar procesos manuales cada vez que tocas un archivo del tema.
+
+## ¿Qué hace Grunt en Magento 2?
+
+Grunt es un **task runner**: una herramienta que automatiza tareas repetitivas. En Magento 2, su uso más común es:
+
+- compilar archivos **Less**
+- vigilar cambios en el tema
+- republicar symlinks y assets de frontend
+
+En otras palabras: en vez de recompilar o refrescar todo a mano, Grunt se encarga de parte del trabajo mientras desarrollas.
+
+## Requisitos previos
+
+Según el flujo oficial de Adobe Commerce, antes de usar Grunt conviene asegurarte de que tu instancia esté en modo **developer** o **default**.
+
+Además necesitas:
+
+- Node.js instalado en tu máquina
+- `grunt-cli` instalado globalmente
+- los archivos de configuración de Grunt activos dentro de tu instalación de Magento
+
+## Instalación básica
+
+Desde la raíz de Magento, el flujo típico es este.
+
+### 1. Instalar la CLI de Grunt
+
+```bash
+npm install -g grunt-cli
+```
+
+### 2. Copiar los archivos sample
+
+Magento trae archivos base que debes convertir en archivos reales de configuración:
+
+- `package.json.sample` -> `package.json`
+- `Gruntfile.js.sample` -> `Gruntfile.js`
+- `grunt-config.json.sample` -> `grunt-config.json`
+
+### 3. Instalar dependencias
+
+```bash
+cd /ruta/a/tu/magento
+npm install
+npm update
+```
+
+Con eso dejas listo el entorno para empezar a trabajar con las tareas de Grunt que Magento ya trae preconfiguradas.
+
+## El archivo clave: `local-themes.js`
+
+La parte importante viene cuando defines tu tema. Adobe recomienda copiar el contenido de `themes.js` a `local-themes.js` dentro de:
+
+```bash
+dev/tools/grunt/configs/
+```
+
+Ahí agregas la configuración de tu tema personalizado.
+
+## Ejemplo de configuración
+
+Un ejemplo típico se ve más o menos así:
+
+```javascript
+module.exports = {
+  custom: {
+    area: 'frontend',
+    name: 'Vendor/mi-tema',
+    locale: 'es_MX',
+    files: [
+      'css/styles-m',
+      'css/styles-l'
+    ],
+    dsl: 'less'
+  }
+};
+```
+
+### Qué significa cada parte
+
+- **`area`**: normalmente `frontend` o `adminhtml`
+- **`name`**: nombre del tema en formato `Vendor/theme`
+- **`locale`**: el locale que vas a usar, por ejemplo `es_MX` o `en_US`
+- **`files`**: archivos raíz de estilos que se van a compilar
+- **`dsl`**: el preprocesador, que en este caso será `less`
+
+Si tu tema hereda de otro y no tiene todos sus archivos raíz, puedes declarar los del tema padre para que Grunt tenga claro desde dónde compilar.
+
+## Los dos comandos que más vas a usar
+
+Una vez que tu tema está bien declarado, el flujo diario suele girar en torno a estos dos comandos.
+
+### `grunt exec:<theme>`
+
+```bash
+grunt exec:custom
+```
+
+Este comando sirve para **republicar los symlinks** y preparar el entorno del tema. Es muy útil cuando acabas de configurar Grunt o cuando necesitas que Magento vuelva a enlazar correctamente los assets.
+
+### `grunt watch:<theme>`
+
+```bash
+grunt watch:custom
+```
+
+Este es el comando más cómodo durante desarrollo. Se queda observando cambios en tus archivos y recompila automáticamente cuando detecta modificaciones.
+
+Si estás editando:
+
+- `_extend.less`
+- `_theme.less`
+- módulos dentro de `web/css/source`
+
+entonces `watch` te ahorra bastante tiempo porque evita lanzar compilaciones manuales una y otra vez.
+
+## Flujo práctico de trabajo
+
+En un proyecto real, la secuencia suele ser algo así:
+
+1. Configuras tu tema en `local-themes.js`
+2. Ejecutas `grunt exec:<theme>`
+3. Arrancas `grunt watch:<theme>`
+4. Empiezas a editar archivos Less
+
+Desde ahí, Grunt va reaccionando a los cambios y recompilando lo necesario.
+
+## ¿Cuándo vale la pena usarlo?
+
+Grunt tiene sentido sobre todo si:
+
+- trabajas en un tema tradicional de Magento 2
+- estás tocando muchos archivos Less
+- quieres un flujo continuo de compilación
+- necesitas mantenerte cerca del stack clásico que usa Magento
+
+No es la herramienta más moderna del ecosistema frontend, pero dentro de Magento sigue siendo útil porque ya está integrada en la forma en la que la plataforma organiza assets y temas.
+
+## Errores comunes
+
+Hay varios tropiezos típicos cuando empiezas:
+
+### 1. El tema no está bien declarado
+
+Si el nombre del tema, el locale o los archivos raíz están mal definidos, Grunt no sabe qué compilar.
+
+### 2. No copiaste los archivos `.sample`
+
+Magento no usa automáticamente esos archivos. Deben existir como `package.json`, `Gruntfile.js` y `grunt-config.json` reales.
+
+### 3. Estás fuera del modo adecuado
+
+Si la instancia no está en `developer` o `default`, el flujo de frontend se vuelve más confuso y puede parecer que Grunt “no hace nada”.
+
+## En resumen
+
+Usar Grunt en Magento 2 sigue siendo una forma práctica de trabajar estilos cuando desarrollas temas con Less. La idea central es simple:
+
+- preparas la configuración
+- declaras tu tema
+- ejecutas `grunt exec`
+- dejas `grunt watch` corriendo mientras desarrollas
+
+Con eso tienes un flujo más cómodo y mucho menos manual para frontend en Magento.
+
+## Referencia oficial
+
+- [Grunt | Adobe Developer](https://developer.adobe.com/commerce/frontend-core/guide/tools/grunt)
