@@ -1,0 +1,298 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'Laravel y los principales comandos de Artisan'
+description: 'Qué es Artisan en Laravel y cuáles son los comandos más útiles para crear archivos, ejecutar migraciones, depurar, optimizar y trabajar más rápido.'
+date: '2024-10-10'
+tags: ['PHP', 'Laravel']
+category: 'tutorial'
+readingTime: '7 min'
+---
+
+Si trabajas con Laravel, tarde o temprano terminas pasando bastante tiempo en la terminal. Y ahí es donde **Artisan** se vuelve una de las herramientas más útiles del framework.
+
+Artisan es la interfaz de línea de comandos que viene incluida con Laravel. Sirve para automatizar tareas comunes como crear archivos, ejecutar migraciones, inspeccionar rutas, limpiar cachés o correr pruebas. En vez de hacer muchas cosas a mano, Artisan te da comandos listos para avanzar más rápido y con menos fricción.
+
+Tomando como referencia la [documentación oficial de Laravel](https://laravel.com/docs/13.x/artisan) y una guía práctica de [Hostinger](https://www.hostinger.com/tutorials/laravel-commands), aquí va un repaso de los comandos de Artisan que más sentido tienen en el día a día.
+
+## ¿Qué es Artisan?
+
+Artisan vive en la raíz de tu proyecto Laravel como el archivo `artisan`. Desde ahí puedes ejecutar comandos con esta estructura:
+
+```bash
+php artisan nombre-del-comando
+```
+
+Si quieres ver todo lo disponible:
+
+```bash
+php artisan list
+```
+
+Y si quieres ayuda puntual de un comando:
+
+```bash
+php artisan help migrate
+```
+
+Ese par de comandos ya te da una idea de cómo se usa Artisan: primero exploras, luego ejecutas solo lo que necesitas.
+
+## 1. `php artisan serve`
+
+Uno de los primeros comandos que casi siempre usas.
+
+```bash
+php artisan serve
+```
+
+Levanta un servidor local para desarrollo, normalmente en `http://127.0.0.1:8000`.
+
+También puedes definir host y puerto:
+
+```bash
+php artisan serve --host=127.0.0.1 --port=8080
+```
+
+Es muy útil cuando quieres arrancar un proyecto rápido sin configurar un servidor web adicional.
+
+## 2. `php artisan make:model`
+
+Genera un modelo de Eloquent.
+
+```bash
+php artisan make:model Post
+```
+
+Y si quieres crear varias piezas relacionadas al mismo tiempo:
+
+```bash
+php artisan make:model Post -mcr
+```
+
+Ese atajo puede crear:
+
+- modelo
+- migración
+- controlador
+- resource controller
+
+Es una forma muy cómoda de empezar una entidad nueva sin ir archivo por archivo.
+
+## 3. `php artisan make:controller`
+
+Crea un controlador nuevo:
+
+```bash
+php artisan make:controller PostController
+```
+
+Si quieres uno orientado a recursos:
+
+```bash
+php artisan make:controller PostController --resource
+```
+
+Esto te prepara métodos típicos como `index`, `create`, `store`, `show`, `edit`, `update` y `destroy`.
+
+## 4. `php artisan make:migration`
+
+Las migraciones son parte del flujo normal de base de datos en Laravel.
+
+```bash
+php artisan make:migration create_posts_table
+```
+
+Con eso generas un archivo en `database/migrations` para definir cambios en el esquema.
+
+Este comando se usa muchísimo cuando agregas tablas nuevas o modificas columnas existentes.
+
+## 5. `php artisan migrate`
+
+Ejecuta las migraciones pendientes:
+
+```bash
+php artisan migrate
+```
+
+Es uno de los comandos más importantes porque aplica en la base de datos los cambios que definiste en los archivos de migración.
+
+También hay variantes útiles:
+
+```bash
+php artisan migrate:rollback
+php artisan migrate:fresh
+```
+
+- `rollback` revierte el último lote de migraciones
+- `fresh` borra todas las tablas y vuelve a correr todo desde cero
+
+Este último es muy útil en desarrollo, pero hay que usarlo con cuidado porque destruye la base actual.
+
+## 6. `php artisan db:seed`
+
+Si necesitas poblar la base con datos de prueba:
+
+```bash
+php artisan db:seed
+```
+
+Y si quieres ejecutar un seeder específico:
+
+```bash
+php artisan db:seed --class=UserSeeder
+```
+
+Es muy útil para entornos de desarrollo, demos o testing local.
+
+## 7. `php artisan route:list`
+
+Uno de mis favoritos cuando quiero revisar rápido qué rutas existen en el proyecto.
+
+```bash
+php artisan route:list
+```
+
+Te muestra:
+
+- método HTTP
+- URI
+- nombre de la ruta
+- controlador o acción asociada
+
+Cuando una ruta “no está entrando” como esperas, este comando ayuda muchísimo.
+
+## 8. `php artisan tinker`
+
+Laravel incluye Tinker como REPL para interactuar con la aplicación desde terminal.
+
+```bash
+php artisan tinker
+```
+
+Dentro de Tinker puedes probar consultas, instanciar modelos, verificar relaciones o hacer pequeñas pruebas sin tocar una ruta o un controlador.
+
+Ejemplo:
+
+```php
+App\Models\User::first();
+```
+
+Es perfecto para inspección rápida o debugging liviano.
+
+## 9. `php artisan test`
+
+Para correr pruebas:
+
+```bash
+php artisan test
+```
+
+Este comando ejecuta los tests del proyecto usando PHPUnit o Pest, según tu configuración.
+
+Cuando quieres validar cambios antes de hacer commit o de desplegar, este es uno de los comandos que más valor aporta.
+
+## 10. `php artisan make:command`
+
+Si quieres crear tus propios comandos de consola:
+
+```bash
+php artisan make:command SendEmails
+```
+
+Laravel generará una clase de comando dentro de `app/Console/Commands`.
+
+Esto es muy útil cuando tienes procesos repetitivos o tareas internas que quieres ejecutar desde CLI, por ejemplo:
+
+- sincronizaciones
+- importaciones
+- limpieza de datos
+- reportes
+
+## 11. Comandos de caché
+
+Laravel usa caché en varias partes del framework, y a veces eso explica por qué un cambio “no se refleja”.
+
+Los más importantes son:
+
+```bash
+php artisan cache:clear
+php artisan config:clear
+php artisan config:cache
+php artisan route:clear
+php artisan route:cache
+php artisan view:clear
+php artisan view:cache
+php artisan optimize
+```
+
+### Cuándo usar cada uno
+
+- `cache:clear` -> limpia la caché general de la aplicación
+- `config:clear` -> limpia la caché de configuración
+- `config:cache` -> recompila la configuración para producción
+- `route:clear` -> limpia caché de rutas
+- `route:cache` -> cachea rutas para mejorar rendimiento
+- `view:clear` -> borra vistas compiladas
+- `view:cache` -> precompila vistas Blade
+- `optimize` -> agrupa varias optimizaciones comunes
+
+En desarrollo, los comandos de `clear` suelen salvar bastante cuando cambias `.env`, rutas o vistas y el framework parece “ignorar” lo nuevo.
+
+## 12. `php artisan storage:link`
+
+Si trabajas con archivos subidos por usuarios:
+
+```bash
+php artisan storage:link
+```
+
+Este comando crea el enlace simbólico entre `storage/app/public` y `public/storage`, de modo que los archivos puedan ser accesibles desde el navegador.
+
+Es uno de esos comandos pequeños que a veces se olvidan, pero sin él muchas imágenes o documentos no aparecen.
+
+## 13. `php artisan down` y `php artisan up`
+
+Para mantenimiento:
+
+```bash
+php artisan down
+php artisan up
+```
+
+`down` pone la aplicación en modo mantenimiento y `up` la vuelve a habilitar.
+
+Son muy útiles cuando necesitas hacer cambios delicados o despliegues donde prefieres bloquear temporalmente el acceso.
+
+## Una forma práctica de pensar Artisan
+
+Yo lo dividiría en cinco grupos:
+
+1. **Inspección**: `list`, `help`, `route:list`, `tinker`
+2. **Scaffolding**: `make:model`, `make:controller`, `make:migration`, `make:command`
+3. **Base de datos**: `migrate`, `rollback`, `fresh`, `db:seed`
+4. **Mantenimiento**: `cache:clear`, `config:clear`, `route:clear`, `view:clear`
+5. **Ejecución**: `serve`, `test`, `down`, `up`
+
+Visto así, Artisan deja de sentirse como “una lista enorme de comandos” y se vuelve más fácil de memorizar.
+
+## En resumen
+
+Artisan es una de las razones por las que Laravel se siente tan cómodo para desarrollar. No solo te ahorra tiempo: también te ayuda a mantener un flujo más ordenado y consistente.
+
+Si estás empezando con Laravel, yo priorizaría aprender bien estos comandos:
+
+- `serve`
+- `make:model`
+- `make:controller`
+- `make:migration`
+- `migrate`
+- `route:list`
+- `tinker`
+- `test`
+- los comandos de `clear` y `cache`
+
+Con eso ya cubres una parte muy grande del trabajo diario en proyectos reales.
+
+## Referencias
+
+- [Artisan Console | Laravel 13.x](https://laravel.com/docs/13.x/artisan)
+- [Laravel commands: Top Artisan commands to know and how to create them | Hostinger](https://www.hostinger.com/tutorials/laravel-commands)
