@@ -3,7 +3,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
 
 const allPosts = await Astro.glob('./blog/*.mdx');
-const sortedPosts = allPosts
+const homeBlogPosts = allPosts.filter((post) => post.frontmatter.category !== 'adventjs');
+const sortedPosts = homeBlogPosts
   .sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime())
   .slice(0, 3);
 

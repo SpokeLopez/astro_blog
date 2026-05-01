@@ -5,17 +5,19 @@ import Pagination from '../../components/Pagination.astro';
 import '../../styles/blog-listings.css';
 
 const allPosts = await Astro.glob('./*.mdx');
-const sortedPosts = allPosts.sort(
+/** Artículos AdventJS viven solo en /blog/adventjs */
+const mainBlogPosts = allPosts.filter((post) => post.frontmatter.category !== 'adventjs');
+const sortedPosts = mainBlogPosts.sort(
   (a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime()
 );
 
-const allTags = [...new Set(sortedPosts.flatMap(post => post.frontmatter.tags))];
+const allTags = [...new Set(sortedPosts.flatMap((post) => post.frontmatter.tags))];
 const PAGE_SIZE = 9;
 ---
 
 <BaseLayout
   title="Blog | SpokeLopez"
-  description="Tutoriales, notas técnicas y retos: CSS, JavaScript, Magento 2, AdventJS y buenas prácticas de desarrollo web."
+  description="Tutoriales y notas técnicas: CSS, JavaScript, Magento, Shopify y más. Los retos AdventJS tienen su propia sección."
 >
   <div class="blog-listing">
     <header class="page-header">

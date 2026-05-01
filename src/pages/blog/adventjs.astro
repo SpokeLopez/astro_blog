@@ -12,12 +12,18 @@ const adventjsPosts = allPosts
     return numA - numB;
   });
 
-const tiktokVideos = [
+const TIKTOK_PROFILE = 'https://www.tiktok.com/@spokelopez';
+
+/** Catálogo completo de vídeos; en la página solo se muestran los primeros N (embeds pesados). */
+const tiktokVideosAll = [
   { id: '7440568686081215799', title: 'AdventJS 2021 - Reto 1', challenge: 1 },
   { id: '7440979847817465144', title: 'AdventJS 2021 - Reto 2', challenge: 2 },
   { id: '7442107974421630264', title: 'AdventJS 2021 - Reto 3', challenge: 3 },
   { id: '7445537831558073606', title: 'AdventJS 2021 - Reto 4', challenge: 4 },
 ];
+
+const TIKTOK_EMBED_PREVIEW_COUNT = 3;
+const tiktokVideosPreview = tiktokVideosAll.slice(0, TIKTOK_EMBED_PREVIEW_COUNT);
 ---
 
 <BaseLayout
@@ -36,11 +42,10 @@ const tiktokVideos = [
     <section class="tiktok-section" aria-labelledby="advent-tiktok-heading">
       <header class="section-intro">
         <h2 id="advent-tiktok-heading">Vídeos en TikTok (AdventJS 2021)</h2>
-        <p>Explicación rápida por reto: pulsa «Ver video» y se carga el embed de TikTok.</p>
       </header>
 
       <div class="tiktok-grid">
-        {tiktokVideos.map(video => (
+        {tiktokVideosPreview.map(video => (
           <div class="tiktok-card">
             <div class="tiktok-embed-container" data-video-id={video.id}>
               <div class="tiktok-skeleton">
@@ -71,6 +76,17 @@ const tiktokVideos = [
           </div>
         ))}
       </div>
+
+      <p class="tiktok-section__cta">
+        <a
+          href={TIKTOK_PROFILE}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="tiktok-series-link"
+        >
+          Ver la serie completa en TikTok → @spokelopez
+        </a>
+      </p>
     </section>
 
     {adventjsPosts.length > 0 && (
@@ -129,6 +145,36 @@ const tiktokVideos = [
 <style>
   .tiktok-section {
     margin-bottom: var(--space-3xl);
+  }
+
+  .tiktok-section__cta {
+    margin: var(--space-2xl) 0 0;
+    text-align: center;
+  }
+
+  .tiktok-series-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.65em 1.25em;
+    border-radius: var(--radius-md);
+    background-color: var(--color-accent);
+    color: #fff !important;
+    transition: background-color 0.2s ease, transform 0.15s ease;
+  }
+
+  .tiktok-series-link:hover {
+    background-color: var(--color-accent-hover);
+    color: #fff !important;
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 640px) {
+    .tiktok-series-link {
+      width: 100%;
+    }
   }
 
   /* TikTok vertical ~325px: columnas acotadas evitan cinta blanca a la derecha */
