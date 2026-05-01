@@ -1,0 +1,200 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'Aprendiendo Composer para mis proyectos'
+description: 'Qué es Composer, cómo funciona en proyectos PHP y cómo usarlo para instalar dependencias o arrancar un proyecto nuevo, incluyendo un ejemplo con Laravel.'
+date: '2021-11-23'
+tags: ['PHP', 'Laravel']
+category: 'tutorial'
+readingTime: '6 min'
+---
+
+Cuando trabajamos con PHP es normal encontrarse con la palabra **dependencias** en muchos de los proyectos que usamos o que empezamos desde cero. Y justo ahí es donde Composer se vuelve una herramienta básica.
+
+Composer es un manejador de paquetes para PHP, muy parecido en espíritu a lo que hace npm en JavaScript: te ayuda a declarar, instalar y mantener las librerías que necesita tu proyecto sin tener que descargarlas una por una de forma manual.
+
+Si estás empezando con PHP o quieres ordenar mejor tu flujo de trabajo, aprender Composer te ahorra tiempo real.
+
+## ¿Qué es Composer?
+
+Composer es un **gestor de dependencias para PHP**. Su trabajo es resolver qué paquetes necesita tu proyecto, descargarlos y mantener un registro claro de versiones.
+
+Eso hace que:
+
+- puedas compartir un proyecto sin subir todas sus librerías
+- otro desarrollador pueda instalar todo con un solo comando
+- sea más fácil actualizar o agregar paquetes en el tiempo
+
+En otras palabras, Composer te da una forma mucho más limpia de trabajar con proyectos PHP modernos.
+
+## ¿Cómo instalar Composer?
+
+La forma más directa es descargarlo desde su sitio oficial:
+
+- [getcomposer.org](https://getcomposer.org/)
+
+Una vez terminada la instalación, puedes abrir una terminal y comprobar que todo quedó bien con:
+
+```bash
+composer
+```
+
+Si Composer está correctamente instalado, verás su versión y un listado de comandos disponibles.
+
+## ¿Cómo funciona Composer?
+
+Composer trabaja principalmente a partir de un archivo JSON llamado `composer.json`.
+
+Ahí declaras cosas como:
+
+- nombre del proyecto
+- autor
+- dependencias
+- restricciones de versión
+
+Un ejemplo muy simple se ve así:
+
+```json
+{
+  "name": "spokelopez/mi-proyecto",
+  "require": {
+    "monolog/monolog": "^3.0"
+  }
+}
+```
+
+En cuanto tienes definidas las dependencias, puedes instalarlas con:
+
+```bash
+composer install
+```
+
+Ese comando genera la carpeta `vendor`, donde Composer guarda las librerías descargadas para el proyecto.
+
+## Comandos básicos que más uso
+
+Hay varios comandos de Composer que te terminan acompañando todo el tiempo.
+
+### `composer init`
+
+Si tu proyecto es nuevo y todavía no tiene archivo de configuración, este comando te ayuda a generar el `composer.json` paso a paso:
+
+```bash
+composer init
+```
+
+Composer te va preguntando datos básicos del proyecto y al final crea el archivo por ti.
+
+### `composer install`
+
+Instala las dependencias definidas en `composer.json`:
+
+```bash
+composer install
+```
+
+Es el comando clásico cuando clonas un repositorio y quieres levantarlo por primera vez.
+
+### `composer update`
+
+Actualiza las dependencias permitidas por tus restricciones de versión:
+
+```bash
+composer update
+```
+
+Conviene usarlo con cuidado, porque puede mover versiones y alterar el comportamiento del proyecto si no revisas bien qué está cambiando.
+
+### `composer validate`
+
+Uno de los comandos más útiles cuando estás editando tu `composer.json` a mano:
+
+```bash
+composer validate
+```
+
+Te ayuda a comprobar si el archivo está bien escrito y si la estructura es válida.
+
+## Packagist
+
+Cuando buscas una librería para PHP, el lugar más natural para empezar es:
+
+- [Packagist](https://packagist.org/)
+
+Ahí puedes encontrar paquetes para tareas muy distintas: logs, clientes HTTP, validación, herramientas de testing, plantillas, integraciones y mucho más.
+
+Lo mejor es que casi siempre la documentación del paquete ya incluye el comando exacto para instalarlo con Composer.
+
+## Ejemplo práctico: instalar Laravel con Composer
+
+Una de las formas más claras de entender el valor de Composer es usarlo para arrancar un framework completo como Laravel.
+
+Según la documentación actual de Laravel, si ya tienes **PHP**, **Composer** y el instalador de Laravel, puedes crear una nueva aplicación con:
+
+```bash
+laravel new example-app
+```
+
+Para instalar el instalador de Laravel con Composer:
+
+```bash
+composer global require laravel/installer
+```
+
+Después de eso, creas el proyecto:
+
+```bash
+laravel new example-app
+```
+
+Y una vez generado:
+
+```bash
+cd example-app
+npm install && npm run build
+composer run dev
+```
+
+Con ese flujo, Laravel arranca su entorno local de desarrollo y puedes abrir el proyecto en `http://localhost:8000`.
+
+## Alternativa clásica con `composer create-project`
+
+Si prefieres instalar Laravel directamente desde Composer sin usar el instalador global, una forma muy conocida es:
+
+```bash
+composer create-project --prefer-dist laravel/laravel mi-proyecto
+```
+
+Esta forma sigue siendo muy didáctica porque deja muy claro lo que está pasando:
+
+- Composer toma el paquete `laravel/laravel`
+- crea un nuevo proyecto con ese esqueleto
+- descarga todo lo necesario dentro de la carpeta indicada
+
+Es una buena opción para entender cómo Composer no solo instala librerías pequeñas, sino también estructuras completas de proyecto.
+
+## ¿Qué opción conviene más?
+
+Hoy en día, si sigues la guía oficial de Laravel, lo más natural es usar:
+
+```bash
+composer global require laravel/installer
+laravel new example-app
+```
+
+Pero si estás aprendiendo Composer y quieres entender mejor el comando y su lógica, `composer create-project` sigue siendo una excelente referencia.
+
+## En resumen
+
+Composer es una herramienta fundamental en PHP porque te permite:
+
+- gestionar dependencias
+- compartir proyectos de forma ordenada
+- instalar frameworks y paquetes con pocos comandos
+- mantener un flujo mucho más profesional
+
+Y si además estás explorando Laravel, Composer es la puerta de entrada natural para crear un proyecto nuevo sin complicarte de más.
+
+## Referencias
+
+- [Laravel Installation](https://laravel.com/docs/13.x/installation)
+- [Instalación de Composer y Laravel — Styde](https://styde.net/instalacion-de-composer-y-laravel/)
