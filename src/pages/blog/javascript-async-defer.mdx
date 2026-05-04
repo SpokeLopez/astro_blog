@@ -1,0 +1,198 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'Async y defer en JavaScript'
+description: 'Qué hacen los atributos async y defer en las etiquetas script, en qué se diferencian y cuándo conviene usar cada uno.'
+date: '2023-01-10'
+tags: ['JavaScript']
+category: 'tutorial'
+readingTime: '5 min'
+---
+
+Cuando empiezas a optimizar la carga de una página web, tarde o temprano te encuentras con dos atributos muy importantes en las etiquetas `<script>`: **`async`** y **`defer`**.
+
+Los dos ayudan a evitar que los scripts bloqueen la carga del documento, pero no funcionan igual. Entender esa diferencia es clave para no romper el orden de ejecución ni cargar JavaScript antes de tiempo.
+
+Tomando como referencia la guía de [javascript.info](https://es.javascript.info/script-async-defer) y este artículo de [Didacticode](https://didacticode.com/que-diferencias-hay-entre-defer-y-async/), aquí va una explicación sencilla y práctica.
+
+## El problema de un `<script>` normal
+
+Si agregas un script externo sin atributos especiales:
+
+```html
+<script src="app.js"></script>
+```
+
+el navegador hace esto:
+
+1. encuentra el script
+2. detiene momentáneamente el parseo del HTML
+3. descarga el archivo
+4. lo ejecuta
+5. después continúa construyendo el DOM
+
+Eso puede generar dos problemas:
+
+- el contenido tarda más en mostrarse
+- el script puede ejecutarse antes de que existan en el DOM ciertos elementos que necesita
+
+Justo para eso existen `defer` y `async`.
+
+## ¿Qué hace `defer`?
+
+`defer` le dice al navegador:
+
+> “Descarga este script en segundo plano, pero ejecútalo después de que el HTML haya sido procesado”.
+
+Ejemplo:
+
+```html
+<script defer src="app.js"></script>
+```
+
+### Comportamiento de `defer`
+
+- no bloquea el parseo del HTML
+- el script se descarga en paralelo
+- se ejecuta cuando el DOM ya está listo
+- respeta el orden en que aparece en el documento
+- se ejecuta antes de `DOMContentLoaded`
+
+Esto hace que `defer` sea ideal cuando:
+
+- tu script necesita acceder al DOM
+- cargas varios scripts que dependen entre sí
+- el orden de ejecución sí importa
+
+## Ejemplo con varios scripts deferidos
+
+```html
+<script defer src="libreria.js"></script>
+<script defer src="app.js"></script>
+```
+
+Aunque `app.js` se descargue más rápido, el navegador ejecutará primero `libreria.js` y luego `app.js`, respetando el orden del documento.
+
+Ese detalle es importantísimo si un archivo depende del anterior.
+
+## ¿Qué hace `async`?
+
+`async` también permite descargar el script en segundo plano, pero su lógica es distinta:
+
+> “Descárgalo en paralelo y ejecútalo en cuanto esté listo, sin esperar al DOM ni respetar el orden con otros scripts”.
+
+Ejemplo:
+
+```html
+<script async src="analytics.js"></script>
+```
+
+### Comportamiento de `async`
+
+- no bloquea el parseo del HTML
+- se descarga en paralelo
+- se ejecuta en cuanto termina de descargarse
+- no respeta el orden del documento
+- no garantiza relación con `DOMContentLoaded`
+
+Eso significa que un script con `async` puede ejecutarse:
+
+- antes de que el DOM esté completo
+- después de `DOMContentLoaded`
+- antes o después de otros scripts `async`
+
+Depende solo de cuál termina de cargar primero.
+
+## ¿Cuándo conviene usar `async`?
+
+`async` funciona mejor para scripts **independientes**, por ejemplo:
+
+- analytics
+- anuncios
+- contadores
+- widgets de terceros
+
+Es decir, scripts que:
+
+- no dependen de tu código
+- no necesitan un orden específico
+- no deberían bloquear el resto de la página
+
+## Diferencia práctica entre `async` y `defer`
+
+La diferencia más importante se puede resumir así:
+
+### `defer`
+
+- espera a que el HTML se procese
+- mantiene el orden entre scripts
+- es mejor para lógica principal de la aplicación
+
+### `async`
+
+- ejecuta tan pronto como carga
+- no mantiene orden
+- es mejor para scripts externos independientes
+
+## Comparación rápida
+
+| Atributo | ¿Bloquea HTML? | ¿Respeta orden? | ¿Espera al DOM? | Uso ideal |
+|---|---|---|---|---|
+| `defer` | No | Sí | Sí | scripts de la app, librerías, DOM |
+| `async` | No | No | No | analytics, ads, widgets externos |
+
+## Un detalle importante
+
+Tanto `async` como `defer` aplican a **scripts externos**, es decir, cuando la etiqueta tiene `src`.
+
+Ejemplo válido:
+
+```html
+<script defer src="app.js"></script>
+```
+
+En cambio, si el script está embebido directamente en el HTML:
+
+```html
+<script defer>
+  console.log('hola');
+</script>
+```
+
+el navegador ignora `defer`.
+
+## ¿Y qué pasa con scripts creados dinámicamente?
+
+Cuando agregas scripts desde JavaScript con `document.createElement('script')`, por defecto suelen comportarse como `async`.
+
+Por ejemplo:
+
+```javascript
+const script = document.createElement('script');
+script.src = 'extra.js';
+document.body.append(script);
+```
+
+En ese caso, el script se carga y se ejecuta en cuanto está listo, sin respetar necesariamente el orden con otros scripts.
+
+## Entonces, ¿cuál debería usar?
+
+Si estás cargando el JavaScript principal de tu sitio o tu aplicación, normalmente **`defer`** es la mejor opción.
+
+```html
+<script defer src="main.js"></script>
+```
+
+Y si estás integrando algo externo, independiente y sin dependencia de orden, normalmente **`async`** encaja mejor.
+
+```html
+<script async src="https://example.com/analytics.js"></script>
+```
+
+## En resumen
+
+`async` y `defer` existen para mejorar la carga de scripts sin bloquear el HTML, pero no hacen lo mismo.
+
+- Usa **`defer`** cuando el script forma parte de la lógica principal y necesita orden o acceso confiable al DOM.
+- Usa **`async`** cuando el script es independiente y no importa exactamente cuándo se ejecuta.
+
+Esa pequeña diferencia evita muchos bugs de carga y mejora bastante la experiencia de la página.
