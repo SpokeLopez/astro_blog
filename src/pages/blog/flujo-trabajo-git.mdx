@@ -1,0 +1,304 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'Flujo de trabajo con Git como desarrollador'
+description: 'Un flujo de trabajo práctico con Git para crear ramas, revisar cambios, hacer commits, publicar trabajo y mezclarlo sin romperte con conflictos evitables.'
+date: '2021-08-08'
+tags: ['Git']
+category: 'tutorial'
+readingTime: '7 min'
+---
+
+Cuando empecé a trabajar con Git de forma profesional, una de las preguntas que más me repetía era: **¿cómo trabajar con ramas sin meter ruido en el código de los demás?**
+
+Con el tiempo me di cuenta de que no se trata de saberse cien comandos de memoria, sino de tener un flujo claro y repetirlo con disciplina. Eso reduce errores, evita conflictos innecesarios y hace mucho más sencillo colaborar con otras personas en el proyecto.
+
+Este es el flujo que más me ha servido en el día a día.
+
+## La idea general
+
+Mi flujo normalmente se ve así:
+
+1. actualizar la rama base
+2. crear una rama de trabajo
+3. hacer cambios
+4. revisar qué cambió
+5. agregar archivos
+6. crear commit
+7. subir la rama
+8. mezclar o preparar el merge con la rama del equipo
+
+Suena simple, pero la diferencia está en hacerlo siempre en el mismo orden.
+
+![Diagrama general de flujo de ramas con Git](/images/blog/git/git-flow.png)
+
+## 1. Actualizar la rama base
+
+Antes de crear una rama nueva, lo primero es asegurarte de que la rama desde la que vas a partir esté actualizada.
+
+```bash
+git fetch
+git pull
+```
+
+### ¿Por qué hago esto primero?
+
+Porque si creas tu rama desde una versión vieja de `main`, `master` o `develop`, después vas a arrastrar cambios desactualizados y el merge se vuelve más incómodo de lo necesario.
+
+`git fetch` trae la información nueva del repositorio remoto y `git pull` actualiza tu rama local con esos cambios.
+
+## 2. Ver en qué rama estás
+
+Antes de crear o cambiar de rama, conviene revisar tu contexto.
+
+```bash
+git branch
+```
+
+La rama actual aparece marcada con un asterisco.
+
+También puedes usar:
+
+```bash
+git status
+```
+
+que además te dice si estás adelantado, atrasado o si tienes archivos modificados.
+
+## 3. Crear una rama nueva
+
+Una vez actualizada la rama base, puedes crear tu rama de trabajo.
+
+```bash
+git branch nombre-de-la-rama
+```
+
+Y luego cambiarte a ella:
+
+```bash
+git checkout nombre-de-la-rama
+```
+
+### Atajo útil
+
+La forma que más uso normalmente es:
+
+```bash
+git checkout -b nombre-de-la-rama
+```
+
+Eso crea la rama y además te mueve a ella inmediatamente.
+
+Si ya usas la sintaxis moderna de Git, el equivalente sería:
+
+```bash
+git switch -c nombre-de-la-rama
+```
+
+## 4. Revisar cambios con `git status`
+
+Cuando ya empezaste a trabajar, el comando que más se repite es:
+
+```bash
+git status
+```
+
+Te sirve para ver:
+
+- qué archivos cambiaste
+- cuáles están sin agregar
+- cuáles ya están listos para commit
+- si tu rama está sincronizada con el remoto
+
+Es probablemente el comando más simple y más útil de todo Git.
+
+## 5. Cambiar de rama cuando hace falta
+
+Para moverte entre ramas:
+
+```bash
+git checkout nombre-de-la-rama
+```
+
+O si quieres volver a la rama anterior:
+
+```bash
+git checkout -
+```
+
+Ese atajo es muy cómodo cuando estás comparando cambios o saltando entre la rama del equipo y tu rama local.
+
+![Ejemplo visual de git checkout entre ramas](/images/blog/git/git-checkout.jpeg)
+
+## 6. Agregar cambios con `git add`
+
+Cuando ya sabes qué archivos quieres incluir en el commit:
+
+```bash
+git add ruta/del/archivo
+```
+
+Yo prefiero agregar archivos de forma explícita cuando el cambio está muy localizado, porque me obliga a revisar exactamente qué voy a subir.
+
+Si quieres agregar todo:
+
+```bash
+git add .
+```
+
+o
+
+```bash
+git add -A
+```
+
+### ¿Cuál conviene más?
+
+- `git add .` suele ser suficiente en muchos casos
+- `git add -A` es más amplio y contempla también eliminaciones y movimientos
+
+## 7. Crear el commit
+
+Una vez agregados los cambios:
+
+```bash
+git commit -m "Mensaje del commit"
+```
+
+Ese mensaje debería explicar de forma breve qué cambió.
+
+Un commit útil no dice solo “cambios” o “fix”. Idealmente debería dar contexto:
+
+```bash
+git commit -m "Corrige estilos del header en mobile"
+```
+
+o
+
+```bash
+git commit -m "Agrega validación al formulario de contacto"
+```
+
+Mientras más claro sea el mensaje, más fácil será entender el historial después.
+
+## 8. Subir la rama con `git push`
+
+Cuando ya tienes el trabajo committeado:
+
+```bash
+git push
+```
+
+Si es la primera vez que subes esa rama, normalmente usarás algo como:
+
+```bash
+git push -u origin nombre-de-la-rama
+```
+
+Eso deja vinculada tu rama local con la rama remota, y después ya puedes usar `git push` sin más.
+
+## 9. Mezclar cambios con la rama de trabajo
+
+Cuando necesitas integrar tu trabajo con la rama del equipo, primero te cambias a la rama destino:
+
+```bash
+git checkout develop
+```
+
+Y luego haces el merge:
+
+```bash
+git merge nombre-de-tu-rama
+```
+
+En algunos equipos esto se hace directo en local. En otros, el flujo real pasa por Pull Request o Merge Request. Aun así, entender qué hace `merge` sigue siendo importante para no trabajar “a ciegas”.
+
+![Ejemplo visual de un merge entre ramas](/images/blog/git/git-merge.png)
+
+## 10. Ver el historial con `git log`
+
+Otro comando que ayuda muchísimo:
+
+```bash
+git log
+```
+
+Te muestra el historial de commits con datos como:
+
+- identificador SHA
+- autor
+- fecha
+- mensaje
+
+Es muy útil para:
+
+- revisar qué cambió
+- identificar cuándo apareció un error
+- encontrar un commit específico
+- entender mejor la historia de una rama
+
+Si quieres una vista más compacta:
+
+```bash
+git log --oneline
+```
+
+## ¿Y si necesito corregir el último commit?
+
+Hay ocasiones donde haces un commit y te das cuenta de que algo quedó mal.
+
+Si todavía no has hecho push, tienes margen para corregir.
+
+### Manteniendo cambios
+
+```bash
+git reset --soft HEAD~1
+```
+
+Esto deshace el commit pero conserva tus cambios preparados o en tu árbol de trabajo.
+
+### Sin conservar cambios
+
+```bash
+git reset --hard HEAD~1
+```
+
+Esto elimina el commit **y también los cambios**, así que hay que usarlo con mucho cuidado.
+
+## Una versión resumida del flujo
+
+Si quisiera resumir mi flujo normal en comandos, sería algo así:
+
+```bash
+git checkout develop
+git fetch
+git pull
+git checkout -b feature/nueva-tarea
+git status
+git add .
+git commit -m "Agrega nueva funcionalidad"
+git push -u origin feature/nueva-tarea
+```
+
+Después de eso, dependiendo del equipo:
+
+- haces merge local
+- o abres Pull Request
+
+## En resumen
+
+Git se vuelve mucho más amigable cuando dejas de verlo como una lista de comandos y empiezas a verlo como un flujo.
+
+Para mí, los comandos que más sostienen ese flujo son:
+
+- `git fetch`
+- `git pull`
+- `git branch`
+- `git checkout`
+- `git status`
+- `git add`
+- `git commit`
+- `git push`
+- `git merge`
+- `git log`
+
+No necesitas dominar todo Git de golpe. Con un flujo claro y repetible ya puedes trabajar de forma mucho más segura en proyectos personales o en equipos grandes.
