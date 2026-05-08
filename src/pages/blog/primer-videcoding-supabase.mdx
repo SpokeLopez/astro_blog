@@ -1,0 +1,164 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'Mi primer videcoding con Supabase: así construí un sistema real'
+description: 'Una reflexión sobre mi primer videcoding con Supabase, qué me gustó de la herramienta y cómo la fui usando para levantar un sistema residencial real con Vue.'
+date: '2025-12-28'
+tags: ['Supabase', 'JavaScript']
+category: 'tutorial'
+readingTime: '6 min'
+---
+
+Hace poco me animé a hacer algo que llevaba rato queriendo probar con más seriedad: mi **primer videcoding usando Supabase** como parte central del proyecto.
+
+La idea no era solo grabar código por grabar código, sino construir algo que realmente tuviera estructura, reglas, persistencia y un caso de uso claro. El proyecto terminó siendo un **sistema de gestión residencial** con módulos para pagos, avisos, visitas, directorio y documentos, construido con **Vue 3** y apoyado en **Supabase** como backend.
+
+Y la verdad, la experiencia me dejó una impresión bastante buena.
+
+![Pantalla de inicio de sesión de ResiQuinta](/images/blog/supabase-resiquinta/login.png)
+
+## ¿Por qué me interesaba probar Supabase?
+
+Durante mucho tiempo, cuando uno piensa en “backend rápido” para prototipos o productos chicos, se topa con opciones cerradas o demasiado orientadas a esconder todo detrás de una capa visual. Lo que me llamó la atención de Supabase es que mantiene una idea que me gusta bastante:
+
+- base de datos real en PostgreSQL
+- APIs y servicios listos para usar
+- autenticación
+- storage
+- y un enfoque bastante cómodo para trabajar desde frontend
+
+Eso lo vuelve interesante porque no se siente como una caja negra total. Más bien se siente como una forma de acelerar sin perder del todo la noción de cómo está armado el sistema.
+
+## El proyecto que usé para este videcoding
+
+El sistema que fui construyendo está pensado para administrar una operación residencial con distintos roles y módulos. Desde el README del proyecto, las piezas principales quedaron bastante claras:
+
+- gestión de pagos y conceptos recurrentes
+- avisos con timeline
+- visitas con QR
+- directorios por privada
+- documentos asociados por privada
+- perfiles de usuario
+- reportes
+
+No era una demo de una sola pantalla. Justo por eso me interesaba usarlo como prueba real: quería ver si Supabase seguía sintiéndose cómodo cuando el proyecto ya tenía varias tablas, reglas y relaciones.
+
+## Lo primero que me gustó de Supabase
+
+Lo más inmediato fue la sensación de **velocidad para empezar**.
+
+Poder levantar una base, definir tablas y empezar a consumir datos desde frontend sin una capa de backend tradicional intermedia acelera muchísimo el arranque. Para un videcoding eso importa bastante, porque te deja concentrarte en:
+
+- modelar bien el problema
+- conectar vistas con datos reales
+- iterar más rápido
+
+En vez de pasar media sesión preparando infraestructura, puedes llegar más rápido a la parte interesante del producto.
+
+## Cómo lo fui usando en el proyecto
+
+En este sistema, Supabase no quedó como un detalle decorativo. Realmente fue parte central de varias piezas:
+
+### 1. Base de datos
+
+La estructura de tablas y scripts SQL fue una parte importante del proyecto. Desde el README se nota que el sistema creció de forma modular, con scripts para:
+
+- roles y usuarios
+- pagos
+- avisos
+- visitas
+- privadas
+- fotos de perfil
+- contactos
+- documentos
+
+Eso me gustó porque refuerza una idea importante: Supabase te deja trabajar rápido, pero sigue siendo valioso pensar bien el modelo de datos.
+
+![Vista de conceptos de pago en el panel administrador](/images/blog/supabase-resiquinta/conceptos-admin.png)
+
+### 2. Storage
+
+Otra parte útil fue el uso de **Supabase Storage** para:
+
+- fotos de perfil
+- documentos por privada
+
+Ese tipo de cosas normalmente ya te obliga a pensar en buckets, permisos, visibilidad y estructura de rutas. Tenerlo resuelto dentro del mismo ecosistema hace que el proyecto se sienta más integrado.
+
+![Modal de creación de concepto recurrente dentro del sistema](/images/blog/supabase-resiquinta/modal-concepto.png)
+
+### 3. Políticas y seguridad
+
+Algo que me pareció especialmente interesante es el tema de **RLS (Row Level Security)**.
+
+Aunque en desarrollo a veces uno afloja reglas para avanzar más rápido, el simple hecho de que el proyecto ya esté pensando en políticas desde el principio me parece una ventaja. Obliga a no ver la seguridad como un parche de última hora.
+
+En este caso, era importante porque había datos que no todos los usuarios debían ver igual: documentos por privada, perfiles, directorios y distintos paneles según rol.
+
+![Vista de pagos del residente dentro de ResiQuinta](/images/blog/supabase-resiquinta/pagos-residente.png)
+
+## Lo que más me dejó este videcoding
+
+Más allá de la herramienta, lo que más me gustó fue la sensación de que el proyecto se podía mover con agilidad sin sentirse “falso”.
+
+Ese para mí fue el punto clave.
+
+No era solo una app bonita conectada a una tabla. Había:
+
+- lógica de negocio
+- estructura modular
+- scripts SQL
+- reglas por rol
+- storage
+- reportes
+- y varias piezas conectadas entre sí
+
+Supabase me dio una base suficientemente rápida para avanzar, pero también suficientemente seria para no sentir que estaba armando algo desechable.
+
+## ¿Qué me pareció más valioso?
+
+Si tuviera que resumir lo mejor de la experiencia, diría esto:
+
+### Rapidez
+
+Puedes pasar de idea a algo funcional en poco tiempo.
+
+### Integración
+
+Base de datos, API, storage y reglas viven en un mismo entorno bastante coherente.
+
+### Buen equilibrio
+
+No sientes que estás trabajando en puro “no-code”, pero tampoco te obliga a levantar todo un backend artesanal para avanzar.
+
+## ¿Tiene límites? Claro
+
+También me parece importante decirlo: Supabase no elimina la necesidad de pensar.
+
+Sigue haciendo falta:
+
+- modelar bien tablas y relaciones
+- organizar scripts
+- definir políticas con cuidado
+- estructurar el frontend con criterio
+
+O sea, Supabase acelera mucho, pero no reemplaza diseño técnico. Y honestamente eso me gusta, porque te deja ganar velocidad sin convertir todo en magia opaca.
+
+## Mi impresión final
+
+Este primer videcoding con Supabase me dejó con ganas de seguir explorándolo en proyectos reales.
+
+No porque sea una bala de plata, sino porque encontré algo que valoro bastante como desarrollador: una herramienta que me deja construir rápido, pero que todavía se siente lo bastante cercana al código, a la base de datos y a la lógica del producto.
+
+En este proyecto me funcionó muy bien como punto medio entre productividad y control.
+
+Y para un sistema modular como este, eso ya dice bastante.
+
+## Si te interesa el proyecto
+
+El repositorio de este sistema es **privado** por ahora. Si te interesa revisarlo, colaborar o descargarlo como referencia, puedes mandarme mensaje y con gusto te doy acceso.
+
+## Referencias
+
+- [Supabase](https://supabase.com/)
+- [Supabase en NoCodeHackers](https://www.nocodehackers.es/herramientas-no-code/supabase)
+- [Supabase: una alternativa ágil de código abierto](https://www.aplyca.com/blog/blog-supabase-una-alternativa-agil-de-codigo-abierto)
