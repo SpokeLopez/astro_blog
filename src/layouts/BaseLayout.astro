@@ -43,7 +43,61 @@ const { title, description = 'SpokeLopez - Software Engineer & Content Creator. 
       </main>
       <Footer />
     </div>
+
+    <button id="back-to-top" aria-label="Volver al inicio" title="Volver al inicio">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="18 15 12 9 6 15"></polyline>
+      </svg>
+    </button>
+
     <Analytics />
     <SpeedInsights />
+
+    <style>
+      #back-to-top {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: 1px solid var(--color-border);
+        background-color: var(--color-bg-card);
+        color: var(--color-text-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(8px);
+        transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        z-index: 99;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      #back-to-top.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      #back-to-top:hover {
+        border-color: var(--color-accent);
+        color: var(--color-accent);
+      }
+    </style>
+
+    <script>
+      const btn = document.getElementById('back-to-top')!;
+
+      window.addEventListener('scroll', () => {
+        btn.classList.toggle('visible', window.scrollY > 400);
+      }, { passive: true });
+
+      btn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    </script>
   </body>
 </html>

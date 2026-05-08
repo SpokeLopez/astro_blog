@@ -8,6 +8,22 @@ const sortedPosts = homeBlogPosts
   .sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime())
   .slice(0, 3);
 
+const PLAYLIST_ID = 'PLVSc1l65FPFh_xUmQtgfaYSSEete1XPku';
+const YT_KEY = import.meta.env.YOUTUBE_API_KEY;
+let playlistVideos: { id: string; title: string; thumbnail: string }[] = [];
+try {
+  const res = await fetch(
+    `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=3&playlistId=${PLAYLIST_ID}&key=${YT_KEY}`
+  );
+  const data = await res.json();
+  playlistVideos = (data.items ?? []).map((item: any) => ({
+    id: item.snippet.resourceId.videoId,
+    title: item.snippet.title,
+    thumbnail: item.snippet.thumbnails?.medium?.url
+      ?? `https://img.youtube.com/vi/${item.snippet.resourceId.videoId}/mqdefault.jpg`,
+  }));
+} catch (_) {}
+
 const skills = [
   { name: 'PHP', level: 95 },
   { name: 'JavaScript', level: 90 },
@@ -74,12 +90,7 @@ const experience = [
   },
 ];
 
-const tiktokVideos = [
-  { id: '1', title: 'CSS Glassmorphism en 60s', views: '12.5K', thumbnail: 'glassmorphism' },
-  { id: '2', title: 'Array Methods JS', views: '8.2K', thumbnail: 'arrays' },
-  { id: '3', title: 'CSS Grid Layout', views: '15.1K', thumbnail: 'grid' },
-  { id: '4', title: 'Flexbox Tips', views: '9.8K', thumbnail: 'flexbox' },
-];
+
 ---
 
 <BaseLayout title="SpokeLopez | Software Engineer">
@@ -268,42 +279,38 @@ const tiktokVideos = [
     </div>
   </section>
 
-  <!-- TikTok Videos Section -->
-  <section class="tiktok-section">
+  <!-- YouTube Playlist Section -->
+  <section class="youtube-section">
     <div class="section-header">
-      <span class="section-tag">Youtube</span>
-      <h2>Últimos videos</h2>
-      <a href="https://tiktok.com/@spokelopez" target="_blank" rel="noopener noreferrer" class="view-all">
-        Ver todos
+      <span class="section-tag">YouTube</span>
+      <h2>Construyendo una API del Mundial 2026</h2>
+      <a href="https://youtube.com/playlist?list=PLVSc1l65FPFh_xUmQtgfaYSSEete1XPku" target="_blank" rel="noopener noreferrer" class="view-all">
+        Ver playlist completa
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="5" y1="12" x2="19" y2="12"></line>
           <polyline points="12 5 19 12 12 19"></polyline>
         </svg>
       </a>
     </div>
-    <div class="tiktok-grid">
-      {tiktokVideos.map(video => (
-        <a href={`https://tiktok.com/@spokelopez/video/${video.id}`} target="_blank" rel="noopener noreferrer" class="tiktok-card">
-          <div class="tiktok-thumbnail">
-            <div class="tiktok-play">
-              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
-                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-              </svg>
+    {playlistVideos.length > 0 ? (
+      <div class="yt-grid">
+        {playlistVideos.map(video => (
+          <a href={`https://www.youtube.com/watch?v=${video.id}&list=${PLAYLIST_ID}`} target="_blank" rel="noopener noreferrer" class="yt-card">
+            <div class="yt-thumb">
+              <img src={video.thumbnail} alt={video.title} width="320" height="180" loading="lazy" />
+              <div class="yt-play">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                  <polygon points="5 3 19 12 5 21 5 3"/>
+                </svg>
+              </div>
             </div>
-          </div>
-          <div class="tiktok-info">
-            <h4>{video.title}</h4>
-            <span class="tiktok-views">
-              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
-                <circle cx="12" cy="12" r="3"/>
-              </svg>
-              {video.views}
-            </span>
-          </div>
-        </a>
-      ))}
-    </div>
+            <p class="yt-title">{video.title}</p>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <p class="yt-empty">No se pudieron cargar los videos. <a href="https://youtube.com/playlist?list=PLVSc1l65FPFh_xUmQtgfaYSSEete1XPku" target="_blank" rel="noopener noreferrer">Ver en YouTube</a></p>
+    )}
   </section>
 
   <!-- Latest Posts Section -->
@@ -848,74 +855,78 @@ const tiktokVideos = [
     display: none;
   }
 
-  /* TikTok Section */
-  .tiktok-section {
+  /* YouTube Section */
+  .youtube-section {
     border-bottom: 1px solid var(--color-border);
   }
 
-  .tiktok-grid {
+  .yt-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-md);
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg);
   }
 
-  .tiktok-card {
-    background-color: var(--color-bg-card);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    transition: all 0.2s ease;
-  }
-
-  .tiktok-card:hover {
-    border-color: var(--color-border-hover);
-    transform: translateY(-2px);
-  }
-
-  .tiktok-thumbnail {
-    aspect-ratio: 9/16;
-    max-height: 200px;
-    background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-card) 100%);
+  .yt-card {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    gap: var(--space-sm);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .yt-thumb {
     position: relative;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    background-color: var(--color-bg-secondary);
   }
 
-  .tiktok-play {
-    width: 56px;
-    height: 56px;
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 50%;
+  .yt-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .yt-card:hover .yt-thumb img {
+    transform: scale(1.04);
+  }
+
+  .yt-play {
+    position: absolute;
+    inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: rgba(0, 0, 0, 0.3);
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .yt-card:hover .yt-play {
+    opacity: 1;
+  }
+
+  .yt-title {
+    font-size: 0.9375rem;
+    font-weight: 500;
     color: var(--color-text);
-    transition: all 0.2s ease;
-  }
-
-  .tiktok-card:hover .tiktok-play {
-    background-color: var(--color-accent);
-    color: var(--color-bg);
-  }
-
-  .tiktok-info {
-    padding: var(--space-md);
-  }
-
-  .tiktok-info h4 {
-    font-size: 0.875rem;
-    font-weight: 600;
-    margin-bottom: var(--space-xs);
     line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
-  .tiktok-views {
-    display: flex;
-    align-items: center;
-    gap: var(--space-xs);
-    font-size: 0.75rem;
+  .yt-empty {
     color: var(--color-text-muted);
+    font-size: 0.9375rem;
+  }
+
+  @media (max-width: 768px) {
+    .yt-grid { grid-template-columns: 1fr; }
   }
 
   /* Posts Grid */
