@@ -9,11 +9,11 @@ const navLinks = [
     submenu: [
       { href: '/blog', label: 'Todos' },
       { href: '/blog/tutoriales', label: 'Tutoriales' },
-      { href: '/blog/adventjs', label: 'AdventJS' },
       { href: '/blog/magento', label: 'Magento' },
       { href: '/blog/shopify', label: 'Shopify' },
     ]
   },
+  { href: '/blog/adventjs', label: 'AdventJS' },
   { href: '/proyectos', label: 'Proyectos' },
   { href: '/recursos', label: 'Recursos' },
 ];
@@ -60,7 +60,7 @@ const navLinks = [
               <li class:list={['nav-item', { 'has-submenu': link.submenu }]}>
                 <a
                   href={link.href}
-                  class:list={['nav-link', { active: currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href)) }]}
+                  class:list={['nav-link', { active: currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href) && !navLinks.some(l => l !== link && l.href !== '/' && currentPath.startsWith(l.href) && l.href.length > link.href.length)) }]}
                 >
                   {link.label}
                   {link.submenu && (
