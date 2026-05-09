@@ -1,0 +1,143 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'Cómo conectar el MCP de Supabase a tu editor de código'
+description: 'Qué es el MCP de Supabase, para qué sirve y cómo conectarlo a tu editor para consultar tablas, ejecutar operaciones y trabajar más cómodo desde tu entorno.'
+date: '2026-05-08'
+tags: ['MCP', 'Supabase']
+category: 'mcp'
+readingTime: '6 min'
+---
+
+Una de las cosas más interesantes que he estado probando últimamente es la idea de conectar herramientas externas directamente al editor usando **MCP**. Y dentro de ese contexto, uno de los casos más útiles me parece el de **Supabase**.
+
+Si ya trabajas con Supabase para base de datos, auth, storage o APIs, poder hablar con tu proyecto desde el editor cambia bastante el flujo. Ya no se trata solo de abrir el panel web en otra pestaña, sino de acercar la base y las operaciones a tu entorno de trabajo.
+
+## ¿Qué es el MCP?
+
+MCP significa **Model Context Protocol**. La idea general es permitir que un cliente compatible, como un editor o una herramienta asistida por IA, pueda conectarse a servicios externos de forma estructurada.
+
+En el caso de Supabase, eso significa que puedes exponer capacidades de tu proyecto para consultarlas desde el editor: tablas, metadata, operaciones y contexto útil para desarrollar más rápido.
+
+## ¿Por qué usar el MCP de Supabase?
+
+Porque reduce bastante la fricción entre escribir código y revisar datos reales.
+
+En vez de estar saltando constantemente entre:
+
+- el editor
+- la consola de Supabase
+- el navegador
+- documentación
+
+puedes centralizar más trabajo en el mismo lugar.
+
+Eso se vuelve especialmente útil cuando estás:
+
+- explorando el esquema de la base
+- validando tablas o columnas
+- entendiendo relaciones
+- haciendo debugging
+- trabajando con un asistente dentro del editor
+
+## Qué aporta el MCP de Supabase
+
+Tomando como base la documentación oficial y el proyecto de la comunidad, el MCP de Supabase funciona como una capa que conecta tu editor con tu proyecto de Supabase para ofrecer contexto y operaciones útiles durante el desarrollo.
+
+La ventaja práctica es esta: tu editor deja de estar “ciego” frente a la base de datos y puede trabajar con más información real del proyecto.
+
+## Requisitos generales
+
+Para usar el MCP de Supabase normalmente necesitas:
+
+- un proyecto de Supabase
+- una clave o token con los permisos adecuados
+- un cliente o editor que soporte MCP
+- configurar el servidor MCP dentro de ese entorno
+
+La parte exacta cambia un poco según el cliente que uses, pero la idea base es siempre la misma: registrar el servidor MCP de Supabase y pasarle las credenciales necesarias para que pueda consultar tu proyecto.
+
+## El flujo general de conexión
+
+Visto de forma simple, la conexión suele seguir esta secuencia:
+
+1. Crear o identificar tu proyecto en Supabase
+2. Generar las credenciales necesarias
+3. Instalar o referenciar el servidor MCP de Supabase
+4. Registrar esa configuración en tu editor
+5. Reiniciar o recargar el cliente
+6. Probar que la conexión ya puede leer contexto del proyecto
+
+No es una configuración especialmente complicada, pero sí conviene hacerla con cuidado porque involucra acceso a datos y estructura del proyecto.
+
+## ¿Qué tipo de cosas puedes hacer?
+
+Aunque la experiencia concreta depende del cliente MCP, la utilidad real suele estar en cosas como:
+
+- inspeccionar tablas
+- entender el esquema
+- trabajar con contexto de la base mientras escribes código
+- consultar metadata del proyecto
+- reducir la cantidad de cambios de contexto entre editor y dashboard
+
+En proyectos medianos o cuando vuelves a un código que dejaste hace semanas, eso ayuda muchísimo.
+
+## ¿Dónde entra mejor este enfoque?
+
+En mi opinión, el MCP de Supabase tiene más sentido cuando ya estás trabajando en un proyecto real y no solo en una demo aislada.
+
+Por ejemplo, si tienes:
+
+- varias tablas
+- reglas de acceso
+- storage
+- relaciones entre entidades
+- una app frontend viva
+
+entonces tener ese contexto más cerca del editor empieza a sentirse realmente útil.
+
+## Un detalle importante: seguridad y permisos
+
+Aquí vale la pena ser cuidadoso.
+
+Cuando conectas un servicio como Supabase a un entorno de desarrollo mediante MCP, estás abriendo una puerta de acceso contextual al proyecto. Por eso conviene revisar muy bien:
+
+- qué token estás usando
+- qué permisos tiene
+- si estás en desarrollo o producción
+- qué información puede consultar el cliente conectado
+
+La comodidad está muy bien, pero no conviene olvidar que sigue siendo acceso a infraestructura real.
+
+## Mi lectura práctica
+
+Lo que más me gusta de este enfoque es que empuja una idea bastante natural del desarrollo moderno: que el editor no sea solo un lugar para escribir archivos, sino un centro de trabajo conectado con el sistema real.
+
+Y Supabase encaja bien en eso porque ya de por sí ofrece una experiencia bastante integrada entre base de datos, auth, storage y APIs.
+
+Si a eso le sumas MCP, la experiencia se vuelve todavía más fluida.
+
+## ¿Vale la pena configurarlo?
+
+Yo diría que sí, sobre todo si:
+
+- ya usas Supabase de forma activa
+- trabajas con asistentes dentro del editor
+- quieres menos ida y vuelta entre dashboard y código
+- te interesa enriquecer el contexto del entorno de desarrollo
+
+Si apenas estás empezando con Supabase, quizá primero convenga dominar la plataforma base. Pero si ya estás más metido en el ecosistema, el MCP tiene bastante sentido.
+
+## En resumen
+
+Conectar el MCP de Supabase a tu editor de código es una forma muy útil de acercar la base de datos y la estructura del proyecto a tu flujo diario de desarrollo.
+
+No reemplaza entender tu arquitectura ni tus tablas, pero sí reduce fricción y mejora el contexto con el que trabajas dentro del editor.
+
+Y justo ahí está su valor: menos saltos, más continuidad y una experiencia de desarrollo más conectada.
+
+## Referencias
+
+- [Supabase MCP: getting started](https://supabase.com/docs/guides/getting-started/mcp)
+- [supabase-community/supabase-mcp](https://github.com/supabase-community/supabase-mcp)
+- [Tutorial Supabase MCP — NoCodeHackers](https://www.nocodehackers.es/post/tutorial-supabase-mcp)
+- [Curso de AI Tools para Developers — Platzi](https://platzi.com/cursos/devs-ai-tools/)

@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import Pagination from '../../components/Pagination.astro';
+import '../../styles/blog-listings.css';
+
+const allPosts = await Astro.glob('./*.mdx');
+const mcpPosts = allPosts
+  .filter(post => post.frontmatter.category === 'mcp')
+  .sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime());
+---
+
+<BaseLayout
+  title="MCP | SpokeLopez"
+  description="Notas y tutoriales sobre MCP, herramientas conectadas al editor y flujos modernos de desarrollo."
+>
+  <div class="blog-listing">
+    <div class="page-header">
+      <span class="page-tag">MCP</span>
+      <h1>MCP y herramientas conectadas</h1>
+      <p class="page-description">
+        Experimentos, guías y notas sobre Model Context Protocol, integración con editores y flujos de desarrollo más conectados.
+      </p>
+    </div>
+
+    <div class="posts-grid">
+      {mcpPosts.length > 0 ? (
+        mcpPosts.map(post => (
+          <PostCard
+            title={post.frontmatter.title}
+            description={post.frontmatter.description}
+            date={new Date(post.frontmatter.date)}
+            slug={post.file.split('/').pop()?.replace('.mdx', '') || ''}
+            tags={post.frontmatter.tags}
+            readingTime={post.frontmatter.readingTime}
+          />
+        ))
+      ) : (
+        <p class="no-posts">Aún no hay entradas en esta categoría. Las nuevas aparecerán aquí.</p>
+      )}
+    </div>
+
+    <Pagination totalPosts={mcpPosts.length} />
+  </div>
+</BaseLayout>
+
+<script>
+  const PAGE_SIZE = 9;
+  let currentPage = 0;
+  const cards = Array.from(document.querySelectorAll<HTMLElement>('.posts-grid .post-card'));
+  const prevBtn = document.querySelector<HTMLButtonElement>('.prev-btn');
+  const nextBtn = document.querySelector<HTMLButtonElement>('.next-btn');
+  const pageNums = document.querySelectorAll<HTMLButtonElement>('.page-num');
+  const totalPages = Math.ceil(cards.length / PAGE_SIZE);
+
+  function render() {
+    cards.forEach((c, i) => {
+      c.style.display = i >= currentPage * PAGE_SIZE && i < (currentPage + 1) * PAGE_SIZE ? '' : 'none';
+    });
+    prevBtn && (prevBtn.disabled = currentPage === 0);
+    nextBtn && (nextBtn.disabled = currentPage >= totalPages - 1);
+    pageNums.forEach((btn, i) => btn.classList.toggle('active', i === currentPage));
+  }
+
+  prevBtn?.addEventListener('click', () => { currentPage--; render(); });
+  nextBtn?.addEventListener('click', () => { currentPage++; render(); });
+  pageNums.forEach(btn => {
+    btn.addEventListener('click', () => { currentPage = Number(btn.dataset.page); render(); });
+  });
+
+  render();
+</script>
