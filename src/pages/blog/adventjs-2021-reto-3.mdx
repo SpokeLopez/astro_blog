@@ -1,0 +1,123 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'AdventJS 2021 — Reto 3: Validar cartas con paréntesis'
+description: 'Comprueba si una carta es válida verificando que los paréntesis cierren bien, que no estén vacíos y que no contengan llaves ni corchetes. Solución comentada con JavaScript y enlace al video en TikTok.'
+date: '2024-12-03'
+tags: ['JavaScript', 'AdventJS', 'Retos']
+category: 'adventjs'
+challengeNumber: 3
+readingTime: '5 min'
+tiktokUrl: 'https://www.tiktok.com/@spokelopez/video/7442107974421630264'
+---
+
+El [tercer reto del AdventJS 2021](https://2021.adventjs.dev/challenges/03) parece sencillo al principio, pero tiene varios detalles que conviene leer bien. No basta con encontrar un `(` y un `)`; también hay que validar que los paréntesis **cierren correctamente**, que **no estén vacíos** y que **no contengan llaves `{}` ni corchetes `[]` dentro**.
+
+## Enunciado resumido
+
+- Entrada: una cadena con texto y, opcionalmente, paréntesis.
+- Salida: `true` si la carta es válida y `false` si no lo es.
+- Reglas:
+  1. Los paréntesis deben abrir y cerrar correctamente.
+  2. No pueden estar vacíos: `()`.
+  3. No pueden contener `{`, `}`, `[` o `]` dentro.
+
+Ejemplos del reto:
+
+```javascript
+"bici coche (balón) bici coche peluche" // true
+"(muñeca) consola bici" // true
+
+"bici coche (balón bici coche" // false
+"peluche (bici [coche) bici coche balón" // false
+"(peluche {) bici" // false
+"() bici" // false
+```
+
+## Estrategia
+
+Para este tipo de reto, me parece más claro recorrer la cadena carácter por carácter y controlar si estamos “dentro” o “fuera” de paréntesis.
+
+La lógica básica sería:
+
+1. Cuando aparece `(`, entramos en un bloque.
+2. Mientras estamos dentro, acumulamos contenido.
+3. Si aparece `)`:
+   - debe existir un `(` abierto
+   - el contenido no puede estar vacío
+4. Si dentro del bloque encontramos `{`, `}`, `[` o `]`, la carta ya no es válida.
+5. Al final, no debe quedar ningún paréntesis abierto.
+
+## Solución (repo)
+
+Esta es la solución que acompaña al reto en mi repositorio [adventjs21](https://github.com/SpokeLopez/adventjs21) ([archivo `03-arreglando-cartas.js`](https://github.com/SpokeLopez/adventjs21/blob/main/03-arreglando-cartas.js)):
+
+```javascript
+export default function isValid(letter) {
+  let inside = false;
+  let content = '';
+
+  for (const char of letter) {
+    if (char === '(') {
+      if (inside) return false;
+      inside = true;
+      content = '';
+      continue;
+    }
+
+    if (char === ')') {
+      if (!inside || content.length === 0) return false;
+      inside = false;
+      continue;
+    }
+
+    if (inside) {
+      if ('{}[]'.includes(char)) return false;
+      content += char;
+    }
+  }
+
+  return !inside;
+}
+```
+
+- **`inside`** — indica si el recorrido está actualmente dentro de un bloque entre paréntesis.
+- **`content`** — guarda el texto contenido dentro del bloque actual.
+- Si aparece un `(` cuando ya estábamos dentro, se invalida.
+- Si aparece un `)` sin contenido o sin haber abierto antes, se invalida.
+- Si dentro hay `{}`, `[]`, se invalida inmediatamente.
+- Al final, **`return !inside`** comprueba que no haya quedado un paréntesis sin cerrar.
+
+## ¿Por qué este enfoque funciona bien?
+
+Porque ataca directamente las reglas del enunciado sin intentar adivinar todo con una sola regex.
+
+En este caso, el reto no solo pregunta por “paréntesis balanceados”; también impone restricciones sobre el contenido interno. Recorrer el string carácter por carácter hace más fácil leer y controlar cada condición.
+
+## Un detalle importante
+
+La condición de `content.length === 0` es la que evita que `()` pase como válido.
+
+Sin eso, podrías cerrar correctamente los paréntesis pero seguir aceptando cartas vacías, que justo es uno de los casos que el reto marca como incorrecto.
+
+## Variante con regex
+
+Se podría intentar algo con expresiones regulares, pero aquí personalmente prefiero la versión iterativa porque:
+
+- es más fácil de depurar
+- deja más clara la intención
+- escala mejor cuando aparecen reglas específicas del enunciado
+
+En retos de este tipo, una solución ligeramente más larga pero más legible suele ser mejor.
+
+## Video en TikTok
+
+En [este video](https://www.tiktok.com/@spokelopez/video/7442107974421630264) explico la idea general del reto y cómo validar la carta sin complicarse de más. Como en los otros posts, también tienes arriba el enlace **Ver en TikTok** en la cabecera del artículo.
+
+## Recursos
+
+- [Reto 3 — AdventJS 2021](https://2021.adventjs.dev/challenges/03)
+- [Código en GitHub](https://github.com/SpokeLopez/adventjs21/blob/main/03-arreglando-cartas.js)
+
+---
+
+Este reto es una buena práctica de validación de strings y lectura cuidadosa del problema. Aquí el truco no estaba en usar algo “más avanzado”, sino en traducir cada regla del enunciado a una condición muy concreta dentro del recorrido.
