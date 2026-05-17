@@ -1,0 +1,114 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'AdventJS 2021 — Reto 4: Pintando el árbol de Navidad'
+description: 'Genera un árbol de Navidad como string usando asteriscos, guiones bajos y un tronco de dos líneas. Solución comentada con JavaScript y enlace al video en TikTok.'
+date: '2024-12-04'
+tags: ['JavaScript', 'AdventJS', 'Retos']
+category: 'adventjs'
+challengeNumber: 4
+readingTime: '5 min'
+tiktokUrl: 'https://www.tiktok.com/@spokelopez/video/7445537831558073606'
+---
+
+El [cuarto reto del AdventJS 2021](https://2021.adventjs.dev/challenges/04) ya se mete más con la construcción de strings y el cuidado del formato de salida. La idea parece simple: pintar un árbol. Pero como casi siempre en este tipo de ejercicios, el detalle está en respetar **exactamente** el ancho, los espacios y los saltos de línea.
+
+## Enunciado resumido
+
+- Entrada: un número entero positivo que representa la altura del árbol.
+- Salida: un string con:
+  1. un triángulo de asteriscos `*`
+  2. espacios representados con guiones bajos `_`
+  3. un tronco de dos líneas con `#`
+
+Ejemplo con altura `5`:
+
+```text
+____*____
+___***___
+__*****__
+_*******_
+*********
+____#____
+____#____
+```
+
+El árbol debe quedar centrado y todas las líneas deben respetar el mismo ancho.
+
+## Estrategia
+
+La forma más cómoda de resolverlo es construir el árbol línea por línea.
+
+Para cada nivel del triángulo:
+
+1. calculas cuántos asteriscos toca pintar
+2. calculas cuántos guiones bajos van a cada lado
+3. unes todo como string
+
+Después agregas el tronco, que siempre ocupa dos líneas centradas.
+
+## Solución (repo)
+
+Esta es la solución que enlazo desde mi repositorio [adventjs21](https://github.com/SpokeLopez/adventjs21) ([archivo `04-pintando-arbol.js`](https://github.com/SpokeLopez/adventjs21/blob/main/04-pintando-arbol.js)):
+
+```javascript
+export default function createXmasTree(height) {
+  let tree = '';
+
+  for (let i = 1; i <= height; i++) {
+    const underscores = '_'.repeat(height - i);
+    const stars = '*'.repeat(i * 2 - 1);
+    tree += `${underscores}${stars}${underscores}\n`;
+  }
+
+  const trunk = '_'.repeat(height - 1) + '#' + '_'.repeat(height - 1);
+
+  tree += `${trunk}\n${trunk}`;
+
+  return tree;
+}
+```
+
+- **`'_'.repeat(height - i)`** — genera los espacios laterales para centrar cada nivel.
+- **`'*'.repeat(i * 2 - 1)`** — pinta la cantidad correcta de asteriscos: 1, 3, 5, 7...
+- **`tree += ...`** — va acumulando cada línea del árbol.
+- **`trunk`** — construye una sola vez la línea del tronco y luego la reutiliza dos veces.
+
+## ¿Por qué `i * 2 - 1`?
+
+Porque el árbol crece de dos en dos:
+
+- nivel 1 -> `1` asterisco
+- nivel 2 -> `3`
+- nivel 3 -> `5`
+- nivel 4 -> `7`
+
+Eso forma la secuencia de números impares, que es justo la que da el triángulo simétrico.
+
+## El truco real del reto
+
+El reto no estaba en los asteriscos, sino en mantener el ancho consistente.
+
+Cada línea debe tener exactamente la misma longitud, así que los guiones bajos son tan importantes como los `*`. Si no calculas bien los lados, el árbol deja de estar centrado.
+
+## Variante mental más simple
+
+Una forma rápida de pensarlo es:
+
+- la base del árbol tiene ancho `height * 2 - 1`
+- cada fila superior va restando 2 asteriscos
+- lo que falta se reparte en guiones bajos a izquierda y derecha
+
+Eso hace más fácil visualizar la geometría del árbol antes de escribir código.
+
+## Video en TikTok
+
+En [este video](https://www.tiktok.com/@spokelopez/video/7445537831558073606) explico el reto y cómo construir el árbol sin complicarse con condiciones innecesarias. Como en las otras entradas de AdventJS, también tienes el enlace **Ver en TikTok** en la cabecera del artículo.
+
+## Recursos
+
+- [Reto 4 — AdventJS 2021](https://2021.adventjs.dev/challenges/04)
+- [Código en GitHub](https://github.com/SpokeLopez/adventjs21/blob/main/04-pintando-arbol.js)
+
+---
+
+Este reto es una buena práctica de manipulación de strings, loops y patrones visuales. Lo más bonito es que con muy pocas líneas puedes generar una salida bastante clara si entiendes bien la simetría del problema.
