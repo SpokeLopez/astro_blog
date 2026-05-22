@@ -11,18 +11,43 @@ const sortedPosts = homeBlogPosts
 const PLAYLIST_ID = 'PLVSc1l65FPFh_xUmQtgfaYSSEete1XPku';
 const YT_KEY = import.meta.env.YOUTUBE_API_KEY;
 let playlistVideos: { id: string; title: string; thumbnail: string }[] = [];
+const MAX_YT_VIDEOS = 3;
+
 try {
-  const res = await fetch(
-    `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=3&playlistId=${PLAYLIST_ID}&key=${YT_KEY}`
-  );
-  const data = await res.json();
-  playlistVideos = (data.items ?? []).map((item: any) => ({
-    id: item.snippet.resourceId.videoId,
-    title: item.snippet.title,
-    thumbnail: item.snippet.thumbnails?.medium?.url
-      ?? `https://img.youtube.com/vi/${item.snippet.resourceId.videoId}/mqdefault.jpg`,
-  }));
+  if (YT_KEY) {
+    const res = await fetch(
+      `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=${MAX_YT_VIDEOS}&playlistId=${PLAYLIST_ID}&key=${YT_KEY}`
+    );
+    const data = await res.json();
+    playlistVideos = (data.items ?? []).map((item: any) => ({
+      id: item.snippet.resourceId.videoId,
+      title: item.snippet.title,
+      thumbnail: item.snippet.thumbnails?.medium?.url
+        ?? `https://img.youtube.com/vi/${item.snippet.resourceId.videoId}/mqdefault.jpg`,
+    }));
+  }
 } catch (_) {}
+
+if (playlistVideos.length === 0) {
+  try {
+    const rssRes = await fetch(`https://www.youtube.com/feeds/videos.xml?playlist_id=${PLAYLIST_ID}`);
+    const rss = await rssRes.text();
+    const entries = rss.split('<entry>').slice(1, MAX_YT_VIDEOS + 1);
+
+    playlistVideos = entries.map((entry) => {
+      const idMatch = entry.match(/<yt:videoId>([^<]+)<\/yt:videoId>/);
+      const titleMatch = entry.match(/<title>([^<]+)<\/title>/);
+      const thumbMatch = entry.match(/media:thumbnail[^>]+url="([^"]+)"/);
+      const id = idMatch?.[1] ?? '';
+
+      return {
+        id,
+        title: titleMatch?.[1] ?? 'Video de YouTube',
+        thumbnail: thumbMatch?.[1] ?? `https://img.youtube.com/vi/${id}/mqdefault.jpg`,
+      };
+    }).filter((video) => video.id);
+  } catch (_) {}
+}
 
 const skills = [
   { name: 'PHP', level: 95 },
