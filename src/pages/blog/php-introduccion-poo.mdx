@@ -1,0 +1,266 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'Aprendiendo PHP orientado a objetos'
+description: 'Una introducción clara a la programación orientada a objetos en PHP: clases, objetos, propiedades, métodos, constructores, encapsulación y herencia.'
+date: '2022-01-06'
+tags: ['PHP']
+category: 'php'
+readingTime: '7 min'
+---
+
+Si ya llevas algo de tiempo escribiendo PHP, llega un momento en el que empiezas a notar que resolver todo con archivos sueltos, funciones dispersas y variables globales se vuelve difícil de mantener. Ahí es donde la **programación orientada a objetos** empieza a tener mucho más sentido.
+
+La orientación a objetos en PHP no es solo una forma “más elegante” de escribir código. En la práctica te ayuda a organizar mejor la lógica, reutilizar comportamiento y construir proyectos que escalan con menos caos.
+
+![Ruta visual para aprender POO en PHP](/images/blog/php-poo/ruta-poo-php.png)
+
+## ¿Qué significa programar orientado a objetos?
+
+La idea base es representar cosas del sistema como **objetos**. Cada objeto tiene:
+
+- **propiedades**: sus datos
+- **métodos**: lo que puede hacer
+
+En vez de pensar el código solo como una secuencia de instrucciones, empiezas a pensar en entidades con responsabilidades propias.
+
+Por ejemplo, en un sistema de tienda podrías tener:
+
+- `Producto`
+- `Usuario`
+- `Pedido`
+- `Carrito`
+
+Cada una tendría información y comportamiento relacionados.
+
+## Clase y objeto
+
+Una **clase** es como un molde. Un **objeto** es una instancia concreta creada a partir de ese molde.
+
+Ejemplo básico:
+
+```php
+<?php
+
+class Usuario
+{
+    public string $nombre;
+
+    public function saludar(): string
+    {
+        return "Hola, soy " . $this->nombre;
+    }
+}
+
+$usuario = new Usuario();
+$usuario->nombre = "Eduardo";
+
+echo $usuario->saludar();
+```
+
+Aquí:
+
+- `Usuario` es la clase
+- `$usuario` es el objeto
+- `nombre` es una propiedad
+- `saludar()` es un método
+
+## ¿Qué es `$this`?
+
+En PHP orientado a objetos, `$this` hace referencia al **objeto actual**.
+
+Eso permite acceder a sus propias propiedades y métodos desde dentro de la clase.
+
+```php
+<?php
+
+class Producto
+{
+    public string $nombre;
+
+    public function mostrarNombre(): string
+    {
+        return $this->nombre;
+    }
+}
+```
+
+Cuando ves `$this->nombre`, estás diciendo: “toma la propiedad `nombre` del objeto actual”.
+
+## Constructor
+
+El constructor te permite inicializar valores en el momento de crear el objeto.
+
+```php
+<?php
+
+class Producto
+{
+    public string $nombre;
+    public float $precio;
+
+    public function __construct(string $nombre, float $precio)
+    {
+        $this->nombre = $nombre;
+        $this->precio = $precio;
+    }
+}
+
+$producto = new Producto("Laptop", 15999.99);
+```
+
+Con esto no necesitas crear el objeto vacío y luego rellenar cada propiedad manualmente.
+
+## Visibilidad: `public`, `private` y `protected`
+
+Una de las ideas más importantes de la POO es controlar qué partes de una clase pueden ser accedidas desde fuera.
+
+### `public`
+
+Se puede usar desde cualquier parte.
+
+```php
+public string $nombre;
+```
+
+### `private`
+
+Solo puede usarse dentro de la misma clase.
+
+```php
+private string $password;
+```
+
+### `protected`
+
+Puede usarse dentro de la clase y también en clases hijas.
+
+```php
+protected string $token;
+```
+
+Esto ayuda a proteger el estado interno del objeto y evitar que cualquier parte del sistema modifique datos delicados sin control.
+
+## Encapsulación
+
+La encapsulación consiste en esconder detalles internos y exponer solo lo necesario.
+
+Un ejemplo clásico sería evitar que el password de un usuario sea modificable libremente:
+
+```php
+<?php
+
+class Usuario
+{
+    private string $password;
+
+    public function setPassword(string $password): void
+    {
+        if (strlen($password) < 8) {
+            throw new InvalidArgumentException("La contraseña es muy corta");
+        }
+
+        $this->password = password_hash($password, PASSWORD_DEFAULT);
+    }
+}
+```
+
+Aquí no permites que el password se toque directamente. Obligas a pasar por un método que valida y transforma el valor.
+
+## Herencia
+
+La herencia permite crear una clase nueva a partir de otra, reutilizando comportamiento.
+
+```php
+<?php
+
+class Persona
+{
+    public string $nombre;
+
+    public function saludar(): string
+    {
+        return "Hola, soy " . $this->nombre;
+    }
+}
+
+class Empleado extends Persona
+{
+    public string $puesto;
+}
+
+$empleado = new Empleado();
+$empleado->nombre = "Ana";
+$empleado->puesto = "Desarrolladora";
+
+echo $empleado->saludar();
+```
+
+`Empleado` hereda de `Persona`, así que puede reutilizar `nombre` y `saludar()`.
+
+## Reutilización y mantenimiento
+
+Ahí está una de las mayores ventajas de trabajar con objetos en PHP:
+
+- reduces duplicación
+- separas mejor responsabilidades
+- el código se vuelve más fácil de leer
+- escalar el proyecto resulta menos doloroso
+
+No significa que todo deba convertirse en clase por obligación. La clave está en usar objetos cuando realmente ayudan a modelar mejor el problema.
+
+## Un ejemplo más cercano a un proyecto real
+
+Imagina una clase para manejar pagos:
+
+```php
+<?php
+
+class Pago
+{
+    public float $monto;
+    public string $estado;
+
+    public function __construct(float $monto)
+    {
+        $this->monto = $monto;
+        $this->estado = "pendiente";
+    }
+
+    public function marcarComoPagado(): void
+    {
+        $this->estado = "pagado";
+    }
+}
+```
+
+Aquí el objeto no solo guarda información. También define cómo cambia su estado.
+
+Ese pequeño detalle hace que la lógica del dominio se lea mucho mejor.
+
+## ¿Cuándo conviene aprender esto?
+
+Mi opinión: cuanto antes empieces a entender la orientación a objetos en PHP, mejor.
+
+No porque debas usar POO para absolutamente todo, sino porque:
+
+- la mayoría de frameworks PHP modernos la usan
+- Composer y el ecosistema de paquetes giran mucho alrededor de clases
+- leer código ajeno se vuelve mucho más fácil
+- te prepara para Laravel, Symfony y arquitecturas más limpias
+
+## En resumen
+
+Aprender PHP orientado a objetos es dar un paso importante desde “hacer que funcione” hacia “hacer que el proyecto se mantenga bien con el tiempo”.
+
+Las piezas que más vale la pena dominar primero son:
+
+- clases
+- objetos
+- propiedades
+- métodos
+- constructores
+- visibilidad
+- encapsulación
+- herencia
+
+Con esa base ya puedes leer mucho mejor código moderno en PHP y empezar a estructurar tus propios proyectos con más orden.
