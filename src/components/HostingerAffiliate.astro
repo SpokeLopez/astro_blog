@@ -1,0 +1,183 @@
+---
+/** Enlace de afiliado Hostinger (código 1SPOKE85 en la URL). */
+const HOSTINGER_REF_URL = 'https://www.hostinger.com/mx?REFERRALCODE=1SPOKE85';
+const REFERRAL_CODE = '1SPOKE85';
+
+interface Props {
+  variant?: 'sidebar' | 'compact';
+}
+
+const { variant = 'sidebar' } = Astro.props;
+---
+
+<aside
+  class:list={['hostinger-affiliate', variant === 'compact' && 'hostinger-affiliate--compact']}
+  aria-label="Recomendación de hosting"
+>
+  <div class="hostinger-affiliate__inner">
+    <span class="hostinger-affiliate__badge">RECOMENDADO</span>
+    <p class="hostinger-affiliate__brand">Hostinger</p>
+    {variant === 'sidebar' && (
+      <p class="hostinger-affiliate__text">
+        Mi hosting preferido para clientes y side projects
+      </p>
+    )}
+    {variant === 'compact' && (
+      <p class="hostinger-affiliate__text hostinger-affiliate__text--short">
+        Mi hosting para clientes y side projects. Obtén un descuento con mi código de afiliado.
+      </p>
+    )}
+    <p class="hostinger-affiliate__code">
+      Descuento con <strong>{REFERRAL_CODE}</strong>
+    </p>
+    <a
+      href={HOSTINGER_REF_URL}
+      class="hostinger-affiliate__cta"
+      target="_blank"
+      rel="sponsored noopener noreferrer"
+    >
+      Ver planes y precios
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+        <polyline points="15 3 21 3 21 9"></polyline>
+        <line x1="10" y1="14" x2="21" y2="3"></line>
+      </svg>
+    </a>
+    <p class="hostinger-affiliate__disclosure">Enlace de afiliado</p>
+  </div>
+</aside>
+
+<style>
+  .hostinger-affiliate {
+    --hostinger-brand: #673de6;
+    --hostinger-brand-hover: #7c56f0;
+  }
+
+  .hostinger-affiliate__inner {
+    padding: var(--space-lg);
+    background: linear-gradient(
+      145deg,
+      var(--color-bg-card) 0%,
+      color-mix(in srgb, var(--hostinger-brand) 8%, var(--color-bg-card)) 100%
+    );
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+  }
+
+  [data-theme='light'] .hostinger-affiliate__inner {
+    box-shadow: 0 4px 20px rgba(103, 61, 230, 0.08);
+  }
+
+  .hostinger-affiliate__badge {
+    display: inline-block;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--hostinger-brand);
+    background: color-mix(in srgb, var(--hostinger-brand) 14%, transparent);
+    padding: 0.2em 0.55em;
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--space-sm);
+  }
+
+  .hostinger-affiliate__brand {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--space-sm);
+    letter-spacing: -0.02em;
+  }
+
+  .hostinger-affiliate__text {
+    font-size: 0.8125rem;
+    line-height: 1.55;
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-md);
+  }
+
+  .hostinger-affiliate__text--short {
+    margin-bottom: var(--space-xs);
+  }
+
+  .hostinger-affiliate__code {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-md);
+  }
+
+  .hostinger-affiliate__code strong {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--color-text);
+    letter-spacing: 0.04em;
+  }
+
+  .hostinger-affiliate__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    width: 100%;
+    padding: 0.65em 1em;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #fff !important;
+    text-decoration: none !important;
+    background: var(--hostinger-brand);
+    border-radius: var(--radius-md);
+    transition: background-color 0.2s ease, transform 0.15s ease;
+  }
+
+  .hostinger-affiliate__cta:hover {
+    background: var(--hostinger-brand-hover);
+    color: #fff !important;
+    transform: translateY(-1px);
+  }
+
+  .hostinger-affiliate__disclosure {
+    margin-top: var(--space-sm);
+    font-size: 0.6875rem;
+    color: var(--color-text-muted);
+    text-align: center;
+  }
+
+  /* Barra fija en móvil (solo cuando el padre usa .post-affiliate-mobile) */
+  .hostinger-affiliate--compact .hostinger-affiliate__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm) var(--space-md);
+    padding: var(--space-md) var(--space-lg);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  }
+
+  .hostinger-affiliate--compact .hostinger-affiliate__badge,
+  .hostinger-affiliate--compact .hostinger-affiliate__disclosure {
+    display: none;
+  }
+
+  .hostinger-affiliate--compact .hostinger-affiliate__brand {
+    margin: 0;
+    font-size: 0.9375rem;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .hostinger-affiliate--compact .hostinger-affiliate__code {
+    margin: 0;
+    font-size: 0.6875rem;
+    order: 3;
+    width: 100%;
+    text-align: center;
+  }
+
+  .hostinger-affiliate--compact .hostinger-affiliate__cta {
+    width: auto;
+    flex-shrink: 0;
+    padding: 0.5em 1rem;
+    order: 2;
+  }
+</style>

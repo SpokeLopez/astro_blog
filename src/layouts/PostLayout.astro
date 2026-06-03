@@ -1,5 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
+import HostingerAffiliate from '../components/HostingerAffiliate.astro';
+import CalBooking from '../components/CalBooking.astro';
 
 interface Props {
   frontmatter: {
@@ -41,6 +43,7 @@ const tagColors: Record<string, string> = {
 ---
 
 <BaseLayout title={`${frontmatter.title} | DevTips`} description={frontmatter.description}>
+  <div class="post-layout">
   <article class="post">
     <header class="post-header">
       <div class="post-meta">
@@ -74,6 +77,11 @@ const tagColors: Record<string, string> = {
     <div class="post-content">
       <slot />
     </div>
+
+    <aside class="post-asides-mobile" aria-label="Enlaces útiles">
+      <HostingerAffiliate variant="sidebar" />
+      <CalBooking variant="sidebar" />
+    </aside>
     
     <footer class="post-footer">
       <div class="share-section">
@@ -112,6 +120,14 @@ const tagColors: Record<string, string> = {
       </a>
     </footer>
   </article>
+
+  <div class="post-sidebar" aria-hidden="false">
+    <div class="post-sidebar__stack">
+      <HostingerAffiliate variant="sidebar" />
+      <CalBooking variant="sidebar" />
+    </div>
+  </div>
+  </div>
 </BaseLayout>
 
 <script>
@@ -136,9 +152,73 @@ const tagColors: Record<string, string> = {
 </script>
 
 <style>
-  .post {
-    max-width: var(--max-width-content);
+  .post-layout {
+    --post-sidebar-width: 260px;
+    --post-header-offset: 5.5rem;
+    /* Margen lateral del <main> cuando el viewport es más ancho que --max-width-wide */
+    --main-inline-gutter: max(
+      var(--space-md),
+      calc((100vw - var(--max-width-wide)) / 2)
+    );
+    display: grid;
+    grid-template-columns: minmax(0, var(--max-width-content)) var(--post-sidebar-width);
+    gap: var(--space-2xl);
+    align-items: start;
+    width: 100%;
+    max-width: calc(var(--max-width-content) + var(--post-sidebar-width) + var(--space-2xl));
     margin: 0 auto;
+  }
+
+  .post {
+    max-width: none;
+    margin: 0;
+    min-width: 0;
+  }
+
+  /* Fijo en viewport: visible durante todo el scroll (columna del grid reserva el espacio) */
+  .post-sidebar {
+    position: relative;
+    width: var(--post-sidebar-width);
+    min-height: 1px;
+  }
+
+  .post-sidebar__stack {
+    position: fixed;
+    top: var(--post-header-offset);
+    right: calc(var(--main-inline-gutter) + var(--space-md));
+    width: var(--post-sidebar-width);
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    max-height: calc(100vh - var(--post-header-offset) - var(--space-md));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  /* Solo móvil/tablet: al final del artículo, en flujo (no flotante) */
+  .post-asides-mobile {
+    display: none;
+  }
+
+  @media (max-width: 1024px) {
+    .post-layout {
+      grid-template-columns: 1fr;
+      max-width: var(--max-width-content);
+    }
+
+    .post-sidebar {
+      display: none;
+    }
+
+    .post-asides-mobile {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+      margin-top: var(--space-3xl);
+      padding-top: var(--space-2xl);
+      border-top: 1px solid var(--color-border);
+    }
   }
 
   .post-header {

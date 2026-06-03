@@ -8,6 +8,8 @@ const sortedPosts = homeBlogPosts
   .sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime())
   .slice(0, 3);
 
+const CAL_PROFILE_URL = 'https://cal.com/eduardo-lopez-nmf4id';
+
 const PLAYLIST_ID = 'PLVSc1l65FPFh_xUmQtgfaYSSEete1XPku';
 const YT_KEY = import.meta.env.YOUTUBE_API_KEY;
 let playlistVideos: { id: string; title: string; thumbnail: string }[] = [];
@@ -412,15 +414,32 @@ const experience = [
   <section class="contact-cta">
     <div class="cta-content">
       <h2>¿Tienes un proyecto en mente?</h2>
-      <p>Estoy disponible para colaboraciones, consultorías o simplemente para platicar sobre código.</p>
+      <p>
+        Reserva una videollamada de <strong>15 o 30 minutos</strong> en mi calendario.
+        Ideal para proyectos, consultoría, entrevistas o platicar sobre código.
+      </p>
       <div class="cta-actions">
-        <a href="mailto:elopez@comsoft-mexico.com" class="btn btn-primary">
-          Enviar email
+        <a
+          href={CAL_PROFILE_URL}
+          class="btn btn-primary btn-cal"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          Agendar reunión
         </a>
-        <div class="contact-info">
-          <span>elopez@comsoft-mexico.com</span>
-          <span>+52 55 4985 8776</span>
+        <div class="cta-durations" aria-hidden="true">
+          <span>15 min</span>
+          <span>30 min</span>
         </div>
+        <p class="cta-cal-hint">
+          <a href={CAL_PROFILE_URL} target="_blank" rel="noopener noreferrer">cal.com/eduardo-lopez</a>
+        </p>
       </div>
     </div>
   </section>
@@ -1037,14 +1056,49 @@ const experience = [
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--space-lg);
+    gap: var(--space-md);
   }
 
-  .contact-info {
+  .btn-cal {
+    gap: var(--space-sm);
+    padding: 0.85em 1.5em;
+    font-size: 1rem;
+  }
+
+  .cta-durations {
     display: flex;
-    gap: var(--space-lg);
-    font-size: 0.875rem;
+    gap: var(--space-sm);
+  }
+
+  .cta-durations span {
+    font-size: 0.8125rem;
+    font-weight: 500;
     color: var(--color-text-muted);
+    padding: 0.25em 0.65em;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-bg-card);
+  }
+
+  .cta-cal-hint {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  .cta-cal-hint a {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .cta-cal-hint a:hover {
+    color: var(--color-accent);
+  }
+
+  .cta-content :global(strong) {
+    color: var(--color-text);
+    font-weight: 600;
   }
 
   /* Responsive */
@@ -1095,11 +1149,6 @@ const experience = [
 
     .tiktok-grid {
       grid-template-columns: 1fr 1fr;
-    }
-
-    .contact-info {
-      flex-direction: column;
-      gap: var(--space-sm);
     }
 
     .timeline-wrapper {
