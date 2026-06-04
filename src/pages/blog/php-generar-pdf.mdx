@@ -1,0 +1,266 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'Cómo generar archivos PDF con PHP'
+description: 'Una guía práctica para generar PDFs con PHP, repasando librerías populares como FPDF, TCPDF, Dompdf y HTML2PDF, con ejemplos y criterios para elegir mejor.'
+date: '2022-01-28'
+tags: ['PHP']
+category: 'php'
+readingTime: '7 min'
+---
+
+En muchos proyectos llega un momento en el que necesitas generar documentos descargables: facturas, reportes, comprobantes, contratos o listados. Y una de las soluciones más comunes en backend es hacerlo directamente desde **PHP**.
+
+La buena noticia es que PHP tiene varias librerías para resolver esto. La menos buena es que no todas sirven para lo mismo. Algunas funcionan mejor cuando quieres dibujar el PDF manualmente, otras cuando ya tienes HTML y CSS, y otras cuando prefieres delegar el trabajo a una API externa.
+
+## ¿Qué significa generar un PDF con PHP?
+
+En términos prácticos, significa construir un archivo PDF desde tu aplicación para que el usuario pueda:
+
+- descargarlo
+- visualizarlo en el navegador
+- almacenarlo
+- o enviarlo por correo
+
+Dependiendo del caso, el PDF puede generarse:
+
+- desde coordenadas y texto dibujado manualmente
+- desde una plantilla HTML
+- desde una librería especializada
+- o desde un servicio externo
+
+## La decisión importante: ¿desde HTML o desde código puro?
+
+Antes de elegir librería, yo suelo hacer esta pregunta:
+
+**¿Ya tengo el diseño del documento en HTML/CSS o necesito construir el PDF desde cero?**
+
+Eso cambia bastante la elección.
+
+- Si ya tienes una vista parecida a una página web, herramientas como **Dompdf** o **HTML2PDF** suelen ser más cómodas.
+- Si necesitas más control sobre coordenadas, celdas, cabeceras, firmas o formatos muy específicos, **FPDF** o **TCPDF** pueden encajar mejor.
+
+## 1. FPDF
+
+FPDF es una de las librerías más conocidas para generar PDFs en PHP. Funciona muy bien cuando quieres construir el documento de forma programática.
+
+### Qué me gusta de FPDF
+
+- es simple de entender
+- tiene buen recorrido en la comunidad PHP
+- permite agregar texto, imágenes, páginas, cabeceras y pies
+- sirve bien para PDFs relativamente estructurados
+
+### Cuándo la usaría
+
+Cuando el documento no depende mucho de HTML y más bien quieres construirlo como un layout controlado por coordenadas y bloques.
+
+### Idea básica de uso
+
+```php
+<?php
+
+require 'fpdf.php';
+
+$pdf = new FPDF();
+$pdf->AddPage();
+$pdf->SetFont('Arial', 'B', 16);
+$pdf->Cell(40, 10, 'Hola mundo PDF');
+$pdf->Output();
+```
+
+FPDF es buena para empezar porque deja muy claro el concepto: crear página, elegir fuente, escribir contenido y sacar el resultado.
+
+## 2. TCPDF
+
+TCPDF es una opción más robusta y más cargada de funcionalidades.
+
+### Lo que aporta
+
+- soporte amplio para encabezados y pies
+- mejor manejo de Unicode
+- soporte para códigos de barras y QR
+- más opciones avanzadas de formato
+- mayor control para documentos empresariales
+
+### Cuándo la usaría
+
+Cuando el PDF necesita más complejidad: etiquetas, códigos, configuraciones más finas, documentos largos o requisitos más formales.
+
+La curva es un poco más pesada que FPDF, pero también ofrece bastante más.
+
+### Ejemplo práctico con TCPDF
+
+Un caso bastante realista sería generar un comprobante o una etiqueta con encabezado, bloques de información y un layout un poco más formal.
+
+```php
+<?php
+
+require_once 'vendor/autoload.php';
+
+$pdf = new TCPDF();
+$pdf->SetMargins(15, 15, 15);
+$pdf->AddPage();
+
+$pdf->SetFont('helvetica', 'B', 16);
+$pdf->Cell(0, 10, 'Comprobante de Pago', 0, 1, 'C');
+
+$pdf->Ln(4);
+$pdf->SetFont('helvetica', '', 11);
+$pdf->Cell(0, 8, 'Cliente: Eduardo Lopez', 0, 1);
+$pdf->Cell(0, 8, 'Concepto: Mantenimiento Enero 2026', 0, 1);
+$pdf->Cell(0, 8, 'Monto: $600.00', 0, 1);
+$pdf->Cell(0, 8, 'Estado: Pagado', 0, 1);
+
+$pdf->Ln(8);
+$pdf->SetFont('helvetica', '', 10);
+$pdf->MultiCell(
+    0,
+    8,
+    'Este documento fue generado automaticamente desde PHP usando TCPDF como parte del sistema de gestion.',
+    0,
+    'L'
+);
+
+$pdf->Output('comprobante.pdf', 'I');
+```
+
+Este ejemplo deja ver bastante bien el tipo de uso donde TCPDF destaca:
+
+- documentos con formato más controlado
+- encabezados y secciones bien definidas
+- salida profesional sin depender tanto de HTML
+
+## 3. Dompdf
+
+Dompdf suele ser una de las opciones más cómodas cuando ya piensas el documento como una vista HTML.
+
+### Por qué es tan práctica
+
+Porque te permite trabajar con HTML y CSS en un formato mucho más natural si vienes del mundo web.
+
+Instalación por Composer:
+
+```bash
+composer require dompdf/dompdf
+```
+
+Ejemplo sencillo:
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+use Dompdf\Dompdf;
+
+$dompdf = new Dompdf();
+
+$html = '
+  <h1>Reporte de pagos</h1>
+  <p>Este documento fue generado desde PHP.</p>
+';
+
+$dompdf->loadHtml($html);
+$dompdf->setPaper('A4', 'portrait');
+$dompdf->render();
+$dompdf->stream('reporte.pdf');
+```
+
+### Cuándo la usaría
+
+Cuando ya tienes una plantilla visual o cuando el documento se parece mucho a una página HTML normal: tablas, títulos, estilos básicos, secciones y bloques.
+
+## 4. HTML2PDF
+
+HTML2PDF también apunta a la idea de transformar HTML en PDF.
+
+Instalación:
+
+```bash
+composer require spipu/html2pdf
+```
+
+Ejemplo básico:
+
+```php
+<?php
+
+require 'vendor/autoload.php';
+
+use Spipu\Html2Pdf\Html2Pdf;
+
+$html2pdf = new Html2Pdf();
+$html2pdf->writeHTML('<h1>PDF generado con HTML2PDF</h1>');
+$html2pdf->output();
+```
+
+### Cuándo puede servirte
+
+Cuando quieres una solución cercana al mundo HTML y CSS, pero con una librería que ya viene bastante enfocada a ese tipo de conversión.
+
+## ¿Y las APIs externas?
+
+Además de librerías locales, también existen plataformas que permiten generar PDFs desde una API, por ejemplo a partir de plantillas o HTML enviado por request.
+
+Eso puede tener sentido cuando:
+
+- no quieres procesar todo en tu servidor
+- necesitas plantillas reutilizables
+- generas documentos de forma intensiva
+- o quieres integrar la generación con otros flujos
+
+La ventaja es la velocidad de implementación. La desventaja es que introduces dependencia externa, costos y una capa más en el flujo.
+
+## Entonces, ¿cuál elegiría?
+
+Si lo resumiera rápido:
+
+### FPDF
+
+Buena para documentos simples y controlados manualmente.
+
+### TCPDF
+
+Buena para necesidades más avanzadas o empresariales.
+
+### Dompdf
+
+Muy buena si ya trabajas cómodo con HTML y CSS.
+
+### HTML2PDF
+
+También útil para conversión desde HTML, dependiendo del tipo de documento y de cómo prefieras estructurarlo.
+
+## Mi criterio práctico
+
+Si estuviera empezando hoy y quisiera generar reportes, comprobantes o documentos internos desde una app PHP, mi primer filtro sería este:
+
+- **si tengo una vista HTML**: probaría **Dompdf**
+- **si necesito control más bajo nivel**: miraría **FPDF**
+- **si el documento es más complejo o empresarial**: evaluaría **TCPDF**
+
+Eso evita caer en la trampa de instalar una librería “porque sí” sin pensar realmente cómo vas a construir el documento.
+
+## Cosas que conviene tener presentes
+
+Generar PDFs no es solo “sacar un archivo”. También suele implicar:
+
+- tipografías
+- tamaño de papel
+- saltos de página
+- imágenes
+- tablas largas
+- rendimiento
+- codificación UTF-8
+
+Por eso, antes de comprometerte con una librería, conviene hacer una prueba con un caso real del proyecto y no solo con un “Hola mundo”.
+
+## En resumen
+
+PHP tiene muy buenas opciones para generar PDFs, pero la mejor elección depende de cómo piensas el documento:
+
+- si lo construyes como layout manual
+- si ya lo tienes como HTML/CSS
+- o si quieres apoyarte en una API externa
+
+Si buscas algo práctico y rápido para documentos con estructura web, **Dompdf** suele ser de los caminos más cómodos. Si quieres más control o más funciones avanzadas, **FPDF** y **TCPDF** siguen siendo opciones muy válidas.

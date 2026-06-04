@@ -19,7 +19,7 @@ const { variant = 'sidebar' } = Astro.props;
     <p class="hostinger-affiliate__brand">Hostinger</p>
     {variant === 'sidebar' && (
       <p class="hostinger-affiliate__text">
-        Mi hosting preferido para clientes y side projects
+        Mi hosting preferido para clientes y side projects. Obtén un descuento con mi código de afiliado.
       </p>
     )}
     {variant === 'compact' && (
@@ -62,11 +62,11 @@ const { variant = 'sidebar' } = Astro.props;
     );
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 10px 24px rgba(17, 24, 39, 0.08), 0 2px 8px rgba(17, 24, 39, 0.04);
   }
 
   [data-theme='light'] .hostinger-affiliate__inner {
-    box-shadow: 0 4px 20px rgba(103, 61, 230, 0.08);
+    box-shadow: 0 12px 28px rgba(103, 61, 230, 0.07), 0 2px 8px rgba(103, 61, 230, 0.04);
   }
 
   .hostinger-affiliate__badge {
