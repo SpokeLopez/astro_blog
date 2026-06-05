@@ -1,0 +1,231 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'Gap decorations en CSS: una nueva forma de estilizar los espacios'
+description: 'Qué son los gap decorations en CSS, cómo funcionan con grid y flex, y por qué ayudan a evitar hacks con bordes, pseudoelementos o marcado extra.'
+date: '2026-06-05'
+tags: ['CSS']
+category: 'tutorial'
+readingTime: '6 min'
+---
+
+import CodePen from '../../components/CodePen.astro';
+
+Cuando usamos `gap` en CSS normalmente pensamos solo en separación: el espacio entre columnas, filas o elementos flexibles. Y durante mucho tiempo eso estuvo bien... hasta que queríamos **estilizar ese espacio**.
+
+Ahí era donde empezaban los hacks: bordes en los hijos, pseudoelementos, cálculos raros o markup adicional solo para dibujar líneas divisorias.
+
+La buena noticia es que eso está cambiando con **gap decorations**, una mejora reciente de CSS que permite decorar esos espacios de forma mucho más natural.
+
+Tomando como referencia la documentación de [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/gap), el artículo de [CSS-Tricks](https://css-tricks.com/the-gap-strikes-back-now-stylable/) y la guía de [Lenguaje CSS](https://lenguajecss.com/css/grid/css-gaps/), aquí va una introducción clara para entender qué resuelve esta novedad y cómo empezar a usarla.
+
+## Antes de todo: qué hace `gap`
+
+La propiedad `gap` define el espacio entre filas y columnas, y hoy aplica a **grid**, **flex** y **multi-column**.
+
+```css
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+```
+
+También puedes controlar filas y columnas por separado:
+
+```css
+.layout {
+  gap: 12px 24px;
+}
+```
+
+En ese caso:
+
+- `12px` corresponde al espacio entre filas
+- `24px` corresponde al espacio entre columnas
+
+`gap` ya era bastante útil por sí solo, pero seguía teniendo una limitación importante: **el espacio era vacío, no decorable**, al menos no de forma directa en grid y flex.
+
+## Entonces, ¿qué son los gap decorations?
+
+Los **gap decorations** permiten **dibujar líneas o decoraciones dentro del gap** sin tocar el layout ni agregar elementos extra.
+
+Dicho de forma simple: ahora puedes decirle al navegador no solo “deja 16px entre estos bloques”, sino también “dibuja una línea dentro de ese espacio”.
+
+Esto acerca grid y flex a algo que ya existía en multi-column con `column-rule`, pero ahora de una manera más consistente.
+
+## Lo interesante de esta mejora
+
+Lo más valioso de esta característica es que:
+
+- no altera la estructura HTML
+- no afecta el tamaño real del layout
+- evita pseudoelementos innecesarios
+- hace más fácil mantener separadores en interfaces complejas
+
+Para componentes como dashboards, listas, calendarios, tablas visuales o paneles administrativos, eso está bastante bien.
+
+## Propiedades clave
+
+### `column-rule`
+
+Esta propiedad ya existía para multi-column, pero la idea de gap decorations extiende su utilidad a otros contextos modernos de layout.
+
+```css
+.paneles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  column-rule: 1px solid #cbd5e1;
+}
+```
+
+Sirve para dibujar decoraciones en los espacios verticales.
+
+### `row-rule`
+
+Esta es la pieza nueva que resulta más llamativa cuando trabajas con grid o con layouts que tienen varias filas visuales.
+
+```css
+.paneles {
+  row-rule: 1px solid #cbd5e1;
+}
+```
+
+Con ella puedes decorar los espacios horizontales.
+
+### `rule`
+
+Si quieres aplicar la misma configuración a filas y columnas, puedes usar el atajo:
+
+```css
+.paneles {
+  rule: 1px solid #cbd5e1;
+}
+```
+
+Es una forma muy cómoda de empezar.
+
+## Un ejemplo práctico
+
+Imagina una cuadrícula de tarjetas simples:
+
+```css
+.features {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  rule: 1px solid #cbd5e1;
+}
+```
+
+Con eso, además de dejar separación, el navegador dibuja líneas entre los bloques usando el espacio del `gap`.
+
+La diferencia importante frente a usar bordes en cada tarjeta es que **la decoración pertenece al contenedor**, no a cada hijo. Eso hace que la solución sea más limpia y más fácil de mantener.
+
+## También admite patrones más interesantes
+
+Una de las partes más potentes es que estas decoraciones permiten variar ancho, color o estilo con varios valores, e incluso usar `repeat()`.
+
+Por ejemplo:
+
+```css
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  row-rule-width: 2px, 1px;
+  row-rule-style: solid, dashed;
+  row-rule-color: #cbd5e1, #e2e8f0;
+}
+```
+
+Eso sirve muy bien para patrones visuales repetitivos, como:
+
+- calendarios
+- horarios
+- dashboards modulares
+- grids tipo tablero
+
+## Controlando cruces e intersecciones
+
+Cuando hay reglas horizontales y verticales al mismo tiempo, entran en juego propiedades como `row-rule-break`, `column-rule-break` o el atajo `rule-break`.
+
+La idea es definir qué pasa cuando dos decoraciones se cruzan:
+
+- si continúan
+- si se cortan en la intersección
+- o si respetan ciertos casos especiales
+
+Ejemplo:
+
+```css
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  column-rule: 1px solid #94a3b8;
+  row-rule: 1px solid #94a3b8;
+  rule-break: intersection;
+}
+```
+
+No es lo primero que necesitas aprender, pero sí es una propiedad muy útil cuando quieres un acabado visual más fino.
+
+## ¿Y el soporte?
+
+Aquí conviene ser prácticos: esta es una funcionalidad **muy reciente**.
+
+Según Chrome for Developers, los gap decorations están disponibles en **Chrome y Edge desde la versión 149**, así que hoy lo más sensato es tratarlos como una **mejora progresiva**.
+
+Eso significa:
+
+- si el navegador lo soporta, se ven las decoraciones
+- si no lo soporta, el layout sigue funcionando con su `gap` normal
+
+Ese comportamiento los hace bastante seguros para experimentar, siempre que no dependas de ellos para algo crítico de la interfaz.
+
+## Recomendación real
+
+Si quieres probarlos hoy, yo los usaría así:
+
+1. construir primero el layout solo con `gap`
+2. añadir decoraciones como mejora visual
+3. envolverlo con `@supports` si quieres ser más explícito
+
+Por ejemplo:
+
+```css
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+@supports (rule: 1px solid #cbd5e1) {
+  .stats-grid {
+    rule: 1px solid #cbd5e1;
+  }
+}
+```
+
+Ese enfoque evita sustos y mantiene el layout estable.
+
+## Demo en vivo
+
+Para aterrizarlo mejor, preparé un ejemplo pequeño en CodePen con una cuadrícula de tarjetas. La idea es simple: primero construir el layout normal con `gap`, y luego añadir la decoración con `rule` como mejora visual sin tocar el HTML.
+
+<CodePen
+  id="OPbwQxP"
+  user="SpokeLopez-1471233183"
+  title="CSS gap decorations con rule"
+  height={460}
+  defaultTab="result"
+/>
+
+## En resumen
+
+`gap` ya era una propiedad clave para separar elementos en grid, flex y multi-column. Lo nuevo con **gap decorations** es que ahora esos espacios también se pueden **dibujar y estilizar** de forma nativa, sin hacks incómodos.
+
+Todavía es una característica joven, pero apunta a algo muy útil: que el propio layout pueda encargarse tanto de la separación como de su tratamiento visual.
+
+Si trabajas mucho con interfaces modulares, paneles o grids visuales, vale la pena empezar a seguirla de cerca.
