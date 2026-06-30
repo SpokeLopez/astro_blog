@@ -235,11 +235,19 @@ const experience = [
 
   <!-- About Section -->
   <section class="about-section">
-    <div class="section-header">
-      <span class="section-tag">Sobre mí</span>
-      <h2>Hola, soy Spoke</h2>
+    <div class="section-header about-section-header">
+      <div>
+        <span class="section-tag">Sobre mí</span>
+        <h2>Hola, soy Spoke</h2>
+      </div>
+      <div>
+        <span class="section-tag section-tag--right">Stack</span>
+        <h2>Tecnologías</h2>
+      </div>
     </div>
+
     <div class="about-content">
+      <!-- Columna izquierda: bio -->
       <div class="about-text">
         <p>
           Llevo más de 8 años construyendo cosas en internet — tiendas, APIs, módulos, integraciones
@@ -260,20 +268,24 @@ const experience = [
           código completo, contexto real, sin relleno.
         </p>
       </div>
+
+      <!-- Columna derecha: tabs de tecnologías -->
       <div class="tech-stack-container">
-        <h3>Tecnologías</h3>
+
+        <div class="tech-tabs" role="tablist" aria-label="Categorías de tecnologías">
+          <button class="tech-tab active" role="tab" aria-selected="true" aria-controls="tab-lenguajes" data-tab="lenguajes">Lenguajes</button>
+          <button class="tech-tab" role="tab" aria-selected="false" aria-controls="tab-frameworks" data-tab="frameworks">Frameworks</button>
+          <button class="tech-tab" role="tab" aria-selected="false" aria-controls="tab-ecommerce" data-tab="ecommerce">eCommerce</button>
+          <button class="tech-tab" role="tab" aria-selected="false" aria-controls="tab-cloud" data-tab="cloud">Cloud</button>
+          <button class="tech-tab" role="tab" aria-selected="false" aria-controls="tab-databases" data-tab="databases">Bases de datos</button>
+        </div>
+
+      <!-- Tab: Lenguajes -->
+      <div class="tech-panel active" id="tab-lenguajes" role="tabpanel">
         <div class="tech-grid">
           <div class="tech-item">
-            <img src="https://cdn.simpleicons.org/php/777BB4/aaaaff" width="32" height="32" alt="PHP" loading="lazy" />
+            <img src="https://cdn.simpleicons.org/php/777BB4" width="32" height="32" alt="PHP" loading="lazy" />
             <span>PHP</span>
-          </div>
-          <div class="tech-item">
-            <img src="https://cdn.simpleicons.org/laravel/FF2D20/ff6b6b" width="32" height="32" alt="Laravel" loading="lazy" />
-            <span>Laravel</span>
-          </div>
-          <div class="tech-item">
-            <img src="https://cdn.simpleicons.org/symfony/ffffff/aaaaaa" width="32" height="32" alt="Symfony" loading="lazy" />
-            <span>Symfony</span>
           </div>
           <div class="tech-item">
             <img src="https://cdn.simpleicons.org/javascript/F7DF1E" width="32" height="32" alt="JavaScript" loading="lazy" />
@@ -282,6 +294,32 @@ const experience = [
           <div class="tech-item">
             <img src="https://cdn.simpleicons.org/typescript/3178C6" width="32" height="32" alt="TypeScript" loading="lazy" />
             <span>TypeScript</span>
+          </div>
+          <div class="tech-item">
+            <img src="https://cdn.simpleicons.org/html5/E34F26" width="32" height="32" alt="HTML5" loading="lazy" />
+            <span>HTML5</span>
+          </div>
+          <div class="tech-item">
+            <img src="https://cdn.simpleicons.org/css/1572B6" width="32" height="32" alt="CSS3" loading="lazy" />
+            <span>CSS3</span>
+          </div>
+          <div class="tech-item">
+            <img src="https://cdn.simpleicons.org/sass/CC6699" width="32" height="32" alt="Sass" loading="lazy" />
+            <span>Sass</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Frameworks -->
+      <div class="tech-panel" id="tab-frameworks" role="tabpanel" hidden>
+        <div class="tech-grid">
+          <div class="tech-item">
+            <img src="https://cdn.simpleicons.org/laravel/FF2D20" width="32" height="32" alt="Laravel" loading="lazy" />
+            <span>Laravel</span>
+          </div>
+          <div class="tech-item">
+            <img src="https://cdn.simpleicons.org/symfony/000000" width="32" height="32" alt="Symfony" loading="lazy" class="icon-adaptable" />
+            <span>Symfony</span>
           </div>
           <div class="tech-item">
             <img src="https://cdn.simpleicons.org/vuedotjs/4FC08D" width="32" height="32" alt="Vue.js" loading="lazy" />
@@ -296,23 +334,114 @@ const experience = [
             <span>Node.js</span>
           </div>
           <div class="tech-item">
-            <img src="https://cdn.simpleicons.org/angular/0F0F11/DD0031" width="32" height="32" alt="Angular" loading="lazy" />
+            <img src="https://cdn.simpleicons.org/angular/DD0031" width="32" height="32" alt="Angular" loading="lazy" />
             <span>Angular</span>
           </div>
           <div class="tech-item">
-            <img src="https://cdn.simpleicons.org/mysql/4479A1/6db0e8" width="32" height="32" alt="MySQL" loading="lazy" />
-            <span>MySQL</span>
+            <img src="https://cdn.simpleicons.org/ionic/3880FF" width="32" height="32" alt="Ionic" loading="lazy" />
+            <span>Ionic</span>
           </div>
           <div class="tech-item">
-            <img src="https://cdn.simpleicons.org/postgresql/4169E1/6b8ee8" width="32" height="32" alt="PostgreSQL" loading="lazy" />
-            <span>PostgreSQL</span>
+            <!-- Liquid (Shopify) — diseño con llaves usando paths -->
+            <svg viewBox="0 0 32 32" width="32" height="32" xmlns="http://www.w3.org/2000/svg" aria-label="Liquid">
+              <rect width="32" height="32" rx="5" fill="#7AB55C"/>
+              <!-- llave izquierda { -->
+              <path d="M11 7 Q8 7 8 10 L8 13 Q8 15 6 16 Q8 17 8 19 L8 22 Q8 25 11 25" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <!-- llave derecha } -->
+              <path d="M21 7 Q24 7 24 10 L24 13 Q24 15 26 16 Q24 17 24 19 L24 22 Q24 25 21 25" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <!-- guión del medio -->
+              <line x1="13.5" y1="16" x2="18.5" y2="16" stroke="white" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span>Liquid</span>
           </div>
+        </div>
+      </div>
+
+      <!-- Tab: eCommerce -->
+      <div class="tech-panel" id="tab-ecommerce" role="tabpanel" hidden>
+        <div class="tech-grid">
+          <div class="tech-item">
+            <svg viewBox="0 1.5 32 29" width="32" height="32" xmlns="http://www.w3.org/2000/svg" aria-label="Magento">
+              <path d="M16 2 L2 10 L2 26 L16 34 L30 26 L30 10 Z" fill="#EE672F"/>
+              <path d="M16 5.5 L5 11.8 L5 24.2 L8.5 26.2 L8.5 13.8 L16 9.2 L23.5 13.8 L23.5 26.2 L27 24.2 L27 11.8 Z" fill="#F9A87A"/>
+              <path d="M13.2 15.2 L13.2 25.8 L10.8 24.4 L10.8 13.8 Z" fill="white" opacity="0.9"/>
+              <path d="M18.8 15.2 L21.2 13.8 L21.2 24.4 L18.8 25.8 Z" fill="white" opacity="0.9"/>
+              <path d="M13.2 15.2 L16 13.5 L18.8 15.2 L16 16.9 Z" fill="white" opacity="0.7"/>
+            </svg>
+            <span>Magento</span>
+          </div>
+          <div class="tech-item">
+            <img src="https://cdn.simpleicons.org/shopify/96BF48" width="32" height="32" alt="Shopify" loading="lazy" />
+            <span>Shopify</span>
+          </div>
+          <div class="tech-item">
+            <img src="https://cdn.simpleicons.org/prestashop/DF0067" width="32" height="32" alt="PrestaShop" loading="lazy" />
+            <span>PrestaShop</span>
+          </div>
+          <div class="tech-item">
+            <img src="https://cdn.simpleicons.org/woocommerce/96588A" width="32" height="32" alt="WooCommerce" loading="lazy" />
+            <span>WooCommerce</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Cloud -->
+      <div class="tech-panel" id="tab-cloud" role="tabpanel" hidden>
+        <div class="tech-grid">
           <div class="tech-item">
             <svg viewBox="0 0 24 24" width="32" height="32" fill="#FF9900" xmlns="http://www.w3.org/2000/svg" aria-label="AWS"><path d="M6.763 10.036c0 .296.032.535.088.71.064.176.144.368.256.576.04.063.056.127.056.183 0 .08-.048.16-.152.24l-.503.335a.383.383 0 0 1-.208.072c-.08 0-.16-.04-.239-.112a2.47 2.47 0 0 1-.287-.375 6.18 6.18 0 0 1-.248-.471c-.622.734-1.405 1.101-2.347 1.101-.67 0-1.205-.191-1.596-.574-.391-.384-.59-.894-.59-1.533 0-.678.239-1.23.726-1.644.487-.415 1.133-.623 1.955-.623.272 0 .551.024.846.064.296.04.6.104.918.176v-.583c0-.607-.127-1.03-.375-1.277-.255-.248-.686-.367-1.3-.367-.28 0-.568.031-.863.103-.295.072-.583.16-.862.272a2.287 2.287 0 0 1-.28.104.488.488 0 0 1-.127.023c-.112 0-.168-.08-.168-.247v-.391c0-.128.016-.224.056-.28a.597.597 0 0 1 .224-.167c.279-.144.614-.264 1.005-.36a4.84 4.84 0 0 1 1.246-.151c.95 0 1.644.216 2.091.647.439.43.662 1.085.662 1.963v2.586zm-3.24 1.214c.263 0 .534-.048.822-.144.287-.096.543-.271.758-.51.128-.152.224-.32.272-.512.047-.191.08-.423.08-.694v-.335a6.66 6.66 0 0 0-.735-.136 6.02 6.02 0 0 0-.75-.048c-.535 0-.926.104-1.19.32-.263.215-.39.518-.39.917 0 .375.095.655.295.846.191.2.47.296.838.296zm6.41.862c-.144 0-.24-.024-.304-.08-.064-.048-.12-.16-.168-.311L7.586 5.55a1.398 1.398 0 0 1-.072-.32c0-.128.064-.2.191-.2h.783c.151 0 .255.025.31.08.065.048.113.16.16.312l1.342 5.284 1.245-5.284c.04-.16.088-.264.151-.312a.549.549 0 0 1 .32-.08h.638c.152 0 .256.025.32.08.063.048.12.16.151.312l1.261 5.348 1.381-5.348c.048-.16.104-.264.16-.312a.52.52 0 0 1 .311-.08h.743c.127 0 .2.065.2.2 0 .04-.009.08-.017.128a1.137 1.137 0 0 1-.056.2l-1.923 6.17c-.048.16-.104.263-.168.311a.51.51 0 0 1-.303.08h-.687c-.151 0-.255-.024-.32-.08-.063-.056-.119-.16-.15-.32l-1.238-5.148-1.23 5.14c-.04.16-.087.264-.15.32-.065.056-.177.08-.32.08zm10.256.215c-.415 0-.83-.048-1.229-.143-.399-.096-.71-.2-.918-.32-.128-.071-.215-.151-.247-.223a.563.563 0 0 1-.048-.224v-.407c0-.167.064-.247.183-.247.048 0 .096.008.144.024.048.016.12.048.2.08.271.12.566.215.878.279.319.064.63.096.95.096.502 0 .894-.088 1.165-.264a.86.86 0 0 0 .415-.758.777.777 0 0 0-.215-.559c-.144-.151-.416-.287-.807-.415l-1.157-.36c-.583-.183-1.014-.454-1.277-.813a1.902 1.902 0 0 1-.4-1.158c0-.335.073-.63.216-.886.144-.255.335-.479.575-.654.24-.184.51-.32.83-.415.32-.096.655-.136 1.006-.136.175 0 .359.008.535.032.183.024.35.056.518.088.16.04.312.08.455.127.144.048.256.096.336.144a.69.69 0 0 1 .24.2.43.43 0 0 1 .071.263v.375c0 .168-.064.256-.184.256a.83.83 0 0 1-.303-.096 3.652 3.652 0 0 0-1.532-.311c-.455 0-.815.071-1.062.223-.248.152-.375.383-.375.71 0 .224.08.416.24.567.159.152.454.304.877.44l1.134.358c.574.184.99.44 1.237.767.247.327.367.702.367 1.117 0 .343-.072.655-.207.926-.144.272-.336.511-.583.703-.248.2-.543.343-.886.447-.36.111-.734.167-1.142.167zM21.698 16.207c-2.626 1.94-6.442 2.969-9.722 2.969-4.598 0-8.74-1.7-11.87-4.526-.247-.223-.024-.527.272-.351 3.384 1.963 7.559 3.153 11.877 3.153 2.914 0 6.114-.607 9.06-1.852.439-.2.814.287.383.607zM22.792 14.961c-.336-.43-2.22-.207-3.074-.103-.255.032-.295-.192-.063-.36 1.5-1.053 3.967-.75 4.254-.399.287.36-.08 2.826-1.485 4.007-.215.184-.423.088-.327-.151.32-.79 1.03-2.57.695-2.994z"/></svg>
             <span>AWS</span>
           </div>
+          <div class="tech-item">
+            <svg viewBox="0 0 24 24" width="32" height="32" xmlns="http://www.w3.org/2000/svg" aria-label="Microsoft Azure" fill="#0078D4"><path d="M13.05 4.24L6.56 18.05l-4.57.01 6.93-12.1zm.7.71l4.45 12.53-8.5 1.47 7.2-4.4-2.84-5zm5.03-.95v15l-2.26-6.35z"/></svg>
+            <span>Azure</span>
+          </div>
+          <div class="tech-item">
+            <img src="https://cdn.simpleicons.org/cloudflare/F38020" width="32" height="32" alt="Cloudflare" loading="lazy" />
+            <span>Cloudflare</span>
+          </div>
         </div>
       </div>
+
+      <!-- Tab: Bases de datos -->
+      <div class="tech-panel" id="tab-databases" role="tabpanel" hidden>
+        <div class="tech-grid">
+          <div class="tech-item">
+            <img src="https://cdn.simpleicons.org/mysql/4479A1" width="32" height="32" alt="MySQL" loading="lazy" />
+            <span>MySQL</span>
+          </div>
+          <div class="tech-item">
+            <img src="https://cdn.simpleicons.org/postgresql/4169E1" width="32" height="32" alt="PostgreSQL" loading="lazy" />
+            <span>PostgreSQL</span>
+          </div>
+          <div class="tech-item">
+            <img src="https://cdn.simpleicons.org/supabase/3ECF8E" width="32" height="32" alt="Supabase" loading="lazy" />
+            <span>Supabase</span>
+          </div>
+          <div class="tech-item">
+            <!-- SQL Server inline SVG — letra S con estilo Microsoft -->
+            <svg viewBox="0 0 32 32" width="32" height="32" xmlns="http://www.w3.org/2000/svg" aria-label="SQL Server">
+              <rect width="32" height="32" rx="4" fill="#CC2927"/>
+              <text x="16" y="22" font-family="Segoe UI, Arial, sans-serif" font-size="18" font-weight="700" fill="white" text-anchor="middle">S</text>
+              <text x="16" y="30" font-family="Segoe UI, Arial, sans-serif" font-size="6.5" font-weight="400" fill="rgba(255,255,255,0.85)" text-anchor="middle" letter-spacing="0.5">SQL</text>
+            </svg>
+            <span>SQL Server</span>
+          </div>
+          <div class="tech-item">
+            <!-- Amazon DynamoDB — no existe en Simple Icons -->
+            <svg viewBox="0 0 32 32" width="32" height="32" xmlns="http://www.w3.org/2000/svg" aria-label="DynamoDB">
+              <rect width="32" height="32" rx="4" fill="#1A1A2E"/>
+              <ellipse cx="16" cy="8" rx="9" ry="3" fill="#4053D6"/>
+              <path d="M7 8 L7 16 Q7 19 16 19 Q25 19 25 16 L25 8" fill="none" stroke="#4053D6" stroke-width="1.5"/>
+              <path d="M7 16 L7 24 Q7 27 16 27 Q25 27 25 24 L25 16" fill="none" stroke="#4053D6" stroke-width="1.5"/>
+              <ellipse cx="16" cy="16" rx="9" ry="3" fill="#4053D6" opacity="0.7"/>
+              <ellipse cx="16" cy="24" rx="9" ry="3" fill="#4053D6" opacity="0.5"/>
+            </svg>
+            <span>DynamoDB</span>
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 
@@ -867,10 +996,47 @@ const experience = [
     border-bottom: 1px solid var(--color-border);
   }
 
+  /* Header de dos columnas alineado con el grid */
+  .about-section-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-3xl);
+    margin-bottom: var(--space-xl);
+    align-items: start;
+  }
+
+  .about-section-header > div {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .about-section-header .section-tag {
+    display: block;
+    line-height: 1;
+    margin-bottom: 0.35em;
+  }
+
+  .about-section-header h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  .section-tag--right {
+    display: block;
+  }
+
   .about-content {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--space-3xl);
+    align-items: start;
+  }
+
+  .about-text {
+    max-width: 100%;
   }
 
   .about-text p {
@@ -900,11 +1066,65 @@ const experience = [
     text-decoration-color: var(--color-accent);
   }
 
+  /* Tech stack */
   .tech-stack-container h3 {
     font-size: 1rem;
     font-weight: 600;
     margin-bottom: var(--space-lg);
-    text-align: center;
+  }
+  .tech-tabs {
+    display: flex;
+    gap: var(--space-xs);
+    margin-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .tech-tab {
+    position: relative;
+    padding: 0.5em 1.1em;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    margin-bottom: -1px;
+  }
+
+  .tech-tab::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: var(--color-accent);
+    border-radius: 2px 2px 0 0;
+    transform: scaleX(0);
+    transition: transform 0.2s ease;
+  }
+
+  .tech-tab:hover {
+    color: var(--color-text);
+  }
+
+  .tech-tab.active {
+    color: var(--color-accent);
+  }
+
+  .tech-tab.active::after {
+    transform: scaleX(1);
+  }
+
+  /* Panels */
+  .tech-panel {
+    animation: fade-in 0.2s ease;
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
   .tech-grid {
@@ -931,14 +1151,16 @@ const experience = [
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   }
 
-  .tech-item img {
+  .tech-item img,
+  .tech-item svg {
     width: 32px;
     height: 32px;
     object-fit: contain;
     transition: transform 0.2s ease;
   }
 
-  .tech-item:hover img {
+  .tech-item:hover img,
+  .tech-item:hover svg {
     transform: scale(1.1);
   }
 
@@ -946,11 +1168,17 @@ const experience = [
     font-size: 0.75rem;
     font-weight: 500;
     color: var(--color-text-secondary);
+    text-align: center;
   }
 
-  @media (max-width: 640px) {
-    .tech-grid {
-      grid-template-columns: repeat(2, 1fr);
+  /* Iconos monocromáticos negros: se invierten en dark mode */
+  :global([data-theme="dark"]) .icon-adaptable {
+    filter: invert(1);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .icon-adaptable {
+      filter: invert(1);
     }
   }
 
@@ -1419,6 +1647,11 @@ const experience = [
 
   /* Responsive */
   @media (max-width: 900px) {
+    .about-section-header {
+      grid-template-columns: 1fr;
+      gap: var(--space-xl);
+    }
+
     .about-content {
       grid-template-columns: 1fr;
       gap: var(--space-xl);
@@ -1451,3 +1684,32 @@ const experience = [
     }
   }
 </style>
+
+<script>
+  // Tab toggle para la sección de Tecnologías
+  const tabs = document.querySelectorAll<HTMLButtonElement>('.tech-tab');
+  const panels = document.querySelectorAll<HTMLElement>('.tech-panel');
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+
+      // Actualizar tabs
+      tabs.forEach((t) => {
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
+      });
+      tab.classList.add('active');
+      tab.setAttribute('aria-selected', 'true');
+
+      // Mostrar panel correspondiente
+      panels.forEach((panel) => {
+        if (panel.id === `tab-${target}`) {
+          panel.removeAttribute('hidden');
+        } else {
+          panel.setAttribute('hidden', '');
+        }
+      });
+    });
+  });
+</script>
