@@ -1,0 +1,292 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'Introducción a Node.js y Express: crea tu primer servidor'
+description: 'Qué son Node.js y Express, por qué se usan juntos y cómo levantar tu primer servidor desde cero con rutas, middleware y archivos estáticos.'
+date: '2025-02-13'
+tags: ['Node.js', 'JavaScript', 'Express']
+category: 'tutorial'
+readingTime: '8 min'
+---
+
+Si llevas un tiempo en el mundo del frontend y quieres dar el salto al backend con JavaScript, Node.js y Express son probablemente el punto de partida más directo que existe. Mismo lenguaje, mismo ecosistema, y una curva de entrada bastante amable para lo que ofrece.
+
+En esta entrada vemos qué son, cómo encajan y cómo levantar tu primer servidor con rutas y middleware funcionales.
+
+## ¿Qué es Node.js?
+
+[Node.js](https://nodejs.org/) es un entorno de ejecución de JavaScript que corre fuera del navegador. Está construido sobre el motor V8 de Chrome y permite ejecutar código JavaScript directamente en el servidor o en tu máquina local.
+
+Antes de Node, JavaScript era exclusivo del navegador. Con Node puedes hacer cosas como:
+
+- crear servidores web
+- leer y escribir archivos del sistema
+- conectarte a bases de datos
+- automatizar tareas con scripts
+
+Node usa un modelo de E/S **no bloqueante y basado en eventos**. Eso significa que puede manejar muchas peticiones al mismo tiempo sin necesitar un hilo por conexión, lo que lo hace muy eficiente para aplicaciones en tiempo real o con muchas peticiones concurrentes.
+
+Para comprobarlo, puedes crear un servidor básico usando solo el módulo `http` nativo:
+
+```javascript
+const http = require('http');
+
+http.createServer((request, response) => {
+  response.writeHead(200, { 'Content-Type': 'text/plain' });
+  response.end('Hola Mundo!\n');
+}).listen(8000);
+
+console.log('Servidor en http://127.0.0.1:8000/');
+```
+
+Funciona, pero enseguida se vuelve complejo cuando necesitas rutas, distintos verbos HTTP o respuestas dinámicas. Ahí es donde entra Express.
+
+## ¿Qué es Express?
+
+[Express](https://expressjs.com/) es el framework web más popular para Node.js. Es minimalista y no dogmático: no te obliga a seguir una estructura específica, puedes organizarlo como más te convenga.
+
+Lo que Express añade sobre el `http` nativo:
+
+- manejo de rutas por método HTTP (`GET`, `POST`, `PUT`, `DELETE`…)
+- sistema de **middleware** para procesar peticiones
+- integración con motores de plantillas
+- servir archivos estáticos con una sola línea
+- gestión de errores centralizada
+
+## Instalación y primer proyecto
+
+Asegúrate de tener Node.js instalado. Puedes verificarlo con:
+
+```bash
+node -v
+npm -v
+```
+
+Si no lo tienes, descarga la versión **LTS** desde [nodejs.org/en/download](https://nodejs.org/en/download). La versión LTS garantiza estabilidad y soporte a largo plazo.
+
+Una vez instalado, crea tu proyecto:
+
+```bash
+mkdir mi-servidor
+cd mi-servidor
+npm init -y
+```
+
+El flag `-y` acepta todos los valores por defecto del `package.json`. Luego instala Express:
+
+```bash
+npm install express
+```
+
+## Tu primer servidor con Express
+
+Crea un archivo `src/index.js` con este contenido:
+
+```javascript
+// Importar Express
+const express = require('express');
+
+// Crear la aplicación
+const app = express();
+
+// Puerto del servidor
+const PORT = 3000;
+
+// Ruta principal
+app.get('/', (req, res) => {
+  res.send('¡Hola Mundo con Express!');
+});
+
+// Iniciar el servidor
+app.listen(PORT, () => {
+  console.log(`Servidor en http://localhost:${PORT}`);
+});
+```
+
+Para ejecutarlo:
+
+```bash
+node src/index.js
+```
+
+Abre `http://localhost:3000` en el navegador y verás el mensaje. Con eso ya tienes un servidor corriendo.
+
+## Rutas en Express
+
+Las rutas definen qué hace el servidor según la URL y el método HTTP de la petición.
+
+```javascript
+// GET - obtener datos
+app.get('/usuarios', (req, res) => {
+  res.json([{ id: 1, nombre: 'Eduardo' }]);
+});
+
+// POST - crear un recurso
+app.post('/usuarios', (req, res) => {
+  res.status(201).json({ mensaje: 'Usuario creado' });
+});
+
+// PUT - actualizar un recurso
+app.put('/usuarios/:id', (req, res) => {
+  const { id } = req.params;
+  res.json({ mensaje: `Usuario ${id} actualizado` });
+});
+
+// DELETE - eliminar un recurso
+app.delete('/usuarios/:id', (req, res) => {
+  const { id } = req.params;
+  res.json({ mensaje: `Usuario ${id} eliminado` });
+});
+```
+
+El `:id` en la ruta es un **parámetro de ruta**. Express lo expone en `req.params`.
+
+### Agrupar rutas con Router
+
+Cuando el proyecto crece, conviene separar las rutas por módulo usando `express.Router`:
+
+```javascript
+// routes/usuarios.js
+const express = require('express');
+const router = express.Router();
+
+router.get('/', (req, res) => {
+  res.json([{ id: 1, nombre: 'Eduardo' }]);
+});
+
+router.get('/:id', (req, res) => {
+  res.json({ id: req.params.id });
+});
+
+module.exports = router;
+```
+
+Y en `index.js` lo registras con un prefijo:
+
+```javascript
+const usuariosRouter = require('./routes/usuarios');
+app.use('/usuarios', usuariosRouter);
+```
+
+Ahora las rutas `/usuarios` y `/usuarios/:id` quedan organizadas en su propio archivo.
+
+## Middleware
+
+El middleware son funciones que se ejecutan en la cadena de procesamiento de cada petición, antes de que llegue al manejador final de la ruta. Tienen acceso a `req`, `res` y `next`.
+
+```javascript
+const miMiddleware = (req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next(); // pasar al siguiente middleware o al manejador de ruta
+};
+
+app.use(miMiddleware);
+```
+
+El `next()` es importante: si no lo llamas, la petición se queda colgada sin respuesta.
+
+### Middleware incluido en Express
+
+Express trae algunos middlewares de serie muy útiles:
+
+```javascript
+// Parsear cuerpos JSON en las peticiones
+app.use(express.json());
+
+// Parsear datos de formularios HTML
+app.use(express.urlencoded({ extended: true }));
+
+// Servir archivos estáticos desde la carpeta 'public'
+app.use(express.static('public'));
+```
+
+Con `express.json()` puedes leer el cuerpo de una petición POST así:
+
+```javascript
+app.post('/usuarios', (req, res) => {
+  const { nombre, email } = req.body;
+  res.status(201).json({ nombre, email });
+});
+```
+
+### Middleware de terceros
+
+El ecosistema de npm tiene middleware para prácticamente cualquier necesidad. Un ejemplo muy común es `morgan`, para registrar las peticiones:
+
+```bash
+npm install morgan
+```
+
+```javascript
+const morgan = require('morgan');
+app.use(morgan('dev'));
+```
+
+Con eso verás en consola algo como `GET /usuarios 200 3.456 ms` por cada petición.
+
+## Manejo de errores
+
+Express tiene un manejador de errores especial con cuatro parámetros: `(err, req, res, next)`. Se registra al final de todos los middlewares y rutas:
+
+```javascript
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Algo salió mal' });
+});
+```
+
+Para rutas que no existen (404), puedes añadir un manejador antes del de errores:
+
+```javascript
+app.use((req, res) => {
+  res.status(404).json({ error: 'Ruta no encontrada' });
+});
+```
+
+El orden importa: Express ejecuta los middlewares en el orden en que se registran.
+
+## Estructura básica recomendada
+
+Para un proyecto pequeño pero ordenado:
+
+```
+mi-servidor/
+├── src/
+│   ├── index.js         # Punto de entrada
+│   └── routes/
+│       └── usuarios.js  # Rutas agrupadas por recurso
+├── public/              # Archivos estáticos
+├── package.json
+└── .gitignore
+```
+
+Express no impone ninguna estructura, pero separar rutas en archivos distintos hace el código mucho más fácil de mantener.
+
+## Comparativa rápida: http nativo vs Express
+
+| Característica | `http` nativo | Express |
+|---|---|---|
+| Rutas por método HTTP | Manual | `app.get()`, `app.post()`… |
+| Parsing del cuerpo | Manual | `express.json()` |
+| Archivos estáticos | Manual | `express.static()` |
+| Middleware | No | Sistema integrado |
+| Ecosistema de plugins | No | Miles en npm |
+
+## En resumen
+
+Node.js te da la capacidad de ejecutar JavaScript en el servidor. Express te da la estructura para construir servidores web de forma ordenada sin reinventar la rueda.
+
+Con lo que vimos en esta entrada ya puedes:
+
+- levantar un servidor con Express
+- definir rutas para distintos métodos HTTP
+- usar middleware para logging o parseo de datos
+- organizar rutas en módulos separados
+- manejar errores de forma centralizada
+
+El siguiente paso natural es conectar una base de datos, ya sea MongoDB con Mongoose, PostgreSQL con `pg`, o cualquier otra que soporte Node.
+
+## Referencias
+
+- [Introducción a Express/Node | MDN Web Docs](https://developer.mozilla.org/es/docs/Learn_web_development/Extensions/Server-side/Express_Nodejs/Introduction)
+- [Documentación oficial de Express](https://expressjs.com/)
+- [Documentación oficial de Node.js](https://nodejs.org/en/learn/getting-started/introduction-to-nodejs)
