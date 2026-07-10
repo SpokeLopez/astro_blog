@@ -453,7 +453,7 @@ const experience = [
       <p class="section-subtitle">+8 años de experiencia en desarrollo web y e-commerce</p>
     </div>
     
-    <!-- Timeline vertical -->
+    <!-- Timeline vertical (desktop) -->
     <div class="timeline-container">
       {experience.map((exp, index) => (
         <div class={`timeline-item ${index % 2 === 0 ? 'timeline-item--left' : 'timeline-item--right'}`}>
@@ -486,6 +486,44 @@ const experience = [
             </div>
           </div>
         </div>
+      ))}
+    </div>
+
+    <!-- Acordeón mobile -->
+    <div class="exp-accordion" aria-label="Experiencia profesional">
+      {experience.map((exp, index) => (
+        <details class="exp-item" open={index === 0}>
+          <summary class="exp-summary">
+            <div class="exp-summary-left">
+              <span class="exp-index">0{index + 1}</span>
+              <div class="exp-summary-info">
+                <span class="exp-summary-role">{exp.role}</span>
+                <span class="exp-summary-company">{exp.company}</span>
+              </div>
+            </div>
+            <div class="exp-summary-right">
+              <span class="exp-summary-period">{exp.period}</span>
+              <svg class="exp-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </div>
+          </summary>
+          <div class="exp-body">
+            <div class="exp-body-meta">
+              <span class="timeline-duration">{exp.duration}</span>
+              <span class="timeline-location" style="font-size:0.75rem">
+                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                {exp.location}
+              </span>
+            </div>
+            <p class="exp-body-desc">{exp.description}</p>
+            <div class="timeline-skills">
+              {exp.skills.map((skill: string) => (
+                <span class="timeline-skill">{skill}</span>
+              ))}
+            </div>
+          </div>
+        </details>
       ))}
     </div>
   </section>
@@ -1404,42 +1442,161 @@ const experience = [
     border: 1px solid rgba(34, 211, 238, 0.2);
   }
 
-  /* ── Responsive timeline ── */
+  /* ── Responsive: ocultar timeline en mobile, mostrar acordeón ── */
+  .exp-accordion {
+    display: none;
+  }
+
   @media (max-width: 720px) {
-    .timeline-container::before {
-      left: 9px;
-    }
-
-    .timeline-item {
-      grid-template-columns: 20px 1fr;
-      gap: 0 var(--space-md);
-    }
-
-    /* Todos los items colapsan a la derecha */
-    .timeline-item--left .timeline-connector,
-    .timeline-item--right .timeline-connector {
-      grid-column: 1;
-      grid-row: 1;
-      padding-top: var(--space-md);
-    }
-
-    .timeline-item--left .timeline-card,
-    .timeline-item--right .timeline-card {
-      grid-column: 2;
-      grid-row: 1;
-      text-align: left;
-    }
-
-    .timeline-item--left::after,
-    .timeline-item--right::before {
+    .timeline-container {
       display: none;
     }
 
-    .timeline-item--left .timeline-meta,
-    .timeline-item--left .timeline-company,
-    .timeline-item--left .timeline-location,
-    .timeline-item--left .timeline-skills {
-      justify-content: flex-start;
+    .exp-accordion {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .exp-item {
+      border-bottom: 1px solid var(--color-border);
+      background-color: var(--color-bg-card);
+    }
+
+    .exp-item:last-child {
+      border-bottom: none;
+    }
+
+    .exp-summary {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      padding: var(--space-md) var(--space-lg);
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: background-color 0.15s ease;
+    }
+
+    .exp-summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .exp-summary:focus-visible {
+      outline: 2px solid var(--color-accent);
+      outline-offset: -2px;
+    }
+
+    .exp-item[open] .exp-summary {
+      background-color: var(--color-accent-muted);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .exp-summary:active {
+      background-color: var(--color-bg-secondary);
+    }
+
+    .exp-summary-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      min-width: 0;
+    }
+
+    .exp-index {
+      font-size: 0.6875rem;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--color-accent);
+      background-color: var(--color-accent-muted);
+      border: 1px solid rgba(34, 211, 238, 0.25);
+      border-radius: var(--radius-sm);
+      padding: 3px 7px;
+      flex-shrink: 0;
+      letter-spacing: 0.04em;
+    }
+
+    .exp-summary-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .exp-summary-role {
+      font-size: 0.9375rem;
+      font-weight: 700;
+      color: var(--color-text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .exp-summary-company {
+      font-size: 0.8125rem;
+      color: var(--color-accent);
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .exp-summary-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .exp-summary-period {
+      font-size: 0.6875rem;
+      font-family: var(--font-mono);
+      color: var(--color-text-muted);
+      white-space: nowrap;
+    }
+
+    .exp-chevron {
+      color: var(--color-text-muted);
+      transition: transform 0.25s ease;
+      flex-shrink: 0;
+    }
+
+    .exp-item[open] .exp-chevron {
+      transform: rotate(180deg);
+      color: var(--color-accent);
+    }
+
+    .exp-body {
+      padding: var(--space-md) var(--space-lg) var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      animation: exp-fade-in 0.2s ease;
+    }
+
+    @keyframes exp-fade-in {
+      from { opacity: 0; transform: translateY(-4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .exp-body-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .exp-body-desc {
+      font-size: 0.875rem;
+      color: var(--color-text-secondary);
+      line-height: 1.65;
+      margin: 0;
     }
   }
 
