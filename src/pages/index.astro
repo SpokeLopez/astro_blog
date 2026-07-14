@@ -170,7 +170,7 @@ const experience = [
 
         <p class="hero-description">
           Desarrollador Full Stack con más de <strong>8 años de experiencia</strong> construyendo
-          soluciones web y e-commerce. Especializado en <strong>PHP, JavaScript, Magento y Shopify</strong>.
+          soluciones web y e-commerce. Especializado en <strong>PHP, JavaScript, Magento, Shopify y PrestaShop</strong>.
           Actualmente trabajando en remoto desde México, con clientes en España y LATAM.
         </p>
 
@@ -179,7 +179,7 @@ const experience = [
           <a href="https://tiktok.com/@spokelopez" target="_blank" rel="noopener noreferrer">TikTok</a>
           y
           <a href="https://youtube.com/@spokelopez" target="_blank" rel="noopener noreferrer">YouTube</a>.
-          Este blog es donde profundizo en los temas con código completo y demos interactivos.
+          En este blog profundizo en Magento, Shopify, PrestaShop y desarrollo web: código completo, contexto real, sin relleno.
         </p>
 
         <!-- CTAs -->
@@ -1209,15 +1209,25 @@ const experience = [
     text-align: center;
   }
 
-  /* Iconos monocromáticos negros: se invierten en dark mode */
-  :global([data-theme="dark"]) .icon-adaptable {
-    filter: invert(1);
+  /* Iconos monocromáticos: forzar negro en light, blanco en dark.
+     El selector data-theme siempre gana sobre el media query del OS. */
+  .icon-adaptable {
+    filter: brightness(0);
   }
 
   @media (prefers-color-scheme: dark) {
     .icon-adaptable {
-      filter: invert(1);
+      filter: brightness(0) invert(1);
     }
+  }
+
+  /* Overrides explícitos por tema — tienen mayor especificidad que el media query */
+  :global([data-theme="light"]) .icon-adaptable {
+    filter: brightness(0) !important;
+  }
+
+  :global([data-theme="dark"]) .icon-adaptable {
+    filter: brightness(0) invert(1) !important;
   }
 
   /* Experience Section */
@@ -1806,12 +1816,39 @@ const experience = [
   @media (max-width: 900px) {
     .about-section-header {
       grid-template-columns: 1fr;
-      gap: var(--space-xl);
+      gap: var(--space-lg);
+    }
+
+    /* En mobile el header de "Stack" se oculta porque el contenido
+       ya está debajo del bloque "Sobre mí" */
+    .about-section-header > div:last-child {
+      display: none;
     }
 
     .about-content {
       grid-template-columns: 1fr;
       gap: var(--space-xl);
+    }
+
+    /* El tech-stack va después del texto en mobile */
+    .about-text {
+      order: 1;
+    }
+
+    .tech-stack-container {
+      order: 2;
+    }
+
+    /* Etiqueta "Stack" visible sólo dentro del contenedor cuando no hay header */
+    .tech-stack-container::before {
+      content: 'Stack';
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-accent);
+      margin-bottom: 0.35em;
     }
 
     .tiktok-grid {
@@ -1825,19 +1862,94 @@ const experience = [
     .services-grid {
       grid-template-columns: 1fr;
     }
+  }
 
-    .timeline-item {
-      min-width: 160px;
+  /* Tabs de tecnologías: scroll horizontal en mobile */
+  @media (max-width: 640px) {
+    .tech-tabs {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      flex-wrap: nowrap;
+      padding-bottom: 0;
     }
 
-    .timeline-card {
-      width: 160px;
+    .tech-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tech-tab {
+      flex-shrink: 0;
+      font-size: 0.8125rem;
+      padding: 0.45em 0.9em;
+    }
+
+    /* Grid de iconos: 3 columnas en mobile */
+    .tech-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-sm);
+    }
+
+    .tech-item {
+      padding: var(--space-sm);
+    }
+
+    .tech-item span {
+      font-size: 0.6875rem;
+    }
+
+    .tiktok-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .services-grid {
+      grid-template-columns: 1fr;
     }
   }
 
-  @media (max-width: 640px) {
-    .tiktok-grid {
-      grid-template-columns: 1fr 1fr;
+  @media (max-width: 480px) {
+    /* Espaciado general de secciones más ajustado */
+    section {
+      padding: var(--space-2xl) 0;
+    }
+
+    /* About: el header tiene un solo título visible */
+    .about-section-header {
+      gap: var(--space-md);
+    }
+
+    /* Botones y acciones del hero ya colapsan arriba,
+       aquí aseguramos que no haya overflow */
+    .hero-actions {
+      width: 100%;
+    }
+
+    /* Tech grid: 2 columnas en pantallas muy pequeñas */
+    .tech-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* Tabs más compactos */
+    .tech-tab {
+      padding: 0.4em 0.75em;
+      font-size: 0.75rem;
+    }
+
+    /* Posts y servicios: siempre 1 columna */
+    .posts-grid,
+    .services-grid,
+    .yt-grid {
+      grid-template-columns: 1fr;
+    }
+
+    /* Stats del hero: reducir tamaño */
+    .stat-value {
+      font-size: 1.25rem;
+    }
+
+    .hero-stats {
+      gap: var(--space-md);
+      padding: var(--space-sm) var(--space-md);
     }
   }
 </style>
