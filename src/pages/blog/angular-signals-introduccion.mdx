@@ -1,0 +1,190 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'Introducción a Signals en Angular'
+description: 'Qué son las signals en Angular, cómo se leen y actualizan, y por qué ayudan a construir estado más claro y reactivo en aplicaciones modernas.'
+date: '2026-07-21'
+tags: ['Angular', 'Signals']
+category: 'angular'
+readingTime: '6 min'
+---
+
+Angular Signals es uno de los cambios más interesantes del ecosistema Angular en los últimos años. La idea es sencilla, pero potente: darle al framework una forma más fina de seguir el estado y actualizar solo lo que realmente cambia.
+
+Si vienes de Angular clásico, RxJS o incluso de otros frameworks con estado reactivo, Signals se siente como una pieza que simplifica bastante la vida cuando trabajas con estado síncrono, derivaciones y UI que depende de valores concretos.
+
+Tomando como base la [guía oficial de Angular](https://angular.dev/guide/signals) y dos artículos que ayudan a aterrizar su uso en proyectos reales, esta entrada es una introducción práctica para entender qué problema resuelven y cómo empezar a usarlas bien.
+
+## ¿Qué es una signal?
+
+Una signal es un contenedor reactivo para un valor. Angular sabe cuándo se lee ese valor y puede reaccionar cuando cambia.
+
+La parte bonita es que no la lees como una propiedad normal, sino como una función:
+
+```ts
+import { signal } from '@angular/core';
+
+const count = signal(0);
+
+console.log(count()); // 0
+```
+
+Ese paréntesis hace toda la diferencia. Angular puede rastrear dónde se usa ese valor y actualizar únicamente los consumidores necesarios.
+
+## Signals mutables
+
+Cuando quieres cambiar el valor, Angular te da dos caminos muy simples:
+
+```ts
+count.set(3);
+count.update((value) => value + 1);
+```
+
+- `set()` reemplaza el valor directamente
+- `update()` calcula un nuevo valor a partir del anterior
+
+Eso hace que el flujo de estado sea bastante legible, sobre todo en componentes pequeños y medianos.
+
+## Signals derivadas con `computed`
+
+Una de las piezas más útiles es `computed`. Sirve para derivar un valor a partir de otras signals.
+
+```ts
+import { computed, signal } from '@angular/core';
+
+const count = signal(2);
+const doubleCount = computed(() => count() * 2);
+
+console.log(doubleCount()); // 4
+```
+
+Lo interesante aquí es que `doubleCount`:
+
+- solo se recalcula cuando alguna dependencia cambia
+- se memoiza
+- no se puede modificar manualmente
+
+En la práctica, esto viene muy bien para:
+
+- totales
+- filtros
+- estados derivados
+- labels calculados
+
+## Un ejemplo más real
+
+Imagina una lista de productos con filtro por texto:
+
+```ts
+import { computed, signal } from '@angular/core';
+
+const search = signal('');
+const products = signal([
+  'Teclado mecánico',
+  'Mouse inalámbrico',
+  'Monitor 27"',
+  'Lámpara de escritorio',
+]);
+
+const filteredProducts = computed(() => {
+  const query = search().toLowerCase().trim();
+
+  return products().filter((product) =>
+    product.toLowerCase().includes(query)
+  );
+});
+```
+
+Aquí `filteredProducts` no guarda una copia manual del estado. Solo describe cómo derivarlo.
+
+Esa diferencia parece pequeña, pero ayuda mucho a mantener componentes más predecibles.
+
+## `effect` para efectos secundarios
+
+Cuando necesitas ejecutar código al cambiar una signal, entra `effect`.
+
+```ts
+import { effect, signal } from '@angular/core';
+
+const theme = signal('light');
+
+effect(() => {
+  console.log('Tema actual:', theme());
+});
+```
+
+Esto es útil para tareas como:
+
+- sincronizar con APIs externas
+- guardar preferencias
+- disparar logs
+- reaccionar a cambios de forma controlada
+
+Un consejo sano: úsalo para efectos, no como sustituto de lógica de negocio. Si puedes resolver algo con `computed`, suele ser mejor.
+
+## Signals en templates
+
+Cuando lees una signal en un template, Angular la rastrea automáticamente.
+
+```html
+<p>Contador: {{ count() }}</p>
+<p>Doble: {{ doubleCount() }}</p>
+```
+
+Eso significa que Angular sabe exactamente qué parte de la interfaz depende de qué valor. Y ahí es donde Signals brillan de verdad: menos trabajo innecesario y una relación más explícita entre estado y UI.
+
+## Relación con `OnPush`
+
+Signals encajan muy bien con componentes `OnPush`. Cuando una signal cambia, Angular marca el componente para actualización sin que tú tengas que pelearte tanto con el cambio de detección.
+
+Eso las vuelve una muy buena opción para:
+
+- componentes presentacionales
+- paneles de control
+- formularios sencillos
+- vistas con varios estados derivados
+
+## Qué problema resuelven
+
+Signals no vienen a borrar todo lo anterior. Más bien ayudan a ordenar mejor una parte muy concreta del estado de tu app:
+
+- estado local
+- estado derivado
+- dependencias claras
+- actualizaciones más precisas
+
+Si vienes de soluciones más pesadas, Signals se sienten refrescantes porque bajan mucho el ruido cuando el problema no necesita algo más complejo.
+
+## Cuándo usarlas
+
+Signals funcionan especialmente bien cuando:
+
+- el estado es síncrono
+- el valor depende de otros valores
+- quieres que la UI reaccione con precisión
+- buscas una forma más simple de modelar el estado local
+
+Y si el flujo es más complejo o asincrónico, Angular también tiene piezas pensadas para eso, así que no necesitas forzar Signals a resolver todo.
+
+## Una forma sana de pensar en ellas
+
+Una buena forma de ver Signals es esta:
+
+- `signal` para guardar estado
+- `computed` para derivar estado
+- `effect` para efectos secundarios
+
+Ese triángulo ya cubre muchísimos casos cotidianos sin necesidad de meter más capas de las necesarias.
+
+## En resumen
+
+Signals en Angular hacen que el estado sea más explícito, más fácil de seguir y más fino a la hora de actualizar la interfaz.
+
+No sustituyen todo el ecosistema de Angular, pero sí abren una forma más clara de trabajar con estado local y derivado, sobre todo en aplicaciones modernas donde la legibilidad importa tanto como el rendimiento.
+
+Si quieres seguir profundizando, vale la pena leer la [guía oficial de Angular](https://angular.dev/guide/signals) y luego comparar cómo se aplican Signals en escenarios más grandes y en patrones de interoperabilidad con el resto de la app.
+
+## Referencias
+
+- [Guía oficial de Angular Signals](https://angular.dev/guide/signals)
+- [Angular Signals en estado enterprise](https://modernfrontendarchitecture.com/articles/angular-signals-enterprise-state/)
+- [Curso de Angular avanzado](https://platzi.com/cursos/angular-avanzado/)

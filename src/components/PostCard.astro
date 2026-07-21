@@ -16,13 +16,14 @@ const formattedDate = date.toLocaleDateString('es-ES', {
   day: 'numeric'
 });
 
-const tagColors: Record<string, string> = {
-  css: 'tag-css',
-  javascript: 'tag-js',
-  js: 'tag-js',
-  php: 'tag-php',
-  laravel: 'tag-laravel',
-  git: 'tag-git',
+  const tagColors: Record<string, string> = {
+    css: 'tag-css',
+    javascript: 'tag-js',
+    js: 'tag-js',
+    angular: 'tag-angular',
+    php: 'tag-php',
+    laravel: 'tag-laravel',
+    git: 'tag-git',
   supabase: 'tag-supabase',
   mcp: 'tag-mcp',
   html: 'tag-html',
@@ -137,6 +138,11 @@ const tagColors: Record<string, string> = {
   .tag-js {
     background-color: rgba(234, 179, 8, 0.15);
     color: #facc15;
+  }
+
+  .tag-angular {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #fda4af;
   }
 
   .tag-php {
