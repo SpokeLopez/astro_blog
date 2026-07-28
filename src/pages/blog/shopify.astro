@@ -4,7 +4,8 @@ import PostCard from '../../components/PostCard.astro';
 import Pagination from '../../components/Pagination.astro';
 import '../../styles/blog-listings.css';
 
-const allPosts = await Astro.glob('./*.mdx');
+const postModules = import.meta.glob('./*.mdx', { eager: true });
+const allPosts = Object.entries(postModules).map(([path, mod]: [string, any]) => ({ ...mod, file: path }));
 
 const hasShopifyTag = (tags: unknown): boolean => {
   if (!Array.isArray(tags)) return false;
