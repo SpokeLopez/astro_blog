@@ -342,13 +342,13 @@ const formattedDate = new Date(frontmatter.date).toLocaleDateString('es-ES', {
     color: var(--color-text-secondary);
   }
 
-  .post-content :global(a) {
+  .post-content :global(a:not(.stackblitz-link__button)) {
     color: var(--color-accent);
     text-decoration: underline;
     text-underline-offset: 2px;
   }
 
-  .post-content :global(a:hover) {
+  .post-content :global(a:not(.stackblitz-link__button):hover) {
     color: var(--color-accent-hover);
   }
 

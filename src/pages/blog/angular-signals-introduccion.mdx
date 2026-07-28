@@ -8,6 +8,8 @@ category: 'angular'
 readingTime: '6 min'
 ---
 
+import StackBlitzLink from '../../components/StackBlitzLink.astro';
+
 Angular Signals es uno de los cambios más interesantes del ecosistema Angular en los últimos años. La idea es sencilla, pero potente: darle al framework una forma más fina de seguir el estado y actualizar solo lo que realmente cambia.
 
 Si vienes de Angular clásico, RxJS o incluso de otros frameworks con estado reactivo, Signals se siente como una pieza que simplifica bastante la vida cuando trabajas con estado síncrono, derivaciones y UI que depende de valores concretos.
@@ -98,17 +100,12 @@ Aquí `filteredProducts` no guarda una copia manual del estado. Solo describe c�
 
 Esa diferencia parece pequeña, pero ayuda mucho a mantener componentes más predecibles.
 
-Puedes probar el ejemplo directamente aquí:
+Prueba el ejemplo completo en StackBlitz:
 
-<iframe
-  src="https://stackblitz.com/edit/stackblitz-starters-oq3pb52l?embed=1&file=src%2Fglobal_styles.css"
-  title="Ejemplo interactivo de Angular Signals"
-  width="100%"
-  height="500"
-  loading="lazy"
-  allow="clipboard-read; clipboard-write; cross-origin-isolated"
-  style="border: 1px solid #e5e7eb; border-radius: 0.5rem;"
-></iframe>
+<StackBlitzLink
+  href="https://stackblitz.com/edit/stackblitz-starters-oq3pb52l?file=src%2Fglobal_styles.css"
+  title="Abrir ejemplo en StackBlitz"
+/>
 
 ## `effect` para efectos secundarios
 
