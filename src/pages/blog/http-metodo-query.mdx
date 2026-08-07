@@ -1,0 +1,182 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'QUERY: el nuevo método HTTP que GET y POST nunca fueron'
+description: 'Qué es el método HTTP QUERY (RFC 10008), por qué nace, en qué se diferencia de GET y POST, y cómo usarlo en Express con Node.js 26.'
+date: '2026-08-07'
+tags: ['JavaScript', 'Node.js', 'HTTP', 'Express']
+category: 'tutorial'
+readingTime: '7 min'
+---
+
+Si trabajas con APIs REST, conoces de sobra `GET`, `POST`, `PUT` y `DELETE`. Pero en junio de 2026 se estandarizó un nuevo método HTTP que lleva años siendo pedido por la comunidad: **`QUERY`**. Es el primer método nuevo desde `PATCH` en 2010, y viene a resolver un problema muy concreto que llevamos más de una década esquivando con parches.
+
+## El problema de siempre: filtrar datos en una API
+
+Imagina que tienes un endpoint para buscar productos con filtros: categorías, rango de precio, valoración mínima, orden… Tienes dos opciones clásicas, y las dos tienen pega.
+
+### Opción A — `GET` con query params
+
+```http
+GET /api/productos/buscar?categorias=laptop,movil&precioMin=800&precioMax=1500&valoracion=4.5&orden=precio
+```
+
+Lo bueno: es cacheable por defecto (navegador, CDN, proxies).
+
+Lo malo:
+
+- Todo llega como texto: tienes que castear números y booleanos a mano en el servidor.
+- Los filtros complejos o anidados no caben bien en una URL.
+- Los límites de longitud de URL son reales: para máxima compatibilidad, conviene quedarse en menos de 2.000 caracteres.
+- Los parámetros acaban en logs del servidor, lo que puede ser un problema con datos sensibles.
+- Los arrays no tienen una representación estándar: `?roles=admin&roles=editor` vs `?roles[]=admin&roles[]=editor` depende de cada framework.
+
+Y por si acaso te lo preguntas: mandar un `GET` con body JSON no es solución. Ningún RFC lo prohíbe explícitamente, pero tampoco lo garantiza. Algunos proxies lo rechazan, otros ignoran el body, otros lo interpretan. Inviable en producción.
+
+### Opción B — `POST` con body JSON
+
+```http
+POST /api/productos/buscar
+Content-Type: application/json
+
+{
+  "categorias": ["laptop", "movil"],
+  "precio": { "min": 800, "max": 1500 },
+  "valoracionMin": 4.5
+}
+```
+
+Lo bueno: body JSON rico con tipos reales, objetos anidados, lógica compleja.
+
+Lo malo: `POST` está definido como método **no seguro** (semánticamente puede modificar estado), así que navegadores y CDNs no cachean su respuesta. Cada búsqueda golpea la base de datos. Y además, estás mintiendo semánticamente: no estás creando nada, solo consultando.
+
+Llevábamos años haciendo *buscar con POST* sabiendo que era un parche. Por eso nace `QUERY`.
+
+## La solución: el método `QUERY`
+
+```http
+QUERY /api/productos/buscar
+Content-Type: application/json
+
+{
+  "categorias": ["laptop", "movil"],
+  "precio": { "min": 800, "max": 1500 },
+  "valoracionMin": 4.5
+}
+```
+
+`QUERY` combina lo mejor de los dos mundos:
+
+- **Body JSON** como `POST`: tipos reales, objetos anidados, sin límite de longitud.
+- **Seguro e idempotente** como `GET`: no modifica el estado del servidor, la respuesta se puede cachear.
+- **Semántica correcta**: "consulto" datos, no los creo ni los modifico.
+
+### ¿Qué es idempotencia y por qué importa?
+
+Una operación es idempotente cuando ejecutarla 10 veces produce el mismo resultado que ejecutarla una sola vez.
+
+- ✅ `GET /usuarios/123` — idempotente, puedes repetirlo sin consecuencias.
+- ✅ `QUERY /usuarios` — idempotente, replantear la petición da el mismo resultado.
+- ❌ `POST /usuarios` — no idempotente, cada llamada puede crear un nuevo recurso.
+
+Esto es crucial para redes poco fiables: si la conexión falla, proxies y clientes pueden reintentar una petición idempotente sin miedo a duplicados ni corrupción de datos.
+
+## Comparativa rápida
+
+| Característica | `GET` | `POST` | `QUERY` |
+|---|---|---|---|
+| Seguro (no modifica estado) | ✅ | ❌ | ✅ |
+| Idempotente | ✅ | ❌ | ✅ |
+| Admite body | ❌ | ✅ | ✅ |
+| Cacheable por defecto | ✅ | ⚠️ No estándar | ✅ |
+| Reintentar con seguridad | ✅ | ❌ Riesgo | ✅ |
+
+## Cómo usarlo en Express
+
+La buena noticia es que en **Node 26**, el parser HTTP ya incluye `QUERY` de forma nativa:
+
+```javascript
+require('http').METHODS.includes('QUERY') // true
+```
+
+Y como **Express 5** genera un método por cada verbo de `http.METHODS`, tienes `app.query()` directamente disponible, aunque aún no esté en la documentación oficial:
+
+```javascript
+import express from 'express'
+
+const app = express()
+app.use(express.json()) // parsea el body por Content-Type, no por método
+
+app.query('/api/productos/buscar', (req, res) => {
+  const { categorias, precio, valoracionMin } = req.body
+
+  // misma lógica de filtrado que usarías con POST
+  const resultados = buscarProductos({ categorias, precio, valoracionMin })
+
+  res.set('Cache-Control', 'public, max-age=30')
+  res.json(resultados)
+})
+
+app.listen(3000)
+```
+
+`express.json()` mira el `Content-Type`, no el método HTTP. Eso significa que parsea el body de `QUERY` exactamente igual que el de `POST`, sin ninguna configuración extra.
+
+### Probarlo con curl
+
+```bash
+# GET clásico — filtros en la URL
+curl -i "http://localhost:3000/api/productos/buscar?categorias=laptop&precioMax=1200"
+
+# POST — body JSON pero no cacheable
+curl -i -X POST http://localhost:3000/api/productos/buscar \
+  -H 'Content-Type: application/json' \
+  -d '{"categorias":["tablet"],"precio":{"max":1200}}'
+
+# QUERY — mismo body que POST, pero cacheable
+curl -i -X QUERY http://localhost:3000/api/productos/buscar \
+  -H 'Content-Type: application/json' \
+  -d '{"categorias":["movil"],"precio":{"min":500,"max":1300},"valoracionMin":4.5}'
+```
+
+## Diseño de APIs más limpio
+
+`QUERY` también simplifica el diseño de endpoints. En lugar de crear una URL por cada variante de filtro:
+
+```
+GET /api/usuarios/activos
+GET /api/usuarios/inactivos
+GET /api/usuarios/premium
+```
+
+Tienes un único endpoint semánticamente correcto:
+
+```
+QUERY /api/usuarios
+```
+
+Con un solo endpoint es más fácil mantener, securizar y monitorizar.
+
+## ⚠️ Estado del soporte actual
+
+Antes de lanzarte a usarlo en producción, ten en cuenta dónde está el ecosistema hoy:
+
+- ✅ **RFC 10008**: estandarizado en junio de 2026.
+- ✅ **Node 26 + Express 5**: el servidor entiende `QUERY` de forma nativa.
+- ✅ **curl**: `-X QUERY` funciona perfectamente.
+- ⚠️ **Navegadores (`fetch`)**: el soporte está llegando pero no es universal. Los navegadores tampoco cachean `QUERY` todavía (hoy solo cachean `GET`/`HEAD`).
+- ⚠️ **CDNs y proxies**: irán añadiendo soporte para cachear por método + body.
+
+La especificación ya está, el lado servidor funciona hoy. El ecosistema cliente se está poniendo al día. Es buen momento para entender el concepto y tenerlo en mente en futuros diseños de API.
+
+## En resumen
+
+`QUERY` no es una revolución, es el método que debería haber existido desde hace años. Cubre el hueco que `GET` y `POST` nunca terminaron de llenar: **consultas complejas con body que además son cacheables y semánticamente correctas**.
+
+Si usas Node 26 y Express 5, puedes experimentar con él hoy mismo en el servidor. Para producción con soporte completo de caché en CDNs y navegadores, habrá que esperar a que el ecosistema madure, probablemente entre 2027 y 2028.
+
+## Referencias
+
+- [RFC 10008 — IETF Datatracker](https://datatracker.ietf.org/doc/rfc10008/)
+- [query-http-demo por midudev — GitHub](https://github.com/midudev/query-http-demo)
+- [The new HTTP method: QUERY — dev.to](https://dev.to/tykok/the-new-http-method-query-2bec)
+- [HTTP WG · Safe method with body](https://httpwg.org/http-extensions/draft-ietf-httpbis-safe-method-w-body.html)
