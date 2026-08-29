@@ -18,7 +18,7 @@ const {
 } = Astro.props;
 
 const penUrl = `https://codepen.io/${user}/pen/${id}`;
-const embedUrl = `https://codepen.io/${user}/embed/${id}?default-tab=${defaultTab}&theme-id=${theme}`;
+const themeId = theme === 'dark' ? 'dark' : 'light';
 ---
 
 <div class="codepen-wrapper">
@@ -38,19 +38,24 @@ const embedUrl = `https://codepen.io/${user}/embed/${id}?default-tab=${defaultTa
       </svg>
     </a>
   </div>
-  <iframe 
-    height={height}
-    style={`width: 100%;`}
-    scrolling="no" 
-    title={title}
-    src={embedUrl}
-    frameborder="no" 
-    loading="lazy" 
-    allowtransparency="true" 
-    allowfullscreen="true"
+
+  <!-- Embed oficial de CodePen: https://blog.codepen.io/documentation/embedded-pens/ -->
+  <p
+    class="codepen"
+    data-height={height}
+    data-default-tab={defaultTab}
+    data-slug-hash={id}
+    data-user={user}
+    data-theme-id={themeId}
+    data-pen-title={title}
+    style={`height: ${height}px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; border: 1px solid var(--color-border); margin: 0; padding: 1em;`}
   >
-    Ver el Pen <a href={penUrl}>{title}</a> en <a href="https://codepen.io">CodePen</a>.
-  </iframe>
+    <span>
+      Ver el Pen <a href={penUrl} target="_blank" rel="noopener noreferrer">{title}</a> en{' '}
+      <a href="https://codepen.io" target="_blank" rel="noopener noreferrer">CodePen</a>.
+    </span>
+  </p>
+  <script async src="https://cpwebassets.codepen.io/assets/embed/ei.js"></script>
 </div>
 
 <style>
@@ -93,8 +98,15 @@ const embedUrl = `https://codepen.io/${user}/embed/${id}?default-tab=${defaultTa
     color: var(--color-accent);
   }
 
-  iframe {
-    display: block;
+  /* Estilos para el elemento embed mientras carga */
+  p.codepen {
     background-color: #1e1e22;
+    color: var(--color-text-secondary);
+    border: none !important;
+    border-top: 1px solid var(--color-border) !important;
+  }
+
+  p.codepen a {
+    color: var(--color-accent, #60a5fa);
   }
 </style>

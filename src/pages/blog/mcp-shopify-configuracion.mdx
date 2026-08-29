@@ -1,0 +1,234 @@
+---
+layout: "../../layouts/PostLayout.astro"
+title: "Cómo configurar el MCP de Shopify en tu editor"
+description: "Qué es el MCP de Shopify, para qué sirve y cómo instalarlo en Claude Code, Cursor o VS Code para tener acceso a documentación, validación de esquemas y datos reales de tu tienda."
+date: "2026-08-29"
+tags: ["MCP", "Shopify"]
+category: "mcp"
+readingTime: "7 min"
+---
+
+Si trabajas con Shopify y usas algún asistente de IA dentro de tu editor, conectar el MCP de Shopify es uno de esos cambios que se notan enseguida. En vez de saltar entre pestañas buscando la mutación GraphQL correcta o revisando si un campo de Liquid existe, puedes resolver esas dudas sin salir del editor.
+
+En este artículo voy a ver dos variantes del MCP de Shopify: el **Dev MCP oficial** de Shopify (para documentación y validación de esquemas) y el **Shopify MCP Server** de la comunidad (para interactuar con datos reales de tu tienda). Cada uno cubre una necesidad distinta.
+
+## ¿Qué es el MCP en este contexto?
+
+MCP significa **Model Context Protocol**. Es una forma estandarizada de conectar un cliente compatible (un editor, una herramienta de IA) con servicios externos. El cliente puede entonces acceder a información, validar código o ejecutar operaciones en ese servicio desde el mismo entorno de trabajo.
+
+En el caso de Shopify hay dos sabores muy diferentes de MCP, y conviene entenderlos por separado.
+
+## El Dev MCP oficial de Shopify
+
+Este es el más sencillo de los dos porque **no necesita credenciales ni acceso a ninguna tienda real**.
+
+Lo que hace el Dev MCP es darte acceso desde el editor a:
+
+- **Documentación actualizada de Shopify**: en vez de que el asistente responda desde su memoria de entrenamiento (que puede estar desactualizada), consulta la documentación real en el momento.
+- **Validación de consultas GraphQL**: puedes pegar cualquier mutación o query y Claude te dirá exactamente qué campos están mal antes de hacer ninguna petición.
+- **Validación de plantillas Liquid**: detecta variables faltantes o filtros no definidos antes de que lleguen a tu tienda.
+- **Validación de UI extensions y Shopify Functions**: comprueba que tu código cumpla los contratos actuales de la plataforma.
+
+No toca ninguna tienda real. Corre completamente en tu máquina y consume la documentación y los esquemas públicos de Shopify.
+
+### Requisitos
+
+- Node.js 18 o superior (verifica con `node --version`)
+- Un editor o cliente compatible con MCP (Claude Code, Cursor, VS Code)
+
+### Instalación según tu editor
+
+**Claude Code** es el camino más directo. Un solo comando lo registra:
+
+```bash
+claude mcp add --transport stdio shopify-dev-mcp -- npx -y @shopify/dev-mcp@latest
+```
+
+Reinicia Claude Code después para que el servidor quede disponible en la sesión.
+
+**Cursor** requiere añadir una entrada en tu archivo `mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "shopify-dev-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@shopify/dev-mcp@latest"
+      ]
+    }
+  }
+}
+```
+
+**VS Code** usa una clave distinta en su configuración:
+
+```json
+{
+  "servers": {
+    "shopify-dev-mcp": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@shopify/dev-mcp@latest"
+      ]
+    }
+  }
+}
+```
+
+Nota que en VS Code la clave raíz es `servers`, no `mcpServers`.
+
+### Verificar que funciona
+
+La prueba más limpia es pedirle al asistente algo que requiere documentación actualizada:
+
+> ¿Cuál es la mutación actual de la Admin API de GraphQL para crear un producto con múltiples variantes en 2026 y qué scopes requiere?
+
+Si el Dev MCP está activo, verás que el asistente invoca una herramienta antes de responder y cita campos específicos del esquema real. Si responde directamente desde memoria sin llamar ninguna herramienta, el servidor no está conectado.
+
+También puedes hacer una prueba con un error deliberado: pasa una mutación con un campo mal escrito (`titel` en vez de `title`) y el Dev MCP debería devolverte un error de esquema concreto, no un "parece correcto".
+
+### Un detalle sobre privacidad
+
+Por defecto el Dev MCP envía los payloads de validación a Shopify para telemetría. Si trabajas con código propietario o bajo NDA, configura la variable de entorno antes de lanzar el editor:
+
+```bash
+export OPT_OUT_INSTRUMENTATION=true
+```
+
+En Windows PowerShell:
+
+```powershell
+$env:OPT_OUT_INSTRUMENTATION = "true"
+```
+
+Hazlo antes de abrir Claude Code o el cliente que uses, no después, porque el servidor lee la variable al arrancar.
+
+---
+
+## El Shopify MCP Server de la comunidad
+
+Este segundo MCP es bastante diferente. Aquí sí se conecta a una tienda real y permite interactuar con sus datos a través de la Admin API de GraphQL.
+
+Lo que puedes hacer con él incluye:
+
+- consultar y buscar productos
+- listar clientes y añadirles etiquetas
+- ver y crear pedidos (incluidos borradores)
+- crear códigos de descuento
+- gestionar colecciones
+- consultar webhooks
+- obtener información general de la tienda
+
+Es un servidor mantenido por la comunidad, no por Shopify directamente, así que ten esto en cuenta antes de conectarlo a una tienda de producción.
+
+### Requisitos
+
+- Node.js v16 o superior
+- Un **Custom App Access Token** de Shopify con los permisos necesarios
+
+### Crear la app personalizada en Shopify
+
+Antes de configurar el servidor necesitas un token de acceso. Los pasos en el panel de Shopify son:
+
+1. Ve a **Configuración** → **Apps y canales de ventas** → **Desarrollar apps**
+2. Haz clic en **Crear una app**
+3. En los **Scopes de configuración** concede permisos de lectura y escritura para `products`, `customers` y `orders` según lo que necesites
+4. Instala la app dentro del panel
+5. Copia el **Admin API access token** que aparece una sola vez
+
+Guarda ese token en un lugar seguro. No podrás volver a verlo desde el panel.
+
+### Instalación del servidor
+
+Clona el repositorio y compílalo:
+
+```bash
+git clone https://github.com/pashpashpash/shopify-mcp-server.git
+cd shopify-mcp-server
+npm install
+npm run build
+```
+
+Crea el archivo `.env` en la raíz del proyecto con tus credenciales:
+
+```text
+SHOPIFY_ACCESS_TOKEN=tu_access_token
+MYSHOPIFY_DOMAIN=tu-tienda.myshopify.com
+```
+
+### Configurar Claude Desktop
+
+Si usas **Claude Desktop** (la app de escritorio), edita el archivo de configuración:
+
+- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- Windows: `%APPDATA%/Claude/claude_desktop_config.json`
+
+Añade la entrada del servidor:
+
+```json
+{
+  "mcpServers": {
+    "shopify": {
+      "command": "node",
+      "args": [
+        "/ruta/absoluta/shopify-mcp-server/dist/index.js"
+      ],
+      "env": {
+        "SHOPIFY_ACCESS_TOKEN": "tu_access_token",
+        "MYSHOPIFY_DOMAIN": "tu-tienda.myshopify.com"
+      }
+    }
+  }
+}
+```
+
+Usa la ruta absoluta al repositorio que clonaste. Puedes pasar las credenciales directamente en `env` o dejar que las lea desde el archivo `.env` si configuras el servidor para ello.
+
+### Depurar problemas de conexión
+
+Si el servidor no responde o hay errores, los logs de Claude Desktop están en:
+
+```bash
+tail -n 20 -f ~/Library/Logs/Claude/mcp*.log
+```
+
+Los problemas más comunes son:
+
+- **Token incorrecto o expirado**: revisa que copiaste el token completo al crear la app
+- **Formato de dominio**: debe ser `tu-tienda.myshopify.com`, sin `https://`
+- **Scopes insuficientes**: si intentas acceder a pedidos pero solo concediste permisos de productos, la API devolverá error
+
+---
+
+## ¿Cuál de los dos usar?
+
+Depende de lo que necesites en cada momento:
+
+- Si quieres que el asistente conozca la documentación actualizada de Shopify y valide tu código GraphQL o Liquid antes de probarlo: **Dev MCP oficial**.
+- Si quieres que el asistente pueda consultar o crear datos reales en una tienda (productos, pedidos, clientes): **Shopify MCP Server de la comunidad**.
+
+Los dos se pueden tener activos al mismo tiempo sin conflicto. Combinados, el asistente puede validar una mutación GraphQL con el Dev MCP y luego ejecutarla contra la tienda con el server de la comunidad.
+
+## Un apunte sobre seguridad
+
+El server de la comunidad opera sobre datos reales de la tienda. Si le das permisos de escritura, puede crear o modificar pedidos, productos y clientes. Vale la pena:
+
+- Probarlo primero en una **tienda de desarrollo**, no en producción
+- Usar un token con solo los scopes que realmente necesitas
+- Revisar qué operaciones tiene habilitadas antes de conectarlo a una tienda activa
+
+La comodidad de tener el asistente tan cerca de los datos reales es real, pero no conviene subestimar el acceso que se le está dando.
+
+## En resumen
+
+Conectar el MCP de Shopify al editor reduce bastante la fricción cuando trabajas con la plataforma. El Dev MCP es el punto de entrada más seguro y fácil de instalar: sin credenciales, sin riesgo, y con documentación siempre actualizada. El server de la comunidad va un paso más allá y permite trabajar con datos reales, lo que lo hace más potente pero también requiere más cuidado en la configuración.
+
+Si ya trabajas con Shopify habitualmente, merece la pena probar al menos el Dev MCP. El tiempo que te ahorra en buscar la mutación correcta o validar un template de Liquid se nota desde el primer día.
+
+## Referencias
+
+- [Shopify Dev MCP Install Guide — Claude Fast](https://claudefa.st/blog/tools/mcp-extensions/shopify-dev-mcp-install)
+- [pashpashpash/shopify-mcp-server — LobeHub](https://lobehub.com/es/mcp/pashpashpash-shopify-mcp-server)
