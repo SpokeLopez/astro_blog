@@ -1,0 +1,193 @@
+---
+layout: "../../layouts/PostLayout.astro"
+title: "JavaScript asíncrono en Node.js: Callbacks, Promises y Async/Await"
+description: "Entiende cómo funciona la programación asíncrona en Node.js, cuándo usar callbacks, promises o async/await y cómo evitar los errores más comunes en producción."
+date: "2025-06-20"
+tags: ["JavaScript", "Node.js"]
+category: "tutorial"
+readingTime: "8 min"
+---
+
+![Async/Await en Node.js](/images/blog/nodejs-async/nodejs-async-await.jpg)
+
+Node.js corre sobre un event loop de un solo hilo. Si no tienes esto claro cuando escribes código, tu servidor puede congelarse bajo carga moderada. He visto servicios en producción acumular cientos de peticiones porque una sola lectura de archivo síncrona bloqueó el event loop durante 200 milisegundos.
+
+Entender la programación asíncrona en Node.js no es un detalle opcional, es la base del modelo de concurrencia de la plataforma.
+
+Tomando como referencia el artículo de [Mark W. en Medium](https://medium.com/@mark.w.1987/asynchronous-javascript-in-node-js-callbacks-vs-promises-vs-async-await-6fba709253dd) y la [documentación oficial de Node.js](https://nodejs.org/learn/asynchronous-work/javascript-asynchronous-programming-and-callbacks), esta entrada recorre los tres patrones principales y explica cuándo conviene usar cada uno.
+
+## JavaScript es síncrono por defecto
+
+Antes de entrar en lo asíncrono, conviene tener clara la base. JavaScript es **síncrono y de un solo hilo**. Las líneas se ejecutan en serie, una detrás de otra:
+
+```js
+const a = 1;
+const b = 2;
+const c = a * b;
+console.log(c); // 3
+doSomething();
+```
+
+El problema llega cuando una operación necesita esperar: leer un archivo, consultar una base de datos, hacer una petición de red. Si esas operaciones bloquean el hilo principal, todo lo demás se detiene.
+
+Ahí es donde entra el modelo asíncrono. Node.js delega esas operaciones a [libuv](https://libuv.org/), permitiendo que el hilo principal siga procesando otras peticiones mientras espera. Ese mecanismo es lo que hace posible que Node.js maneje miles de conexiones concurrentes sin necesidad de escalar hardware.
+
+## Callbacks
+
+Los callbacks fueron el primer mecanismo asíncrono de Node.js. La idea es sencilla: pasas una función como argumento y esta se ejecuta cuando la operación termina.
+
+```js
+const fs = require("node:fs");
+
+fs.readFile("/archivo.json", (err, data) => {
+  if (err) {
+    console.error("Error al leer el archivo:", err);
+    return;
+  }
+  console.log(data);
+});
+```
+
+Node.js adoptó una convención clara: el primer argumento del callback siempre es el error (o `null` si no hubo ninguno). Esto se conoce como **error-first callbacks** y es la forma estándar de manejar errores en esta arquitectura.
+
+Para operaciones simples, los callbacks funcionan bien. El problema aparece cuando necesitas encadenar varias operaciones asíncronas:
+
+```js
+const fs = require("fs");
+
+// Pirámide de la perdición
+fs.readFile("./config.json", "utf8", (err, data) => {
+  if (err) return console.error("Error leyendo config:", err);
+
+  let config;
+  try {
+    config = JSON.parse(data);
+  } catch (parseErr) {
+    return console.error("JSON inválido:", parseErr);
+  }
+
+  queryDatabase(config.dbQuery, (err, rows) => {
+    if (err) return console.error("Error en la consulta:", err);
+
+    const response = JSON.stringify({ results: rows });
+
+    fs.writeFile("./respuesta.json", response, "utf8", (err) => {
+      if (err) return console.error("Error al escribir:", err);
+
+      console.log("Pipeline completo");
+    });
+  });
+});
+```
+
+Esto es el famoso **callback hell** (o pirámide de la perdición). El código crece hacia la derecha en lugar de hacia abajo, el flujo es difícil de seguir y el manejo de errores está disperso en cada nivel.
+
+## Promises
+
+Las Promises cambiaron la forma de manejar operaciones asíncronas en Node.js. En lugar de anidar, encadenas. Cada `.then()` devuelve una nueva Promise, así las operaciones secuenciales se leen de arriba hacia abajo. Un único `.catch()` al final de la cadena centraliza el manejo de errores.
+
+Node.js incluye `util.promisify()` para convertir callbacks al estilo Promise sin reescribir las funciones originales:
+
+```js
+const fs = require("fs");
+const util = require("util");
+
+const readFileAsync = util.promisify(fs.readFile);
+
+function handleRequest(filePath, dbClient, response) {
+  readFileAsync(filePath, "utf8")
+    .then((raw) => JSON.parse(raw))
+    .then((data) => dbClient.query("SELECT * FROM records WHERE id = $1", [data.id]))
+    .then((result) => {
+      response.writeHead(200, { "Content-Type": "application/json" });
+      response.end(JSON.stringify(result.rows));
+    })
+    .catch((err) => {
+      console.error("Error en el pipeline:", err.message);
+      response.writeHead(500);
+      response.end(JSON.stringify({ error: "Error interno del servidor" }));
+    });
+}
+```
+
+Mucho más legible. El flujo es lineal y hay un único punto de manejo de errores.
+
+Las Promises también introducen herramientas de concurrencia real. `Promise.all()` te permite lanzar varias operaciones independientes en paralelo y esperar a que todas terminen:
+
+```js
+// En lugar de esto (secuencial, lento):
+const userA = await getUser(1);
+const userB = await getUser(2);
+const userC = await getUser(3);
+
+// Haz esto (paralelo, mucho más rápido):
+const [userA, userB, userC] = await Promise.all([getUser(1), getUser(2), getUser(3)]);
+```
+
+## Async/Await
+
+`async/await` es sintaxis sobre Promises. El código asíncrono se lee como si fuera síncrono, lo que reduce mucho la carga cognitiva al revisar o depurar.
+
+```js
+async function handleRequest(filePath, dbClient, response) {
+  try {
+    const raw = await readFileAsync(filePath, "utf8");
+    const data = JSON.parse(raw);
+
+    const result = await dbClient.query("SELECT * FROM records WHERE id = $1", [data.id]);
+
+    response.writeHead(200, { "Content-Type": "application/json" });
+    response.end(JSON.stringify(result.rows));
+  } catch (err) {
+    console.error("Error en el pipeline:", err.message);
+    response.writeHead(500);
+    response.end(JSON.stringify({ error: "Error interno del servidor" }));
+  }
+}
+```
+
+El error más frecuente con `async/await` en producción es usar `await` dentro de un bucle cuando las iteraciones son independientes entre sí:
+
+```js
+// ⚠️ Esto es secuencial: espera cada llamada antes de la siguiente
+for (const id of ids) {
+  const user = await getUser(id); // 50 ids × 200ms = ~10 segundos
+  process(user);
+}
+
+// ✅ Esto es paralelo: lanza todo a la vez y espera el conjunto
+const users = await Promise.all(ids.map((id) => getUser(id))); // ~200ms
+users.forEach(process);
+```
+
+`await` es secuencial por defecto. Si las operaciones no dependen unas de otras, paralelas con `Promise.all()` casi siempre es la decisión correcta.
+
+## ¿Cuándo usar cada patrón?
+
+| Patrón          | Cuándo usarlo                                                                           |
+| --------------- | --------------------------------------------------------------------------------------- |
+| **Callbacks**   | Event listeners simples, streams, APIs antiguas de Node.js que no necesitas envolver    |
+| **Promises**    | Cuando coordinas varias operaciones concurrentes con `Promise.all()` o `Promise.race()` |
+| **Async/Await** | Para cualquier flujo secuencial; es la opción por defecto en código moderno             |
+
+Los tres manejan bien operaciones de I/O, pero ninguno resuelve el bloqueo por CPU. Si tienes cómputo pesado, `await` no libera el event loop. Para eso necesitas [Worker Threads](https://nodejs.org/api/worker_threads.html).
+
+## Buenas prácticas
+
+**Maneja siempre los errores.** Desde Node.js 15, las promesas rechazadas sin manejar terminan el proceso. He visto servicios caer por un `.catch()` que faltaba en una llamada de logging no crítica. Envuelve los `await` en `try/catch` y agrega `.catch()` a las cadenas de promesas que queden sueltas.
+
+**Paraleliza lo que puedas.** Es la ganancia de rendimiento más común que encuentro en revisiones de código. Si dos operaciones no dependen una de la otra, no hay razón para hacerlas en serie.
+
+**Mantén patrones consistentes.** Mezclar callbacks y async/await en el mismo módulo genera confusión. Usa `util.promisify()` para modernizar código legado y mantén un estilo coherente dentro de cada archivo.
+
+## En resumen
+
+La programación asíncrona en Node.js tiene una curva de aprendizaje, pero los tres patrones son complementarios: los callbacks siguen siendo útiles en escenarios simples, las Promises te dan herramientas de concurrencia reales y async/await hace el código más legible en flujos secuenciales.
+
+La pregunta clave que conviene hacerse siempre es: **¿puede el event loop seguir procesando mientras este código espera?** Esa pregunta, aplicada consistentemente, guía casi todas las decisiones de diseño asíncrono en Node.js.
+
+## Referencias
+
+- [JavaScript Asynchronous Programming and Callbacks — Node.js Docs](https://nodejs.org/learn/asynchronous-work/javascript-asynchronous-programming-and-callbacks)
+- [util.promisify() — Node.js API](https://nodejs.org/api/util.html#utilpromisifyoriginal)
+- [Worker Threads — Node.js API](https://nodejs.org/api/worker_threads.html)
