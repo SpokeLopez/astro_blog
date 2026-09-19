@@ -1,104 +1,722 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import BaseLayout from "../layouts/BaseLayout.astro";
 
-const resources = [
+const devTools = [
   {
-    category: 'Herramientas de Desarrollo',
+    subcategory: "Editores",
+    icon: "✏️",
     items: [
-      { name: 'VS Code', url: 'https://code.visualstudio.com/', description: 'Mi editor de codigo favorito' },
-      { name: 'Warp', url: 'https://warp.dev/', description: 'Terminal moderna con AI' },
-      { name: 'Fig', url: 'https://fig.io/', description: 'Autocompletado para terminal' },
-      { name: 'Postman', url: 'https://postman.com/', description: 'Testing de APIs' },
-    ]
+      {
+        name: "Cursor",
+        url: "https://www.cursor.com/",
+        description: "Editor con AI integrada, basado en VS Code",
+        badge: "AI",
+      },
+      {
+        name: "Zed",
+        url: "https://zed.dev/",
+        description: "Editor de código de alta velocidad, multiplayer",
+        badge: "Fast",
+      },
+    ],
   },
   {
-    category: 'Extensiones VS Code',
+    subcategory: "Terminal & Shell",
+    icon: "⌨️",
     items: [
-      { name: 'GitHub Copilot', url: 'https://github.com/features/copilot', description: 'AI pair programming' },
-      { name: 'Prettier', url: 'https://prettier.io/', description: 'Formateo automatico de codigo' },
-      { name: 'ESLint', url: 'https://eslint.org/', description: 'Linting para JavaScript' },
-      { name: 'Live Server', url: 'https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer', description: 'Servidor local con hot reload' },
-    ]
+      {
+        name: "Ghostty",
+        url: "https://ghostty.org/",
+        description: "Emulador de terminal rápido y nativo",
+        badge: "New",
+      },
+      { name: "Zsh", url: "https://www.zsh.org/", description: "Shell potente y extensible", badge: null },
+      { name: "Starship", url: "https://starship.rs/", description: "Prompt minimalista y ultrarrápido", badge: null },
+      {
+        name: "Kiro CLI",
+        url: "https://kiro.dev/",
+        description: "Agente de desarrollo con AI en tu terminal",
+        badge: "AI",
+      },
+      {
+        name: "Claude CLI",
+        url: "https://docs.anthropic.com/en/docs/claude-code",
+        description: "Agente de código de Anthropic directo en la terminal",
+        badge: "AI",
+      },
+      {
+        name: "zoxide",
+        url: "https://github.com/ajeetdsouza/zoxide",
+        description: "cd inteligente que aprende tus rutas",
+        badge: null,
+      },
+      {
+        name: "fzf",
+        url: "https://github.com/junegunn/fzf",
+        description: "Fuzzy finder interactivo para la línea de comandos",
+        badge: null,
+      },
+      {
+        name: "zsh-autosuggestions",
+        url: "https://github.com/zsh-users/zsh-autosuggestions",
+        description: "Sugerencias en tiempo real basadas en historial",
+        badge: null,
+      },
+      {
+        name: "zsh-syntax-highlighting",
+        url: "https://github.com/zsh-users/zsh-syntax-highlighting",
+        description: "Resaltado de sintaxis en la terminal",
+        badge: null,
+      },
+    ],
   },
   {
-    category: 'Recursos de Aprendizaje',
+    subcategory: "Git & Productividad",
+    icon: "🔧",
     items: [
-      { name: 'MDN Web Docs', url: 'https://developer.mozilla.org/', description: 'Documentacion web definitiva' },
-      { name: 'JavaScript.info', url: 'https://javascript.info/', description: 'Tutorial moderno de JavaScript' },
-      { name: 'CSS-Tricks', url: 'https://css-tricks.com/', description: 'Trucos y tutoriales de CSS' },
-      { name: 'AdventJS', url: 'https://adventjs.dev/', description: 'Retos diarios de JavaScript' },
-    ]
+      {
+        name: "Git aliases",
+        url: "https://git-scm.com/book/en/v2/Git-Basics-Git-Aliases",
+        description: "Atajos personalizados para comandos Git frecuentes",
+        badge: null,
+      },
+      {
+        name: "lazygit",
+        url: "https://github.com/jesseduffield/lazygit",
+        description: "TUI para Git, flujo de trabajo ultrarrápido",
+        badge: null,
+      },
+      { name: "Fig", url: "https://fig.io/", description: "Autocompletado visual para cualquier CLI", badge: null },
+    ],
   },
   {
-    category: 'Plataformas E-commerce',
+    subcategory: "Entornos & Runtimes",
+    icon: "⚙️",
     items: [
-      { name: 'Magento/Adobe Commerce', url: 'https://business.adobe.com/products/magento/magento-commerce.html', description: 'Plataforma enterprise de e-commerce' },
-      { name: 'Shopify', url: 'https://shopify.com/', description: 'E-commerce SaaS' },
-      { name: 'PrestaShop', url: 'https://prestashop.com/', description: 'E-commerce open source' },
-      { name: 'WooCommerce', url: 'https://woocommerce.com/', description: 'E-commerce para WordPress' },
-    ]
+      {
+        name: "Laravel Herd",
+        url: "https://herd.laravel.com/",
+        description: "Entorno PHP/Laravel local con un clic",
+        badge: null,
+      },
+      {
+        name: "NVM",
+        url: "https://github.com/nvm-sh/nvm",
+        description: "Node Version Manager, múltiples versiones de Node",
+        badge: null,
+      },
+      {
+        name: "Docker",
+        url: "https://www.docker.com/",
+        description: "Contenedores para entornos reproducibles",
+        badge: null,
+      },
+      {
+        name: "Docker Compose",
+        url: "https://docs.docker.com/compose/",
+        description: "Orquestación de servicios multi-contenedor",
+        badge: null,
+      },
+    ],
   },
   {
-    category: 'Frameworks y Librerias',
+    subcategory: "Setup Visual",
+    icon: "🎨",
     items: [
-      { name: 'Laravel', url: 'https://laravel.com/', description: 'Framework PHP elegante' },
-      { name: 'Vue.js', url: 'https://vuejs.org/', description: 'Framework JavaScript progresivo' },
-      { name: 'Astro', url: 'https://astro.build/', description: 'Framework para sitios estaticos' },
-      { name: 'Tailwind CSS', url: 'https://tailwindcss.com/', description: 'Framework CSS utility-first' },
-    ]
+      {
+        name: "JetBrainsMono Nerd Font",
+        url: "https://www.nerdfonts.com/font-downloads",
+        description: "Fuente monoespaciada con iconos para la terminal",
+        badge: null,
+      },
+      {
+        name: "Kanagawa Wave",
+        url: "https://github.com/rebelot/kanagawa.nvim",
+        description: "Tema oscuro inspirado en la gran ola de Kanagawa",
+        badge: "Dark",
+      },
+      {
+        name: "Catppuccin Latte",
+        url: "https://github.com/catppuccin/catppuccin",
+        description: "Tema pastel cálido para el modo claro",
+        badge: "Light",
+      },
+      { name: "Starship", url: "https://starship.rs/", description: "Prompt minimalista y ultrarrápido", badge: null },
+    ],
   },
   {
-    category: 'Diseno y UI',
+    subcategory: "APIs, DB & Acceso Remoto",
+    icon: "🗄️",
     items: [
-      { name: 'Figma', url: 'https://figma.com/', description: 'Herramienta de diseno colaborativo' },
-      { name: 'Coolors', url: 'https://coolors.co/', description: 'Generador de paletas de colores' },
-      { name: 'Google Fonts', url: 'https://fonts.google.com/', description: 'Tipografias gratuitas' },
-      { name: 'Heroicons', url: 'https://heroicons.com/', description: 'Iconos SVG por Tailwind' },
-    ]
-  }
+      {
+        name: "Postman",
+        url: "https://postman.com/",
+        description: "Testing y documentación de APIs REST/GraphQL",
+        badge: null,
+      },
+      {
+        name: "DBeaver",
+        url: "https://dbeaver.io/",
+        description: "Cliente universal para bases de datos",
+        badge: null,
+      },
+      {
+        name: "Termius",
+        url: "https://termius.com/",
+        description: "Cliente SSH multiplataforma con sincronización",
+        badge: null,
+      },
+    ],
+  },
 ];
 
-const codePenUser = 'SpokeLopez-1471233183';
+const editorExtensions = [
+  {
+    subcategory: "Formato & Calidad",
+    icon: "✨",
+    items: [
+      {
+        name: "Prettier",
+        url: "https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode",
+        description: "Formateo automático de código",
+        badge: null,
+      },
+      {
+        name: "ESLint",
+        url: "https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint",
+        description: "Linting para JavaScript y TypeScript",
+        badge: null,
+      },
+      {
+        name: "Pretty TypeScript Errors",
+        url: "https://marketplace.visualstudio.com/items?itemName=yoavbls.pretty-ts-errors",
+        description: "Errores de TypeScript legibles en el editor",
+        badge: null,
+      },
+      {
+        name: "Live Server",
+        url: "https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer",
+        description: "Servidor local con hot reload",
+        badge: null,
+      },
+      {
+        name: "Playwright Test",
+        url: "https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright",
+        description: "Corre y depura tests E2E desde el editor",
+        badge: null,
+      },
+    ],
+  },
+  {
+    subcategory: "Git",
+    icon: "🌿",
+    items: [
+      {
+        name: "Git Graph",
+        url: "https://marketplace.visualstudio.com/items?itemName=mhutchie.git-graph",
+        description: "Visualiza el árbol de commits y ramas",
+        badge: null,
+      },
+      {
+        name: "Git History",
+        url: "https://marketplace.visualstudio.com/items?itemName=donjayamanne.githistory",
+        description: "Historial de commits, archivos y líneas",
+        badge: null,
+      },
+      {
+        name: "GitLens",
+        url: "https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens",
+        description: "Supercharge Git: blame, anotaciones y más",
+        badge: null,
+      },
+      {
+        name: ".gitignore Generator",
+        url: "https://marketplace.visualstudio.com/items?itemName=piotrpalarz.vscode-gitignore-generator",
+        description: "Genera .gitignore para cualquier stack",
+        badge: null,
+      },
+    ],
+  },
+  {
+    subcategory: "Laravel & PHP",
+    icon: "🐘",
+    items: [
+      {
+        name: "PHP Intelephense",
+        url: "https://marketplace.visualstudio.com/items?itemName=bmewburn.vscode-intelephense-client",
+        description: "Intellisense, diagnósticos y refactor para PHP",
+        badge: null,
+      },
+      {
+        name: "Laravel Extra Intellisense",
+        url: "https://marketplace.visualstudio.com/items?itemName=amiralizadeh9480.laravel-extra-intellisense",
+        description: "Autocompletado para rutas, vistas y más",
+        badge: null,
+      },
+      {
+        name: "Laravel Goto View",
+        url: "https://marketplace.visualstudio.com/items?itemName=codingyu.laravel-goto-view",
+        description: "Navega a vistas Blade desde el controlador",
+        badge: null,
+      },
+    ],
+  },
+  {
+    subcategory: "Frontend & Estilos",
+    icon: "🎨",
+    items: [
+      {
+        name: "Tailwind CSS IntelliSense",
+        url: "https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss",
+        description: "Autocompletado y preview de clases Tailwind",
+        badge: null,
+      },
+      {
+        name: "Shopify Liquid",
+        url: "https://marketplace.visualstudio.com/items?itemName=Shopify.theme-check-vscode",
+        description: "Syntax highlighting y linting para Liquid",
+        badge: null,
+      },
+      {
+        name: "GraphQL: Syntax Highlighting",
+        url: "https://marketplace.visualstudio.com/items?itemName=GraphQL.vscode-graphql-syntax",
+        description: "Resaltado de sintaxis para archivos GraphQL",
+        badge: null,
+      },
+      {
+        name: "Prisma",
+        url: "https://marketplace.visualstudio.com/items?itemName=Prisma.prisma",
+        description: "Syntax, formato y autocompletado para Prisma",
+        badge: null,
+      },
+      {
+        name: "ES7+ React/Redux/React-Native snippets",
+        url: "https://marketplace.visualstudio.com/items?itemName=dsznajder.es7-react-js-snippets",
+        description: "Snippets para React, Redux y React Native",
+        badge: null,
+      },
+    ],
+  },
+];
+
+const learningResources = [
+  {
+    subcategory: "Documentación",
+    icon: "📖",
+    items: [
+      {
+        name: "MDN Web Docs",
+        url: "https://developer.mozilla.org/",
+        description: "Documentación web definitiva de Mozilla",
+        badge: null,
+      },
+      {
+        name: "JavaScript.info",
+        url: "https://javascript.info/",
+        description: "Tutorial moderno y completo de JavaScript",
+        badge: null,
+      },
+      {
+        name: "CSS-Tricks",
+        url: "https://css-tricks.com/",
+        description: "Trucos, guías y tutoriales de CSS",
+        badge: null,
+      },
+      {
+        name: "AdventJS",
+        url: "https://adventjs.dev/",
+        description: "Retos diarios de JavaScript por midudev",
+        badge: null,
+      },
+      {
+        name: "CSS Reference",
+        url: "https://cssreference.io/",
+        description: "Guía visual de todas las propiedades CSS",
+        badge: null,
+      },
+      {
+        name: "Devhints",
+        url: "https://devhints.io/",
+        description: "Cheatsheets de comandos, librerías y herramientas",
+        badge: null,
+      },
+      {
+        name: "Laracasts",
+        url: "https://laracasts.com/",
+        description: "Screencasts de Laravel, PHP y desarrollo web",
+        badge: null,
+      },
+    ],
+  },
+  {
+    subcategory: "Plataformas de Cursos",
+    icon: "🎓",
+    items: [
+      {
+        name: "Platzi",
+        url: "https://platzi.com/",
+        description: "La plataforma de tecnología en español",
+        badge: null,
+      },
+      {
+        name: "Codely",
+        url: "https://codely.com/",
+        description: "Cursos de arquitectura, DDD y buenas prácticas",
+        badge: null,
+      },
+    ],
+  },
+  {
+    subcategory: "YouTube",
+    icon: "▶️",
+    items: [
+      {
+        name: "midudev",
+        url: "https://www.youtube.com/@midudev",
+        description: "JavaScript, React, entrevistas y mucho más",
+        badge: null,
+      },
+      {
+        name: "Fazt Code",
+        url: "https://www.youtube.com/@FaztCode",
+        description: "Tutoriales de backend, APIs y frameworks",
+        badge: null,
+      },
+      {
+        name: "Hola Mundo",
+        url: "https://www.youtube.com/@HolaMundoDev",
+        description: "Desarrollo web moderno y buenas prácticas",
+        badge: null,
+      },
+    ],
+  },
+];
+
+const ecomPlatforms = [
+  {
+    name: "Magento / Adobe Commerce",
+    url: "https://business.adobe.com/products/magento/magento-commerce.html",
+    description: "Plataforma enterprise con máxima flexibilidad para catálogos complejos y múltiples tiendas.",
+    badge: "Enterprise",
+    badgeType: "enterprise",
+  },
+  {
+    name: "Shopify",
+    url: "https://shopify.com/",
+    description: "La solución SaaS más popular del mercado. Rápida de desplegar, con un ecosistema de apps enorme.",
+    badge: "SaaS",
+    badgeType: "saas",
+  },
+  {
+    name: "PrestaShop",
+    url: "https://prestashop.com/",
+    description: "Open source con gran comunidad europea. Control total sobre el hosting y el código.",
+    badge: "Open Source",
+    badgeType: "opensource",
+  },
+  {
+    name: "WooCommerce",
+    url: "https://woocommerce.com/",
+    description: "El plugin e-commerce más usado del mundo, construido sobre WordPress.",
+    badge: "Plugin",
+    badgeType: "plugin",
+  },
+];
+
+const favTools = [
+  {
+    subcategory: "Diseño & UI",
+    icon: "🖌️",
+    items: [
+      {
+        name: "Figma",
+        url: "https://figma.com/",
+        description: "Diseño colaborativo de interfaces y prototipos",
+        badge: null,
+      },
+      { name: "Coolors", url: "https://coolors.co/", description: "Generador de paletas de colores", badge: null },
+      {
+        name: "Google Fonts",
+        url: "https://fonts.google.com/",
+        description: "Tipografías gratuitas de calidad",
+        badge: null,
+      },
+      {
+        name: "Heroicons",
+        url: "https://heroicons.com/",
+        description: "Iconos SVG por el equipo de Tailwind",
+        badge: null,
+      },
+    ],
+  },
+];
+
+const codePenUser = "SpokeLopez-1471233183";
 ---
 
-<BaseLayout title="Recursos | SpokeLopez" description="Herramientas, extensiones y recursos que uso para desarrollo web.">
+<BaseLayout
+  title="Recursos | SpokeLopez"
+  description="Herramientas, extensiones y recursos que uso para desarrollo web."
+>
   <div class="page-header">
     <span class="page-tag">Recursos</span>
     <h1>Herramientas y Recursos</h1>
-    <p class="page-description">Una coleccion de herramientas, extensiones y recursos que uso en mi dia a dia como desarrollador.</p>
+    <p class="page-description">
+      Una colección de herramientas, extensiones y recursos que uso en mi día a día como desarrollador.
+    </p>
   </div>
 
-  <div class="resources-container">
-    {resources.map(section => (
-      <section class="resource-section">
-        <h2>{section.category}</h2>
-        <div class="resource-grid">
-          {section.items.map(item => (
-            <a href={item.url} target="_blank" rel="noopener noreferrer" class="resource-card">
-              <h3>{item.name}</h3>
-              <p>{item.description}</p>
-              <span class="external-link">
-                Visitar
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                  <polyline points="15 3 21 3 21 9"></polyline>
-                  <line x1="10" y1="14" x2="21" y2="3"></line>
-                </svg>
-              </span>
-            </a>
-          ))}
+  <!-- ─── Dev Tools Showcase ─── -->
+  <section class="devtools-section">
+    <div class="section-header">
+      <h2 class="section-title">
+        <span class="section-title-icon">🖥️</span>
+        Herramientas de Desarrollo
+      </h2>
+      <p class="section-subtitle">Mi stack de herramientas actual — de la terminal al editor.</p>
+    </div>
+
+    <div class="devtools-groups">
+      {devTools.map((group) => (
+        <div class="devtools-group">
+          <h3 class="group-label">
+            <span class="group-icon">{group.icon}</span>
+            {group.subcategory}
+          </h3>
+          <ul class="devtools-list">
+            {group.items.map((tool) => (
+              <li class="devtool-item">
+                <a href={tool.url} target="_blank" rel="noopener noreferrer" class="devtool-link">
+                  <div class="devtool-info">
+                    <span class="devtool-name">{tool.name}</span>
+                    <span class="devtool-desc">{tool.description}</span>
+                  </div>
+                  {tool.badge && <span class={`devtool-badge badge-${tool.badge.toLowerCase()}`}>{tool.badge}</span>}
+                  <svg
+                    class="devtool-arrow"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                  </svg>
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
-      </section>
-    ))}
-  </div>
+      ))}
+    </div>
+  </section>
 
+  <!-- ─── Editor Extensions ─── -->
+  <section class="devtools-section">
+    <div class="section-header">
+      <h2 class="section-title">
+        <span class="section-title-icon">🧩</span>
+        Extensiones para Editor
+      </h2>
+      <p class="section-subtitle">Las extensiones que tengo activas en Cursor y Zed.</p>
+    </div>
+
+    <div class="devtools-groups">
+      {editorExtensions.map((group) => (
+        <div class="devtools-group">
+          <h3 class="group-label">
+            <span class="group-icon">{group.icon}</span>
+            {group.subcategory}
+          </h3>
+          <ul class="devtools-list">
+            {group.items.map((tool) => (
+              <li class="devtool-item">
+                <a href={tool.url} target="_blank" rel="noopener noreferrer" class="devtool-link">
+                  <div class="devtool-info">
+                    <span class="devtool-name">{tool.name}</span>
+                    <span class="devtool-desc">{tool.description}</span>
+                  </div>
+                  {tool.badge && <span class={`devtool-badge badge-${tool.badge.toLowerCase()}`}>{tool.badge}</span>}
+                  <svg
+                    class="devtool-arrow"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                  </svg>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- ─── Learning Resources ─── -->
+  <section class="devtools-section">
+    <div class="section-header">
+      <h2 class="section-title">
+        <span class="section-title-icon">📚</span>
+        Recursos de Aprendizaje
+      </h2>
+      <p class="section-subtitle">Documentación, plataformas y canales que consulto para seguir aprendiendo.</p>
+    </div>
+
+    <div class="devtools-groups">
+      {learningResources.map((group) => (
+        <div class="devtools-group">
+          <h3 class="group-label">
+            <span class="group-icon">{group.icon}</span>
+            {group.subcategory}
+          </h3>
+          <ul class="devtools-list">
+            {group.items.map((tool) => (
+              <li class="devtool-item">
+                <a href={tool.url} target="_blank" rel="noopener noreferrer" class="devtool-link">
+                  <div class="devtool-info">
+                    <span class="devtool-name">{tool.name}</span>
+                    <span class="devtool-desc">{tool.description}</span>
+                  </div>
+                  {tool.badge && <span class={`devtool-badge badge-${tool.badge.toLowerCase()}`}>{tool.badge}</span>}
+                  <svg
+                    class="devtool-arrow"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                  </svg>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- ─── E-commerce Platforms ─── -->
+  <section class="devtools-section ecom-section">
+    <div class="section-header">
+      <h2 class="section-title">
+        <span class="section-title-icon">🛒</span>
+        Plataformas E-commerce
+      </h2>
+      <p class="section-subtitle">Las plataformas con las que trabajo o he trabajado en proyectos reales.</p>
+    </div>
+
+    <div class="ecom-grid">
+      {ecomPlatforms.map((platform) => (
+        <a href={platform.url} target="_blank" rel="noopener noreferrer" class="ecom-card">
+          <div class="ecom-card-top">
+            <span class={`ecom-badge badge-ecom-${platform.badgeType}`}>{platform.badge}</span>
+            <svg
+              class="ecom-arrow"
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+          </div>
+          <h3 class="ecom-name">{platform.name}</h3>
+          <p class="ecom-desc">{platform.description}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- ─── Fav Tools ─── -->
+  <section class="devtools-section">
+    <div class="section-header">
+      <h2 class="section-title">
+        <span class="section-title-icon">⭐</span>
+        Herramientas Favoritas
+      </h2>
+      <p class="section-subtitle">Recursos y utilidades que uso frecuentemente en mi flujo de trabajo.</p>
+    </div>
+
+    <div class="devtools-groups">
+      {favTools.map((group) => (
+        <div class="devtools-group">
+          <h3 class="group-label">
+            <span class="group-icon">{group.icon}</span>
+            {group.subcategory}
+          </h3>
+          <ul class="devtools-list">
+            {group.items.map((tool) => (
+              <li class="devtool-item">
+                <a href={tool.url} target="_blank" rel="noopener noreferrer" class="devtool-link">
+                  <div class="devtool-info">
+                    <span class="devtool-name">{tool.name}</span>
+                    <span class="devtool-desc">{tool.description}</span>
+                  </div>
+                  {tool.badge && <span class={`devtool-badge badge-${tool.badge.toLowerCase()}`}>{tool.badge}</span>}
+                  <svg
+                    class="devtool-arrow"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                  </svg>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- ─── CodePen ─── -->
   <section class="codepen-section">
     <h2>Mis CodePens</h2>
-    <p class="section-desc">Demos interactivos y experimentos de codigo</p>
+    <p class="section-desc">Demos interactivos y experimentos de código</p>
     <div class="codepen-cta">
       <a href={`https://codepen.io/${codePenUser}`} target="_blank" rel="noopener noreferrer" class="codepen-link">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M18.144 13.067v-2.134L16.55 12zm1.715 1.135a.46.46 0 0 1-.227-.064l-8.844-5.864a.46.46 0 0 1-.207-.384V2.4a.46.46 0 0 1 .69-.398l8.844 5.108a.46.46 0 0 1 .207.384v6.324a.46.46 0 0 1-.463.46zm-2.042.066l-2.037-1.346 2.037-1.347zm-13.39-1.347l-2.036 1.347v-2.693zm-2.343-1.854a.46.46 0 0 1 .227.064l8.844 5.864a.46.46 0 0 1 .207.384v5.49a.46.46 0 0 1-.69.398L1.828 18.16a.46.46 0 0 1-.207-.384v-6.324a.46.46 0 0 1 .463-.46zm12.017 3.01l-4.097 2.717v-5.434zm.33-4.01L12 12.4l-2.43-2.333L12 7.734zM7.903 12L3.806 9.284v5.433z"/>
+          <path d="M18.144 13.067v-2.134L16.55 12zm1.715 1.135a.46.46 0 0 1-.227-.064l-8.844-5.864a.46.46 0 0 1-.207-.384V2.4a.46.46 0 0 1 .69-.398l8.844 5.108a.46.46 0 0 1 .207.384v6.324a.46.46 0 0 1-.463.46zm-2.042.066l-2.037-1.346 2.037-1.347zm-13.39-1.347l-2.036 1.347v-2.693zm-2.343-1.854a.46.46 0 0 1 .227.064l8.844 5.864a.46.46 0 0 1 .207.384v5.49a.46.46 0 0 1-.69.398L1.828 18.16a.46.46 0 0 1-.207-.384v-6.324a.46.46 0 0 1 .463-.46zm12.017 3.01l-4.097 2.717v-5.434zm.33-4.01L12 12.4l-2.43-2.333L12 7.734zM7.903 12L3.806 9.284v5.433z" />
         </svg>
         Ver mi perfil en CodePen
       </a>
@@ -107,6 +725,7 @@ const codePenUser = 'SpokeLopez-1471233183';
 </BaseLayout>
 
 <style>
+  /* ─── Page Header ─── */
   .page-header {
     text-align: center;
     margin-bottom: var(--space-3xl);
@@ -136,6 +755,289 @@ const codePenUser = 'SpokeLopez-1471233183';
     margin: 0 auto;
   }
 
+  /* ─── Dev Tools Section ─── */
+  .devtools-section {
+    margin-bottom: var(--space-3xl);
+    padding: var(--space-2xl);
+    background: linear-gradient(135deg, var(--color-bg-card) 0%, var(--color-bg-secondary) 100%);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .devtools-section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-accent), transparent);
+  }
+
+  .section-header {
+    margin-bottom: var(--space-2xl);
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: 1.5rem;
+    margin-bottom: var(--space-xs);
+  }
+
+  .section-title-icon {
+    font-size: 1.25rem;
+  }
+
+  .section-subtitle {
+    color: var(--color-text-muted);
+    font-size: 0.9375rem;
+    margin-left: calc(1.25rem + var(--space-sm));
+  }
+
+  /* ─── Groups grid ─── */
+  .devtools-groups {
+    columns: 2;
+    column-gap: var(--space-xl);
+  }
+
+  .devtools-group {
+    break-inside: avoid;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xl);
+  }
+
+  .devtools-group:last-child {
+    margin-bottom: 0;
+  }
+
+  .group-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-xs);
+  }
+
+  .group-icon {
+    font-size: 0.875rem;
+  }
+
+  /* ─── Tools list ─── */
+  .devtools-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .devtool-item {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .devtool-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-md);
+    color: var(--color-text);
+    background-color: transparent;
+    border: 1px solid transparent;
+    transition: all 0.15s ease;
+  }
+
+  .devtool-link:hover {
+    background-color: var(--color-accent-muted);
+    border-color: var(--color-accent);
+    color: var(--color-text);
+    transform: translateX(4px);
+  }
+
+  .devtool-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .devtool-name {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .devtool-desc {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .devtool-badge {
+    flex-shrink: 0;
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  .badge-ai {
+    background-color: rgba(34, 211, 238, 0.15);
+    color: var(--color-accent);
+    border: 1px solid rgba(34, 211, 238, 0.3);
+  }
+
+  .badge-new {
+    background-color: rgba(168, 85, 247, 0.15);
+    color: #c084fc;
+    border: 1px solid rgba(168, 85, 247, 0.3);
+  }
+
+  .badge-fast {
+    background-color: rgba(251, 146, 60, 0.15);
+    color: #fb923c;
+    border: 1px solid rgba(251, 146, 60, 0.3);
+  }
+
+  .badge-dark {
+    background-color: rgba(99, 102, 241, 0.15);
+    color: #a5b4fc;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+  }
+
+  .badge-light {
+    background-color: rgba(250, 204, 21, 0.15);
+    color: #fde047;
+    border: 1px solid rgba(250, 204, 21, 0.3);
+  }
+
+  .devtool-arrow {
+    flex-shrink: 0;
+    color: var(--color-text-muted);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+  }
+
+  .devtool-link:hover .devtool-arrow {
+    opacity: 1;
+    color: var(--color-accent);
+  }
+
+  /* ─── E-commerce Cards ─── */
+  .ecom-section {
+    --ecom-accent: var(--color-accent);
+  }
+
+  .ecom-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: var(--space-md);
+  }
+
+  .ecom-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding: var(--space-lg);
+    background-color: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    color: var(--color-text);
+    transition: all 0.2s ease;
+  }
+
+  .ecom-card:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    color: var(--color-text);
+  }
+
+  .ecom-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--space-xs);
+  }
+
+  .ecom-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  .ecom-desc {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .ecom-arrow {
+    color: var(--color-text-muted);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .ecom-card:hover .ecom-arrow {
+    opacity: 1;
+    color: var(--color-accent);
+  }
+
+  /* E-commerce badges */
+  .ecom-badge {
+    font-size: 0.625rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+
+  .badge-ecom-enterprise {
+    background-color: rgba(239, 68, 68, 0.12);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.25);
+  }
+
+  .badge-ecom-saas {
+    background-color: rgba(34, 211, 238, 0.12);
+    color: var(--color-accent);
+    border: 1px solid rgba(34, 211, 238, 0.25);
+  }
+
+  .badge-ecom-opensource {
+    background-color: rgba(74, 222, 128, 0.12);
+    color: #4ade80;
+    border: 1px solid rgba(74, 222, 128, 0.25);
+  }
+
+  .badge-ecom-plugin {
+    background-color: rgba(251, 191, 36, 0.12);
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.25);
+  }
+
+  /* ─── Other Resources ─── */
   .resources-container {
     display: flex;
     flex-direction: column;
@@ -143,9 +1045,16 @@ const codePenUser = 'SpokeLopez-1471233183';
   }
 
   .resource-section h2 {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
     font-size: 1.25rem;
     margin-bottom: var(--space-lg);
     color: var(--color-text);
+  }
+
+  .section-emoji {
+    font-size: 1.125rem;
   }
 
   .resource-grid {
@@ -193,6 +1102,7 @@ const codePenUser = 'SpokeLopez-1471233183';
     font-weight: 500;
   }
 
+  /* ─── CodePen ─── */
   .codepen-section {
     margin-top: var(--space-3xl);
     padding-top: var(--space-2xl);
@@ -232,5 +1142,20 @@ const codePenUser = 'SpokeLopez-1471233183';
     border-color: var(--color-accent);
     background-color: var(--color-accent-muted);
     color: var(--color-accent);
+  }
+
+  /* ─── Responsive ─── */
+  @media (max-width: 640px) {
+    .devtools-section {
+      padding: var(--space-lg);
+    }
+
+    .devtools-groups {
+      columns: 1;
+    }
+
+    .section-subtitle {
+      margin-left: 0;
+    }
   }
 </style>

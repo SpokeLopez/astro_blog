@@ -1,0 +1,175 @@
+---
+layout: "../../layouts/PostLayout.astro"
+title: "Caveman Prompting: cómo reducir hasta un 65% el consumo de tokens en tu agente de IA"
+description: "Caveman es una técnica de prompting y herramienta open source que elimina el relleno de las respuestas de tu agente de IA. Menos tokens, más velocidad y menor costo sin sacrificar calidad."
+date: "2026-09-11"
+tags: ["IA", "Skills"]
+category: "ia"
+readingTime: "7 min"
+image: "/images/caveman-prompting-reducir-tokens-ia.png"
+imageAlt: "Página principal de Caveman: Take AI further. Spend less."
+---
+
+![Página principal de Caveman: Take AI further. Spend less.](/images/caveman-prompting-reducir-tokens-ia.png)
+
+Si usas asistentes de IA en tu editor —Claude Code, Cursor, GitHub Copilot— habrás notado que una buena parte de cada respuesta es relleno puro: "¡Claro! Estaré encantado de ayudarte con eso..." antes de llegar a lo que realmente necesitas. Caveman es la solución a eso.
+
+## ¿Qué es Caveman?
+
+Caveman es simultáneamente **una técnica de prompting** y **una herramienta open source** creada por Julius Brussee. El [repositorio en GitHub](https://github.com/JuliusBrussee/caveman) acumula más de 100.000 estrellas, lo que da una idea del problema que resuelve.
+
+La idea es sencilla: si instruyeras a alguien con vocabulario muy limitado, no dirías "¿podrías considerablemente mejorar este texto?". Dirías: "mejora texto. rápido." Con los modelos de lenguaje funciona igual.
+
+La filosofía del proyecto cabe en una línea del README oficial:
+
+> _"Why use many token when few do trick"_
+
+## Cómo funciona
+
+Caveman actúa sobre dos frentes distintos.
+
+### 1. La Skill (lo que el agente dice)
+
+Es un archivo de reglas que instruye al agente a responder en "estilo cavernícola inteligente". Elimina sistemáticamente:
+
+- Relleno conversacional ("I'd be happy to help you with that...")
+- Frases de cortesía ("sure", "certainly", "gracias por preguntar")
+- Hedging y ambigüedad ("podría valer la pena considerar...")
+- Explicaciones sobre las explicaciones
+
+Y mantiene intacto lo que importa:
+
+- Bloques de código completos
+- Términos técnicos exactos
+- Mensajes de error al pie de la letra
+- Comandos, rutas de archivo y URLs
+
+### 2. El Proxy (lo que el agente lee)
+
+Es un proceso local que intercepta el tráfico entre el agente y el proveedor (Anthropic, OpenAI, Google) y comprime lo que el agente recibe antes de enviarlo. Detecta el tipo de contenido y aplica compresión específica:
+
+| Tipo de contenido | Qué conserva                                         | Ahorro típico |
+| ----------------- | ---------------------------------------------------- | ------------- |
+| JSON              | Claves relevantes, colapsa arrays                    | 70–90%        |
+| Logs              | Errores y stack traces, elimina ruido INFO           | 85–95%        |
+| Código            | Imports, firmas, tipos; elimina cuerpos de funciones | 40–70%        |
+| Diffs             | Encabezados y líneas cambiadas                       | 60–80%        |
+
+## Los cuatro niveles de intensidad
+
+Una vez instalada la skill, tienes cuatro modos disponibles:
+
+| Comando           | Qué hace                                                              |
+| ----------------- | --------------------------------------------------------------------- |
+| `/caveman lite`   | Quita relleno, mantiene gramática completa. Profesional pero ajustado |
+| `/caveman`        | Por defecto. Quita artículos, fragmentos OK, sinónimos cortos         |
+| `/caveman ultra`  | Compresión máxima. Telegráfico. Abrevia todo                          |
+| `/caveman wenyan` | Modo chino clásico. Compresión extrema en muy pocos caracteres        |
+
+Para tener una idea concreta de la diferencia, un mismo bug de middleware devuelve esto según el nivel:
+
+**Sin Caveman:** "¡Claro! Estaré encantado de ayudarte. El problema que estás teniendo seguramente esté causado por que tu middleware de autenticación no está validando bien el vencimiento del token..."
+
+**Con Caveman Full:** "Bug en middleware auth. Comprobación de vencimiento del token usa `<` en lugar de `<=`. Fix: [código]"
+
+La misma información. Muchos menos tokens.
+
+## Los números del benchmark oficial
+
+El repositorio incluye benchmarks reproducibles sobre 10 tareas reales usando la API de Claude:
+
+| Tarea                                 | Sin Caveman      | Con Caveman    | Ahorro  |
+| ------------------------------------- | ---------------- | -------------- | ------- |
+| Implementar React error boundary      | 3.454 tokens     | 456 tokens     | 87%     |
+| Configurar PostgreSQL connection pool | 2.347 tokens     | 380 tokens     | 84%     |
+| Explicar git rebase vs merge          | 702 tokens       | 292 tokens     | 58%     |
+| Refactorizar callback a async/await   | 387 tokens       | 301 tokens     | 22%     |
+| **Media de 10 tareas**                | **1.214 tokens** | **294 tokens** | **65%** |
+
+El rango es amplio: desde 22% en refactors densos hasta 87% en tareas explicativas. El promedio del proxy en sesiones reales de Claude Code es 33% adicional de reducción en los tokens de entrada.
+
+Un dato relevante sobre el costo: los tokens de salida cuestan 5 veces más que los de entrada en Claude Sonnet. Reducir la verbosidad de las respuestas tiene impacto directo en la factura de API.
+
+## Instalación
+
+Hay varias formas de instalarlo dependiendo del agente que uses:
+
+```bash
+# Skill universal (30+ agentes soportados)
+npx skills add JuliusBrussee/caveman
+
+# Claude Code específicamente
+claude plugin marketplace add JuliusBrussee/caveman
+claude plugin install caveman@caveman
+
+# Instalación completa con proxy (recomendada)
+curl -fsSL https://raw.githubusercontent.com/JuliusBrussee/caveman/v2.6.0/install.sh | bash
+```
+
+Los agentes compatibles incluyen Claude Code, Cursor, Windsurf, GitHub Copilot y más de 40 agentes en total.
+
+## Sub-skills incluidas
+
+Además del modo principal, Caveman viene con skills especializadas:
+
+- `/caveman-commit` — mensajes de commit en Conventional Commits concisos
+- `/caveman-review` — code reviews de una línea por problema
+- `/caveman-compress <archivo>` — comprime archivos `CLAUDE.md` o `AGENTS.md` (ahorro 36–60%)
+- `/caveman-stats` — estadísticas de tokens ahorrados en la sesión actual
+
+## La técnica sin instalar nada
+
+La parte interesante es que los principios de Caveman también funcionan como técnica manual, sin instalar ninguna herramienta. El patrón es:
+
+```
+[VERBO ACCIONABLE]. Input: [contenido]. Restricciones: [formato/largo]. Contexto: [solo si es vital].
+```
+
+En la práctica significa eliminar los preámbulos: en lugar de "¿podrías analizar este texto e indicarme el sentimiento expresado?", directamente "Analiza sentimiento: positivo / negativo / neutro. Justifica en una línea. [TEXTO]".
+
+Los principios que guían la técnica:
+
+1. **Verbo accionable primero**: "Analiza", "Resume", "Extrae", "Clasifica"
+2. **Input explícito y delimitado**: marcadores claros como `[TEXTO]` o `Contenido: ___`
+3. **Restricciones de formato precisas**: JSON, tabla, lista, número máximo de palabras
+4. **Contexto mínimo e indispensable**: una línea máximo, sin explicar el "por qué"
+5. **Cero relleno**: eliminar "por favor", "gracias", frases de cortesía
+
+El error más común al aplicar esto es confundir "corto" con "incompleto". Un prompt Caveman tiene toda la información necesaria; lo que no tiene son palabras que no aportan señal.
+
+## Cuándo conviene (y cuándo no)
+
+**Vale la pena si:**
+
+- La mayoría del tiempo está en debugging conversacional, explicaciones o comparativas
+- Tienes archivos `CLAUDE.md` o `AGENTS.md` pesados que se cargan en cada sesión
+- Trabajas con múltiples agentes en el mismo proyecto
+- El costo de API o los límites de contexto son un factor
+
+**El beneficio es mínimo si:**
+
+- El trabajo es casi todo generación de código denso o JSON estructurado
+- Las respuestas ya son cortas y técnicas por naturaleza
+- No quieres configurar nada adicional y el costo no importa
+
+## El ecosistema
+
+Caveman ha dado lugar a un ecosistema de herramientas relacionadas:
+
+| Herramienta    | Qué hace                                                             |
+| -------------- | -------------------------------------------------------------------- |
+| caveman-browse | Comprime lo que el agente ve en el navegador                         |
+| cavemem        | Comprime lo que el agente recuerda entre sesiones (SQLite + MCP)     |
+| cavekit        | Flujo spec-first: especificaciones antes que código                  |
+| caveman-code   | Agente CLI completo con cuatro capas de compresión (preview privada) |
+
+Un detalle curioso del proyecto: el modo Wenyan usa chino clásico porque es el formato escrito más denso en información por carácter desarrollado por humanos. Un benchmark de marzo 2026 (arXiv 2604.00025) encontró además que forzar respuestas breves en modelos grandes mejoró la precisión en 26 puntos porcentuales en ciertos benchmarks, lo que sugiere que el minimalismo no sacrifica calidad.
+
+---
+
+Caveman resuelve un problema real: los agentes de IA son naturalmente verbosos porque fueron entrenados para serlo. La skill es básicamente un permiso explícito para que respondan diferente. Vale la pena probarlo al menos en su forma manual antes de decidir si instalar la herramienta.
+
+## Referencias
+
+- [JuliusBrussee/caveman — GitHub](https://github.com/JuliusBrussee/caveman)
+- [Caveman Prompting: la técnica de IA que te ahorra tokens hablando menos — DonWeb Blog](https://blog.donweb.com/caveman-prompting-tecnica-ia/)
