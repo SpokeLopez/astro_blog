@@ -10,6 +10,8 @@ interface Props {
     date: Date;
     tags: string[];
     tiktokUrl?: string;
+    image?: string;
+    imageAlt?: string;
   };
 }
 
@@ -65,6 +67,17 @@ const formattedDate = new Date(frontmatter.date).toLocaleDateString('es-ES', {
       </div>
       
       <h1 class="post-title">{frontmatter.title}</h1>
+
+      {frontmatter.image && (
+        <img
+          class="post-cover"
+          src={frontmatter.image}
+          alt={frontmatter.imageAlt || frontmatter.title}
+          width="1200"
+          height="630"
+          loading="eager"
+        />
+      )}
       
       <p class="post-description">{frontmatter.description}</p>
       
@@ -155,6 +168,16 @@ const formattedDate = new Date(frontmatter.date).toLocaleDateString('es-ES', {
 </script>
 
 <style>
+  .post-cover {
+    display: block;
+    width: 100%;
+    aspect-ratio: 1200 / 630;
+    object-fit: cover;
+    margin: var(--space-xl) 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
   .post-layout {
     --post-sidebar-width: 260px;
     --post-header-offset: 5.5rem;
