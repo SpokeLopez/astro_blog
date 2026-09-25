@@ -1,0 +1,196 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'Códigos de estado HTTP: qué significa cada respuesta del servidor'
+description: 'Entiende las cinco familias de códigos HTTP, aprende a diferenciar los estados más comunes y descubre cómo revisarlos cuando depuras una web o una API.'
+date: '2022-03-10T12:00:00-06:00'
+tags: ['HTTP', 'Web', 'Tutorial']
+category: 'tutorial'
+readingTime: '8 min'
+image: '/images/blog/covers/codigos-estado-http.webp'
+imageAlt: 'Infografía colorida con códigos de estado HTTP y explicaciones breves'
+---
+
+Cuando visitas una página, envías un formulario o consumes una API, el servidor siempre devuelve una respuesta. Además del contenido, esa respuesta incluye un **código de estado HTTP**: un número de tres cifras que resume qué ocurrió con la petición.
+
+No necesitas memorizar toda la lista para trabajar en frontend o backend. Conocer las cinco familias y unos cuantos códigos habituales es suficiente para diagnosticar la mayoría de los problemas.
+
+## Las cinco familias de códigos HTTP
+
+El primer dígito indica la categoría de la respuesta. La [referencia de códigos de estado de MDN](https://developer.mozilla.org/es/docs/Web/HTTP/Reference/Status) las agrupa así:
+
+| Familia | Rango | Qué comunica |
+| --- | --- | --- |
+| `1xx` | 100–199 | Información provisional; la petición continúa procesándose. |
+| `2xx` | 200–299 | La petición se recibió y se procesó correctamente. |
+| `3xx` | 300–399 | El cliente debe seguir una redirección o puede usar una versión almacenada. |
+| `4xx` | 400–499 | El problema está en la petición o en las credenciales del cliente. |
+| `5xx` | 500–599 | El servidor no pudo completar una petición que, en principio, era válida. |
+
+El primer número orienta, pero no cuenta toda la historia. Un `401` y un `403`, por ejemplo, son errores del cliente, aunque uno pide autenticación y el otro indica que el usuario autenticado no tiene permiso.
+
+## Respuestas informativas: `1xx`
+
+Son respuestas provisionales que normalmente no ves en la interfaz. El servidor todavía está negociando o procesando la petición.
+
+- `100 Continue`: el servidor recibió las cabeceras iniciales y el cliente puede continuar enviando el cuerpo.
+- `101 Switching Protocols`: se acepta cambiar de protocolo, como ocurre al iniciar una conexión WebSocket.
+- `103 Early Hints`: permite adelantar cabeceras `Link` para que el navegador empiece a precargar recursos.
+
+En la mayoría de aplicaciones solo necesitas reconocer que un `1xx` no es el resultado final.
+
+## Respuestas correctas: `2xx`
+
+### `200 OK`
+
+La operación terminó correctamente. En un `GET`, suele significar que el recurso se devolvió en el cuerpo de la respuesta.
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+```
+
+### `201 Created`
+
+La petición fue correcta y creó un recurso nuevo. Es la respuesta habitual de un `POST` que registra un usuario, un pedido o un artículo. Es recomendable incluir una cabecera `Location` con la URL del recurso recién creado.
+
+### `202 Accepted`
+
+El servidor aceptó el trabajo, pero todavía no lo ha terminado. Resulta útil para procesos en segundo plano: generar un PDF, importar un catálogo o procesar un vídeo.
+
+### `204 No Content`
+
+La operación funcionó, pero no hay contenido que devolver. Es una respuesta frecuente después de eliminar un recurso o actualizarlo cuando el cliente no necesita recibir una copia completa.
+
+## Redirecciones: `3xx`
+
+Una redirección no significa necesariamente que exista un error. Indica que el cliente debe consultar otra ubicación o que puede reutilizar una representación que ya tiene.
+
+### `301 Moved Permanently`
+
+La URL cambió de forma permanente. Úsalo cuando migras una ruta, cambias el dominio o sustituyes un slug. Los buscadores pueden transferir señales de la URL antigua a la nueva cuando la redirección está bien configurada.
+
+### `302 Found`
+
+Indica una redirección temporal. Históricamente algunos clientes cambiaban el método de la petición al seguirla, por eso conviene elegirlo con cuidado en endpoints que reciben `POST`.
+
+### `304 Not Modified`
+
+El recurso no cambió desde la versión que el navegador tiene en caché. No incluye el cuerpo de la respuesta y permite ahorrar ancho de banda.
+
+### `307 Temporary Redirect` y `308 Permanent Redirect`
+
+Son equivalentes modernos de `302` y `301`, pero preservan explícitamente el método HTTP y el cuerpo de la petición. Esto los hace más seguros cuando una redirección puede recibir `POST`, `PUT` o `PATCH`.
+
+## Errores del cliente: `4xx`
+
+Estos códigos indican que el servidor no puede aceptar la petición tal como llegó. No siempre significa que la persona haya cometido un error: también puede faltar una cabecera, un token o un permiso.
+
+### `400 Bad Request`
+
+La petición tiene una sintaxis inválida o datos que el servidor no puede interpretar. Un JSON mal formado, un parámetro obligatorio ausente o un formato inesperado son causas comunes.
+
+### `401 Unauthorized`
+
+La petición necesita autenticación. Aunque el nombre diga “no autorizado”, el significado práctico suele ser “todavía no has demostrado quién eres”. El cliente debe enviar credenciales válidas, normalmente mediante `Authorization: Bearer ...`.
+
+### `403 Forbidden`
+
+El servidor entendió quién eres, pero no te permite realizar esa operación. Por ejemplo, una cuenta autenticada intenta borrar un recurso reservado para administradores.
+
+### `404 Not Found`
+
+El recurso solicitado no existe en esa URL o el servidor no quiere revelar si existe. Es el código más conocido porque aparece cuando un enlace apunta a una ruta inexistente.
+
+No conviene redirigir todos los `404` a la página de inicio. Si existe una página equivalente, utiliza una redirección `301`; si el recurso se eliminó definitivamente, considera `410 Gone`.
+
+### `405 Method Not Allowed`
+
+La ruta existe, pero no admite el método utilizado. Un endpoint que solo acepta `GET` podría devolver `405` al recibir un `POST`. La cabecera `Allow` puede indicar qué métodos sí están permitidos.
+
+### `409 Conflict`
+
+La petición choca con el estado actual del recurso. Es habitual al intentar crear un usuario con un correo ya registrado o modificar una versión que quedó obsoleta.
+
+### `422 Unprocessable Content`
+
+La estructura de la petición es válida, pero sus datos no pasan las reglas de negocio. Por ejemplo, un formulario con un correo correcto sintácticamente, pero que ya está ocupado.
+
+### `429 Too Many Requests`
+
+El cliente superó el límite de peticiones. Una API puede acompañar este estado con `Retry-After` para indicar cuándo conviene reintentar. Los clientes deberían aplicar backoff y evitar reintentos infinitos.
+
+## Errores del servidor: `5xx`
+
+Aquí la petición llegó al servidor, pero algo impidió completarla. Estos estados suelen requerir revisar logs, dependencias externas, bases de datos o límites de infraestructura.
+
+- `500 Internal Server Error`: ocurrió un fallo inesperado dentro de la aplicación.
+- `502 Bad Gateway`: un proxy o gateway recibió una respuesta inválida de otro servidor.
+- `503 Service Unavailable`: el servicio está temporalmente fuera de disponibilidad, por mantenimiento o saturación.
+- `504 Gateway Timeout`: un proxy esperó demasiado tiempo la respuesta de un servicio ascendente.
+
+No uses `500` para ocultar cualquier problema. Devuelve el código más preciso que puedas y registra el detalle técnico en el servidor, nunca en la respuesta pública si contiene información sensible.
+
+## Cómo revisar un código de estado
+
+### Desde las herramientas del navegador
+
+1. Abre las herramientas de desarrollo con `F12` o `Ctrl + Shift + I`.
+2. Entra en la pestaña **Network** o **Red**.
+3. Recarga la página y selecciona la petición que quieres investigar.
+4. Revisa la columna **Status** y después las cabeceras, el método y la respuesta.
+
+La pestaña Network ayuda a distinguir si falla el documento HTML, un archivo JavaScript, una imagen o una llamada `fetch`.
+
+### Desde la terminal
+
+Para consultar solo las cabeceras de una URL puedes usar `curl`:
+
+```bash
+curl -I https://ejemplo.com
+```
+
+Una API JSON se puede revisar con más detalle así:
+
+```bash
+curl -i \
+  -H 'Accept: application/json' \
+  https://api.ejemplo.com/products
+```
+
+Busca primero la línea de estado, por ejemplo `HTTP/2 200`, y luego comprueba `Location`, `Cache-Control`, `Retry-After` o `Content-Type` según el caso.
+
+## Códigos HTTP y SEO
+
+Los códigos no son una métrica SEO aislada, pero sí describen la disponibilidad que encuentran los visitantes y los rastreadores. La guía de [Semrush sobre códigos HTTP](https://es.semrush.com/blog/codigos-de-estado-http/) destaca especialmente estos casos:
+
+- Las páginas importantes deberían responder `200`.
+- Un `301` es apropiado para una URL que se trasladó permanentemente.
+- Un `404` puede ser normal para una ruta inexistente, pero conviene corregir enlaces rotos y errores accidentales.
+- Los `5xx` persistentes dificultan el rastreo y empeoran la experiencia de usuario.
+
+La regla práctica es sencilla: devuelve el código que describe realmente lo ocurrido. No conviertas un error en `200` para “que no se vea mal”, ni uses una redirección cuando el recurso no tiene un destino equivalente.
+
+## Resumen rápido
+
+Si solo vas a recordar unos pocos códigos, empieza por estos:
+
+| Código | Idea rápida |
+| --- | --- |
+| `200` | Todo salió bien. |
+| `201` | Se creó algo nuevo. |
+| `301` | La URL cambió permanentemente. |
+| `304` | Puedes usar la versión en caché. |
+| `400` | La petición está mal formada. |
+| `401` | Falta autenticación. |
+| `403` | No tienes permiso. |
+| `404` | No existe ese recurso. |
+| `429` | Has enviado demasiadas peticiones. |
+| `500` | Algo falló en el servidor. |
+| `503` | El servicio no está disponible ahora. |
+
+Los códigos de estado son una conversación breve entre cliente y servidor. Leerlos correctamente te permite localizar antes si el problema está en la URL, los datos, las credenciales, la caché o la infraestructura.
+
+### Referencias
+
+- [Códigos de estado de respuesta HTTP — MDN](https://developer.mozilla.org/es/docs/Web/HTTP/Reference/Status)
+- [Códigos HTTP: lista completa y explicaciones — Semrush](https://es.semrush.com/blog/codigos-de-estado-http/)
