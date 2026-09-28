@@ -392,37 +392,6 @@ const learningResources = [
   },
 ];
 
-const ecomPlatforms = [
-  {
-    name: "Magento / Adobe Commerce",
-    url: "https://business.adobe.com/products/magento/magento-commerce.html",
-    description: "Plataforma enterprise con máxima flexibilidad para catálogos complejos y múltiples tiendas.",
-    badge: "Enterprise",
-    badgeType: "enterprise",
-  },
-  {
-    name: "Shopify",
-    url: "https://shopify.com/",
-    description: "La solución SaaS más popular del mercado. Rápida de desplegar, con un ecosistema de apps enorme.",
-    badge: "SaaS",
-    badgeType: "saas",
-  },
-  {
-    name: "PrestaShop",
-    url: "https://prestashop.com/",
-    description: "Open source con gran comunidad europea. Control total sobre el hosting y el código.",
-    badge: "Open Source",
-    badgeType: "opensource",
-  },
-  {
-    name: "WooCommerce",
-    url: "https://woocommerce.com/",
-    description: "El plugin e-commerce más usado del mundo, construido sobre WordPress.",
-    badge: "Plugin",
-    badgeType: "plugin",
-  },
-];
-
 const favTools = [
   {
     subcategory: "Diseño & UI",
@@ -615,45 +584,6 @@ const codePenUser = "SpokeLopez-1471233183";
             ))}
           </ul>
         </div>
-      ))}
-    </div>
-  </section>
-
-  <!-- ─── E-commerce Platforms ─── -->
-  <section class="devtools-section ecom-section">
-    <div class="section-header">
-      <h2 class="section-title">
-        <span class="section-title-icon">🛒</span>
-        Plataformas E-commerce
-      </h2>
-      <p class="section-subtitle">Las plataformas con las que trabajo o he trabajado en proyectos reales.</p>
-    </div>
-
-    <div class="ecom-grid">
-      {ecomPlatforms.map((platform) => (
-        <a href={platform.url} target="_blank" rel="noopener noreferrer" class="ecom-card">
-          <div class="ecom-card-top">
-            <span class={`ecom-badge badge-ecom-${platform.badgeType}`}>{platform.badge}</span>
-            <svg
-              class="ecom-arrow"
-              xmlns="http://www.w3.org/2000/svg"
-              width="14"
-              height="14"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-              <polyline points="15 3 21 3 21 9"></polyline>
-              <line x1="10" y1="14" x2="21" y2="3"></line>
-            </svg>
-          </div>
-          <h3 class="ecom-name">{platform.name}</h3>
-          <p class="ecom-desc">{platform.description}</p>
-        </a>
       ))}
     </div>
   </section>
@@ -939,102 +869,6 @@ const codePenUser = "SpokeLopez-1471233183";
   .devtool-link:hover .devtool-arrow {
     opacity: 1;
     color: var(--color-accent);
-  }
-
-  /* ─── E-commerce Cards ─── */
-  .ecom-section {
-    --ecom-accent: var(--color-accent);
-  }
-
-  .ecom-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: var(--space-md);
-  }
-
-  .ecom-card {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-    padding: var(--space-lg);
-    background-color: var(--color-bg);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    color: var(--color-text);
-    transition: all 0.2s ease;
-  }
-
-  .ecom-card:hover {
-    border-color: var(--color-accent);
-    transform: translateY(-3px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    color: var(--color-text);
-  }
-
-  .ecom-card-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: var(--space-xs);
-  }
-
-  .ecom-name {
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--color-text);
-  }
-
-  .ecom-desc {
-    font-size: 0.8125rem;
-    color: var(--color-text-muted);
-    line-height: 1.5;
-    flex: 1;
-  }
-
-  .ecom-arrow {
-    color: var(--color-text-muted);
-    opacity: 0;
-    transition: opacity 0.2s ease;
-    flex-shrink: 0;
-  }
-
-  .ecom-card:hover .ecom-arrow {
-    opacity: 1;
-    color: var(--color-accent);
-  }
-
-  /* E-commerce badges */
-  .ecom-badge {
-    font-size: 0.625rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    padding: 3px 8px;
-    border-radius: 4px;
-  }
-
-  .badge-ecom-enterprise {
-    background-color: rgba(239, 68, 68, 0.12);
-    color: #f87171;
-    border: 1px solid rgba(239, 68, 68, 0.25);
-  }
-
-  .badge-ecom-saas {
-    background-color: rgba(34, 211, 238, 0.12);
-    color: var(--color-accent);
-    border: 1px solid rgba(34, 211, 238, 0.25);
-  }
-
-  .badge-ecom-opensource {
-    background-color: rgba(74, 222, 128, 0.12);
-    color: #4ade80;
-    border: 1px solid rgba(74, 222, 128, 0.25);
-  }
-
-  .badge-ecom-plugin {
-    background-color: rgba(251, 191, 36, 0.12);
-    color: #fbbf24;
-    border: 1px solid rgba(251, 191, 36, 0.25);
   }
 
   /* ─── Other Resources ─── */

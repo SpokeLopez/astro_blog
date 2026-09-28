@@ -1041,71 +1041,103 @@ const experience = [
     <div class="section-header">
       <span class="section-tag">Servicios</span>
       <h2>Lo que hago</h2>
+      <p class="section-subtitle">Software a la medida para hacer crecer tu negocio</p>
     </div>
-    <div class="services-grid">
-      <div class="service-card">
+
+    <!-- Fila 1: hero card grande + 2 cards normales -->
+    <div class="services-row services-row--top">
+      <!-- Hero card -->
+      <a href={CAL_PROFILE_URL} target="_blank" rel="noopener noreferrer" class="service-card service-card--hero">
         <div class="service-icon">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <polyline points="16 18 22 12 16 6"></polyline>
             <polyline points="8 6 2 12 8 18"></polyline>
           </svg>
         </div>
-        <h3>Desarrollo Web</h3>
-        <p>Sitios y aplicaciones rápidos, seguros y escalables con las mejores tecnologías.</p>
-      </div>
-      <div class="service-card">
+        <h3>Desarrollo web a la medida</h3>
+        <p>Sitios, aplicaciones y APIs construidas con el stack correcto para tu negocio. Rápido, seguro y escalable desde el día uno.</p>
+      </a>
+
+      <!-- E-commerce -->
+      <a href={CAL_PROFILE_URL} target="_blank" rel="noopener noreferrer" class="service-card">
         <div class="service-icon">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <circle cx="9" cy="21" r="1" />
-            <circle cx="20" cy="21" r="1" />
-            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
           </svg>
         </div>
         <h3>E-commerce</h3>
-        <p>Tiendas online con Magento, Shopify y PrestaShop optimizadas para conversión.</p>
-      </div>
-      <div class="service-card">
+        <p>Tiendas en Magento, Shopify y PrestaShop que convierten. Tu operación, no la de la plantilla.</p>
+      </a>
+
+      <!-- Apps móviles -->
+      <a href={CAL_PROFILE_URL} target="_blank" rel="noopener noreferrer" class="service-card">
         <div class="service-icon">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-            <circle cx="9" cy="7" r="4"></circle>
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+            <line x1="12" y1="18" x2="12.01" y2="18"></line>
           </svg>
         </div>
-        <h3>Mentorías</h3>
-        <p>Asesoría personalizada para acelerar tu crecimiento como desarrollador.</p>
-      </div>
+        <h3>Apps móviles</h3>
+        <p>Tu negocio en las manos de tus clientes. iOS, Android o ambos con una sola inversión usando Ionic.</p>
+      </a>
+    </div>
+
+    <!-- Fila 2: 4 cards iguales -->
+    <div class="services-row services-row--bottom">
+      <!-- Inteligencia artificial -->
+      <a href={CAL_PROFILE_URL} target="_blank" rel="noopener noreferrer" class="service-card">
+        <div class="service-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"></path>
+            <circle cx="7.5" cy="14.5" r="1.5"></circle>
+            <circle cx="16.5" cy="14.5" r="1.5"></circle>
+          </svg>
+        </div>
+        <h3>Inteligencia artificial</h3>
+        <p>Automatiza decisiones, predice tendencias y libera a tu equipo de tareas repetitivas con IA práctica.</p>
+      </a>
+
+      <!-- Gestión de inventarios -->
+      <a href={CAL_PROFILE_URL} target="_blank" rel="noopener noreferrer" class="service-card">
+        <div class="service-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+          </svg>
+        </div>
+        <h3>Gestión de inventarios</h3>
+        <p>Control en tiempo real. Reduce merma, robo hormiga y decisiones con datos desactualizados.</p>
+      </a>
+
+      <!-- Facturación electrónica -->
+      <a href={CAL_PROFILE_URL} target="_blank" rel="noopener noreferrer" class="service-card">
+        <div class="service-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+        <h3>Facturación electrónica</h3>
+        <p>CFDI 4.0 integrado a tu operación. Me conecto con PACs autorizados y automatizo el proceso.</p>
+      </a>
+
+      <!-- Arquitectura de software -->
+      <a href={CAL_PROFILE_URL} target="_blank" rel="noopener noreferrer" class="service-card">
+        <div class="service-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+          </svg>
+        </div>
+        <h3>Arquitectura de software</h3>
+        <p>Base sólida, segura y preparada para crecer. Diseño para que tu producto escale sin rehacerlo todo.</p>
+      </a>
     </div>
   </section>
 
@@ -2199,29 +2231,78 @@ const experience = [
     gap: var(--space-lg);
   }
 
-  /* Services Section */
+  /* =====================
+     Services Section
+  ===================== */
   .services-section {
     border-bottom: 1px solid var(--color-border);
   }
 
-  .services-grid {
+  /* Filas del grid de servicios */
+  .services-row {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-lg);
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
   }
 
+  .services-row--top {
+    /* Hero card ocupa 2 columnas, las otras 2 dividen el resto */
+    grid-template-columns: 2fr 1fr 1fr;
+  }
+
+  .services-row--bottom {
+    grid-template-columns: repeat(4, 1fr);
+    margin-bottom: 0;
+  }
+
+  /* Tarjeta base */
   .service-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
     background-color: var(--color-bg-card);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
     padding: var(--space-xl);
-    transition: all 0.2s ease;
+    text-decoration: none;
+    color: inherit;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+    cursor: pointer;
   }
 
   .service-card:hover {
-    border-color: var(--color-border-hover);
+    border-color: var(--color-accent);
+    box-shadow: 0 4px 24px rgba(34, 211, 238, 0.08);
+    transform: translateY(-2px);
   }
 
+  /* Hero card — fondo oscuro como en la imagen */
+  .service-card--hero {
+    background-color: var(--color-bg-secondary);
+    border-color: var(--color-border);
+    color: var(--color-text);
+    justify-content: flex-start;
+  }
+
+  .service-card--hero:hover {
+    border-color: var(--color-accent);
+    background-color: var(--color-bg-secondary);
+    box-shadow: 0 8px 32px rgba(34, 211, 238, 0.12);
+  }
+
+  .service-card--hero h3 {
+    font-size: 1.375rem;
+  }
+
+  .service-card--hero p {
+    font-size: 0.9375rem;
+    flex: 1;
+  }
+
+  /* Icono de servicio */
   .service-icon {
     display: inline-flex;
     align-items: center;
@@ -2230,20 +2311,56 @@ const experience = [
     height: 48px;
     background-color: var(--color-accent-muted);
     color: var(--color-accent);
-    border-radius: var(--radius-lg);
-    margin-bottom: var(--space-md);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-sm);
+    flex-shrink: 0;
   }
 
+  .service-card--hero .service-icon {
+    background-color: rgba(34, 211, 238, 0.15);
+  }
+
+  /* Títulos y texto */
   .service-card h3 {
-    font-size: 1.125rem;
-    font-weight: 600;
-    margin-bottom: var(--space-sm);
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: var(--color-text);
+    line-height: 1.3;
+    margin: 0;
   }
 
   .service-card p {
     font-size: 0.875rem;
-    color: var(--color-text-muted);
-    line-height: 1.6;
+    color: var(--color-text-secondary);
+    line-height: 1.65;
+    margin: 0;
+    flex: 1;
+  }
+
+  /* Responsive servicios */
+  @media (max-width: 1024px) {
+    .services-row--top {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .service-card--hero {
+      grid-column: 1 / -1;
+    }
+
+    .services-row--bottom {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .services-row--top,
+    .services-row--bottom {
+      grid-template-columns: 1fr;
+    }
+
+    .service-card--hero {
+      grid-column: auto;
+    }
   }
 
   /* Contact CTA */
@@ -2362,10 +2479,6 @@ const experience = [
     .posts-grid {
       grid-template-columns: 1fr;
     }
-
-    .services-grid {
-      grid-template-columns: 1fr;
-    }
   }
 
   /* Tabs de tecnologías: scroll horizontal en mobile */
@@ -2405,10 +2518,6 @@ const experience = [
     .tiktok-grid {
       grid-template-columns: 1fr 1fr;
     }
-
-    .services-grid {
-      grid-template-columns: 1fr;
-    }
   }
 
   @media (max-width: 480px) {
@@ -2441,7 +2550,6 @@ const experience = [
 
     /* Posts y servicios: siempre 1 columna */
     .posts-grid,
-    .services-grid,
     .yt-grid {
       grid-template-columns: 1fr;
     }
