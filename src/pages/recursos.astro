@@ -7,12 +7,6 @@ const devTools = [
     icon: "✏️",
     items: [
       {
-        name: "Cursor",
-        url: "https://www.cursor.com/",
-        description: "Editor con AI integrada, basado en VS Code",
-        badge: "AI",
-      },
-      {
         name: "Zed",
         url: "https://zed.dev/",
         description: "Editor de código de alta velocidad, multiplayer",
@@ -32,18 +26,6 @@ const devTools = [
       },
       { name: "Zsh", url: "https://www.zsh.org/", description: "Shell potente y extensible", badge: null },
       { name: "Starship", url: "https://starship.rs/", description: "Prompt minimalista y ultrarrápido", badge: null },
-      {
-        name: "Kiro CLI",
-        url: "https://kiro.dev/",
-        description: "Agente de desarrollo con AI en tu terminal",
-        badge: "AI",
-      },
-      {
-        name: "Claude CLI",
-        url: "https://docs.anthropic.com/en/docs/claude-code",
-        description: "Agente de código de Anthropic directo en la terminal",
-        badge: "AI",
-      },
       {
         name: "zoxide",
         url: "https://github.com/ajeetdsouza/zoxide",
@@ -115,6 +97,12 @@ const devTools = [
         name: "Docker Compose",
         url: "https://docs.docker.com/compose/",
         description: "Orquestación de servicios multi-contenedor",
+        badge: null,
+      },
+      {
+        name: "pnpm",
+        url: "https://pnpm.io/",
+        description: "Gestor de paquetes rápido y eficiente en disco",
         badge: null,
       },
     ],
@@ -392,6 +380,171 @@ const learningResources = [
   },
 ];
 
+const aiTools = [
+  {
+    subcategory: "Agentes & Coding",
+    icon: "🤖",
+    items: [
+      {
+        name: "Kiro CLI",
+        url: "https://kiro.dev/",
+        description: "Agente de desarrollo con IA directo en la terminal",
+        badge: "AI",
+      },
+      {
+        name: "Claude Code",
+        url: "https://docs.anthropic.com/en/docs/claude-code",
+        description: "Agente de código de Anthropic para la terminal",
+        badge: "AI",
+      },
+      {
+        name: "opencode",
+        url: "https://opencode.ai/",
+        description: "Agente de código open source que corre en la terminal",
+        badge: "AI",
+      },
+      {
+        name: "Cursor",
+        url: "https://www.cursor.com/",
+        description: "Editor con IA integrada: chat, autocompletado y edición en contexto",
+        badge: "AI",
+      },
+      {
+        name: "Zoer",
+        url: "https://zoer.ai/es-ES",
+        description: "Asistente de IA para acelerar tareas del día a día",
+        badge: "AI",
+      },
+      {
+        name: "TestSprite",
+        url: "https://www.testsprite.com/",
+        description: "Generación automática de tests con IA",
+        badge: "AI",
+      },
+      {
+        name: "Ollama",
+        url: "https://ollama.com/",
+        description: "Corre modelos de lenguaje localmente en tu máquina",
+        badge: "Local",
+      },
+    ],
+  },
+  {
+    subcategory: "Chats & Asistentes",
+    icon: "💬",
+    items: [
+      {
+        name: "Claude",
+        url: "https://claude.ai/",
+        description: "El asistente que más uso para razonar, escribir y revisar código",
+        badge: "AI",
+      },
+      {
+        name: "ChatGPT",
+        url: "https://chatgpt.com/",
+        description: "Referencia rápida, ideas y exploración de conceptos",
+        badge: "AI",
+      },
+      {
+        name: "Gemini",
+        url: "https://gemini.google.com/",
+        description: "Integración con el ecosistema Google y contexto largo",
+        badge: "AI",
+      },
+      {
+        name: "Perplexity",
+        url: "https://www.perplexity.ai/",
+        description: "Búsqueda conversacional con fuentes en tiempo real",
+        badge: "AI",
+      },
+    ],
+  },
+  {
+    subcategory: "Productividad & Generación",
+    icon: "⚡",
+    items: [
+      {
+        name: "v0 by Vercel",
+        url: "https://v0.dev/",
+        description: "Genera componentes UI a partir de texto o capturas",
+        badge: "AI",
+      },
+      {
+        name: "Stitch",
+        url: "https://stitch.withgoogle.com/",
+        description: "Genera interfaces de Google a partir de descripciones",
+        badge: "AI",
+      },
+      {
+        name: "Gemini Notebook",
+        url: "https://notebook.google.com/",
+        description: "Analiza documentos y fuentes largas con IA de Google",
+        badge: "AI",
+      },
+      {
+        name: "VEED",
+        url: "https://www.veed.io/",
+        description: "Edición de video con IA: subtítulos, cortes y más",
+        badge: "AI",
+      },
+      {
+        name: "Notion AI",
+        url: "https://www.notion.com/product/ai",
+        description: "IA integrada en el workspace para redactar y resumir",
+        badge: "AI",
+      },
+      {
+        name: "OpenSpec",
+        url: "https://openspec.dev/",
+        description: "Genera especificaciones de API desde código o descripción",
+        badge: "AI",
+      },
+      {
+        name: "Linear",
+        url: "https://linear.app/",
+        description: "Gestión de proyectos y issues con flujos modernos",
+        badge: null,
+      },
+      {
+        name: "Embedding Projector",
+        url: "https://projector.tensorflow.org/",
+        description: "Visualiza embeddings de modelos en 3D directamente en el navegador",
+        badge: null,
+      },
+    ],
+  },
+  {
+    subcategory: "Documentación IA",
+    icon: "📄",
+    items: [
+      {
+        name: "Agents.md",
+        url: "https://agents.md/",
+        description: "Referencia de instrucciones para agentes de IA por proyecto",
+        badge: null,
+      },
+      {
+        name: "Cursor Directory",
+        url: "https://cursor.directory/",
+        description: "Colección de reglas y prompts para Cursor",
+        badge: null,
+      },
+      {
+        name: "Skills.sh",
+        url: "https://www.skills.sh/",
+        description: "Rutas de aprendizaje técnico con IA",
+        badge: null,
+      },
+      {
+        name: "DeepWiki",
+        url: "https://deepwiki.com/",
+        description: "Documentación generada con IA de repositorios de GitHub",
+        badge: "AI",
+      },
+    ],
+  },
+];
+
 const favTools = [
   {
     subcategory: "Diseño & UI",
@@ -588,6 +741,57 @@ const codePenUser = "SpokeLopez-1471233183";
     </div>
   </section>
 
+  <!-- ─── AI Tools ─── -->
+  <section class="devtools-section ai-section">
+    <div class="section-header">
+      <h2 class="section-title">
+        <span class="section-title-icon">✦</span>
+        Mi Stack de IA
+      </h2>
+      <p class="section-subtitle">Las herramientas de inteligencia artificial que tengo en rotación.</p>
+    </div>
+
+    <div class="devtools-groups">
+      {aiTools.map((group) => (
+        <div class="devtools-group">
+          <h3 class="group-label">
+            <span class="group-icon">{group.icon}</span>
+            {group.subcategory}
+          </h3>
+          <ul class="devtools-list">
+            {group.items.map((tool) => (
+              <li class="devtool-item">
+                <a href={tool.url} target="_blank" rel="noopener noreferrer" class="devtool-link">
+                  <div class="devtool-info">
+                    <span class="devtool-name">{tool.name}</span>
+                    <span class="devtool-desc">{tool.description}</span>
+                  </div>
+                  {tool.badge && <span class={`devtool-badge badge-${tool.badge.toLowerCase()}`}>{tool.badge}</span>}
+                  <svg
+                    class="devtool-arrow"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                  </svg>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+
   <!-- ─── Fav Tools ─── -->
   <section class="devtools-section">
     <div class="section-header">
@@ -659,8 +863,14 @@ const codePenUser = "SpokeLopez-1471233183";
   .page-header {
     text-align: center;
     margin-bottom: var(--space-3xl);
-    padding-bottom: var(--space-2xl);
+    padding: var(--space-lg) var(--space-sm) var(--space-2xl);
     border-bottom: 1px solid var(--color-border);
+    background: linear-gradient(
+      180deg,
+      var(--color-bg-secondary) 0%,
+      transparent 100%
+    );
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   }
 
   .page-tag {
@@ -859,6 +1069,12 @@ const codePenUser = "SpokeLopez-1471233183";
     border: 1px solid rgba(250, 204, 21, 0.3);
   }
 
+  .badge-local {
+    background-color: rgba(74, 222, 128, 0.15);
+    color: #4ade80;
+    border: 1px solid rgba(74, 222, 128, 0.3);
+  }
+
   .devtool-arrow {
     flex-shrink: 0;
     color: var(--color-text-muted);
@@ -869,6 +1085,20 @@ const codePenUser = "SpokeLopez-1471233183";
   .devtool-link:hover .devtool-arrow {
     opacity: 1;
     color: var(--color-accent);
+  }
+
+  /* ─── AI Section accent ─── */
+  .ai-section::before {
+    background: linear-gradient(90deg, #a855f7, transparent);
+  }
+
+  .ai-section .devtool-link:hover {
+    background-color: rgba(168, 85, 247, 0.1);
+    border-color: #a855f7;
+  }
+
+  .ai-section .devtool-link:hover .devtool-arrow {
+    color: #a855f7;
   }
 
   /* ─── Other Resources ─── */

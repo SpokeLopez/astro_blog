@@ -217,6 +217,7 @@ const categories = ['Todos', ...new Set(projects.map(p => p.category))];
           </article>
         ))}
       </div>
+      <nav id="pagination" class="pagination" aria-label="Navegación de páginas"></nav>
     </section>
 
     <!-- CTA -->
@@ -230,28 +231,109 @@ const categories = ['Todos', ...new Set(projects.map(p => p.category))];
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const filterTags = document.querySelectorAll('.filter-tag');
-    const projectCards = document.querySelectorAll('.project-card');
+    const filterTags = document.querySelectorAll<HTMLButtonElement>('.filter-tag');
+    const projectCards = document.querySelectorAll<HTMLElement>('.project-card');
+    const pagination = document.getElementById('pagination')!;
+
+    const PER_PAGE = 9;
+    let currentCategory = 'Todos';
+    let currentPage = 1;
+
+    function getFiltered(): HTMLElement[] {
+      return Array.from(projectCards).filter(card =>
+        currentCategory === 'Todos' || card.dataset.category === currentCategory
+      );
+    }
+
+    function getTotalPages(filtered: HTMLElement[]): number {
+      return Math.max(1, Math.ceil(filtered.length / PER_PAGE));
+    }
+
+    function render() {
+      const filtered = getFiltered();
+      const totalPages = getTotalPages(filtered);
+
+      // Clamp currentPage
+      if (currentPage > totalPages) currentPage = totalPages;
+
+      const start = (currentPage - 1) * PER_PAGE;
+      const end = start + PER_PAGE;
+
+      projectCards.forEach(card => card.style.display = 'none');
+      filtered.forEach((card, i) => {
+        card.style.display = (i >= start && i < end) ? 'block' : 'none';
+        if (i >= start && i < end) {
+          card.style.animation = 'fadeIn 0.3s ease';
+        }
+      });
+
+      renderPagination(totalPages);
+    }
+
+    function renderPagination(totalPages: number) {
+      if (totalPages <= 1) {
+        pagination.innerHTML = '';
+        return;
+      }
+
+      const pages: (number | '…')[] = [];
+
+      if (totalPages <= 7) {
+        for (let i = 1; i <= totalPages; i++) pages.push(i);
+      } else {
+        pages.push(1);
+        if (currentPage > 3) pages.push('…');
+        for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+          pages.push(i);
+        }
+        if (currentPage < totalPages - 2) pages.push('…');
+        pages.push(totalPages);
+      }
+
+      pagination.innerHTML = `
+        <button class="page-btn page-prev" ${currentPage === 1 ? 'disabled' : ''} aria-label="Página anterior">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        ${pages.map(p =>
+          p === '…'
+            ? `<span class="page-ellipsis">…</span>`
+            : `<button class="page-btn page-num ${p === currentPage ? 'active' : ''}" data-page="${p}">${p}</button>`
+        ).join('')}
+        <button class="page-btn page-next" ${currentPage === totalPages ? 'disabled' : ''} aria-label="Página siguiente">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      `;
+
+      pagination.querySelector('.page-prev')?.addEventListener('click', () => {
+        if (currentPage > 1) { currentPage--; scrollToGrid(); render(); }
+      });
+      pagination.querySelector('.page-next')?.addEventListener('click', () => {
+        if (currentPage < totalPages) { currentPage++; scrollToGrid(); render(); }
+      });
+      pagination.querySelectorAll<HTMLButtonElement>('.page-num').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentPage = Number(btn.dataset.page);
+          scrollToGrid();
+          render();
+        });
+      });
+    }
+
+    function scrollToGrid() {
+      document.querySelector('.projects-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 
     filterTags.forEach(tag => {
       tag.addEventListener('click', () => {
-        // Update active state
         filterTags.forEach(t => t.classList.remove('active'));
         tag.classList.add('active');
-
-        const category = tag.dataset.category;
-
-        // Filter projects
-        projectCards.forEach(card => {
-          if (category === 'Todos' || card.dataset.category === category) {
-            card.style.display = 'block';
-            card.style.animation = 'fadeIn 0.3s ease';
-          } else {
-            card.style.display = 'none';
-          }
-        });
+        currentCategory = tag.dataset.category!;
+        currentPage = 1;
+        render();
       });
     });
+
+    render();
   });
 </script>
 
@@ -270,6 +352,14 @@ const categories = ['Todos', ...new Set(projects.map(p => p.category))];
   .page-header {
     text-align: center;
     margin-bottom: var(--space-xl);
+    padding: var(--space-lg) var(--space-sm) var(--space-2xl);
+    border-bottom: 1px solid var(--color-border);
+    background: linear-gradient(
+      180deg,
+      var(--color-bg-secondary) 0%,
+      transparent 100%
+    );
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
   }
 
   .section-tag {
@@ -454,6 +544,63 @@ const categories = ['Todos', ...new Set(projects.map(p => p.category))];
     background-color: var(--color-bg-secondary);
     color: var(--color-text-muted);
     border-radius: var(--radius-sm);
+  }
+
+  /* Pagination — estilos globales porque el HTML lo genera JS dinámicamente */
+  :global(.pagination) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-xl);
+    border-top: 1px solid var(--color-border);
+    flex-wrap: wrap;
+  }
+
+  :global(.page-btn) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 var(--space-sm);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg-card);
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+    font-family: var(--font-sans);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  :global(.page-btn:hover:not(:disabled)) {
+    border-color: var(--color-border-hover);
+    color: var(--color-text);
+  }
+
+  :global(.page-btn.active) {
+    background-color: var(--color-accent-muted);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+
+  :global(.page-btn:disabled) {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  :global(.page-ellipsis) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    user-select: none;
   }
 
   /* CTA */
