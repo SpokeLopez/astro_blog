@@ -117,10 +117,14 @@ const PAGE_SIZE = 9;
     });
   });
 
-  prevBtn?.addEventListener('click', () => { currentPage--; render(); });
-  nextBtn?.addEventListener('click', () => { currentPage++; render(); });
+  function scrollToTop() {
+    document.querySelector('.posts-grid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  prevBtn?.addEventListener('click', () => { currentPage--; render(); scrollToTop(); });
+  nextBtn?.addEventListener('click', () => { currentPage++; render(); scrollToTop(); });
   pageNums.forEach(btn => {
-    btn.addEventListener('click', () => { currentPage = Number(btn.dataset.page); render(); });
+    btn.addEventListener('click', () => { currentPage = Number(btn.dataset.page); render(); scrollToTop(); });
   });
 
   render();
