@@ -1,0 +1,187 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'Modo plan en Claude Code: cómo pensar antes de codificar'
+description: 'Qué es el modo plan de Claude Code, cómo activarlo y los tips para sacarle el máximo partido: explora antes de actuar, crea skills reutilizables y deja de corregir errores evitables.'
+date: '2026-10-16'
+tags: ['Claude Code', 'IA', 'Productividad']
+category: 'ia'
+readingTime: '10 min'
+image: '/images/blog/covers/claude-code-modo-plan.webp'
+imageAlt: 'Logotipo de Claude con grafos de nodos conectados y manos ilustradas'
+---
+
+Cuando empiezas a usar Claude Code de manera más seria, tarde o temprano aparece el concepto del **modo plan**. A primera vista parece algo menor: un modo de solo lectura que Claude usa antes de ponerse a codificar. Pero si te quedas ahí te pierdes la parte interesante.
+
+Este artículo es una guía práctica para entender qué es el modo plan, qué hace realmente por debajo, y cómo integrarlo a un flujo de trabajo que tenga sentido.
+
+## El problema que resuelve
+
+Imagina que le dices a Claude: "implementa autenticación con Google OAuth". Sin ninguna instrucción adicional, Claude puede ir directo a editar archivos. Y puede hacerlo bien. Pero también puede tomar decisiones que no se alinean con tu arquitectura, modificar cosas que no tocabas, o resolver el problema de una forma que técnicamente funciona pero que no es la que tú tenías en mente.
+
+El modo plan existe para separar dos fases que normalmente se mezclan: **entender el problema** y **resolverlo**. Si le das a Claude el espacio para explorar antes de actuar, los resultados suelen ser bastante mejores.
+
+La documentación oficial de Claude Code lo resume bien: explora primero, planifica después, codifica al final.
+
+## Qué es el modo plan por dentro
+
+Algo que me parece valioso entender es lo que sucede técnicamente cuando activas el modo plan. Armin Ronacher, el creador de Flask, escribió un análisis bastante detallado sobre esto cuando quiso entender qué estaba perdiéndose al no usarlo.
+
+Su conclusión fue que el modo plan no es magia: es esencialmente un conjunto de instrucciones inyectadas al contexto del modelo que le dicen que está en modo de solo lectura, que no debe ejecutar herramientas que modifiquen el sistema, y que debe seguir un flujo de trabajo por fases antes de generar el plan final. Esas fases son básicamente:
+
+1. Entender el código relevante haciendo lecturas
+2. Diseñar un enfoque de implementación
+3. Revisar que el plan esté alineado con lo que pediste
+4. Escribir el plan final en un archivo markdown
+
+Lo interesante es que las herramientas de edición de archivos siguen disponibles en modo plan, pero el modelo está instruido a no usarlas salvo para escribir en su propio archivo de plan. No hay enforcement real a nivel de herramientas, es disciplina por prompt.
+
+Esto no lo hace menos útil. Al contrario: saber que funciona así te ayuda a entender cuándo es realmente necesario y cuándo puedes conseguir algo similar con un buen prompt.
+
+## Cómo activarlo
+
+La forma más directa es presionar `Shift + Tab` dentro de una sesión de Claude Code hasta que la barra de estado muestre `⏸ plan mode on`. Desde ese momento Claude opera en modo lectura.
+
+También puedes iniciar la sesión directamente en modo plan desde la terminal:
+
+```bash
+claude --permission-mode plan
+```
+
+Para salir del modo plan y pasar a la implementación, vuelves a presionar `Shift + Tab` o apruebas el plan cuando Claude lo presente.
+
+## El flujo de trabajo que tiene sentido
+
+La documentación oficial propone un flujo de cuatro fases que en la práctica funciona bastante bien.
+
+**Explorar.** En modo plan le dices a Claude qué parte del código quieres que lea y entienda antes de proponer nada. Por ejemplo:
+
+```
+lee /src/auth y entiende cómo manejamos las sesiones y el login.
+revisa también cómo gestionamos las variables de entorno para secretos.
+```
+
+Claude va a leer archivos, entender la estructura, y responder sin tocar nada.
+
+**Planificar.** Con ese contexto fresco, le pides que diseñe el enfoque:
+
+```
+quiero añadir OAuth con Google. ¿qué archivos hay que cambiar?
+¿cuál es el flujo de sesión? crea un plan detallado.
+```
+
+Claude produce el plan en markdown. En este punto puedes abrirlo con `Ctrl + G`, editarlo directamente, quitarle partes que no te convencen o añadir restricciones. Esta parte es importante: el plan no es un contrato cerrado, puedes moldearlo.
+
+**Implementar.** Sales del modo plan y le das luz verde para ejecutar:
+
+```
+implementa el flujo OAuth del plan. escribe pruebas para el callback handler,
+ejecuta el test suite y corrige los errores que aparezcan.
+```
+
+**Confirmar.** Una vez que el trabajo está hecho y verificado:
+
+```
+haz commit con un mensaje descriptivo y abre un PR
+```
+
+## ¿Cuándo vale la pena usarlo?
+
+El modo plan no es para todo. La documentación de Claude Code es explícita al respecto: si la tarea es pequeña y clara, ir directo a la implementación es perfectamente válido. Corregir un typo, añadir un log, renombrar una variable... no necesitan planificación.
+
+El modo plan empieza a valer la pena cuando:
+
+- No estás seguro del enfoque que Claude tomará
+- El cambio toca múltiples archivos o partes del sistema
+- Estás trabajando en código que no conoces bien
+- Quieres entender qué va a modificar antes de que lo modifique
+
+Y en mi experiencia, también cuando tienes esa sensación de "esto está bien en general pero quiero que entienda el contexto antes de tocar algo". El modo plan te da esa garantía.
+
+## El valor real: control sin fricción
+
+Hay algo que me parece especialmente útil del modo plan que va más allá de la técnica. Cuando dejas que Claude explore primero, las preguntas o decisiones que toma son mucho más informadas. No está inventando una solución en el vacío, sino construyendo sobre lo que realmente existe en el proyecto.
+
+Y cuando produce el plan en markdown, tú tienes en mano algo concreto que puedes revisar, editar y aprobar. No es una promesa verbal de lo que va a hacer; es un documento que puedes modificar. Si no te gusta una parte del enfoque, la cambias antes de que se ejecute cualquier cosa.
+
+Eso reduce bastante el ciclo de correcciones posteriores.
+
+## Un detalle sobre el contexto
+
+Algo a tener en cuenta: aunque el modo plan es poderoso, no está exento de la limitación principal de Claude Code, que es la ventana de contexto. Una exploración exhaustiva de código base puede consumir bastante contexto antes de llegar a la fase de implementación.
+
+La recomendación práctica es ser específico en qué partes del código quieres que Claude explore. No "entiende el proyecto", sino "lee `/src/auth` y `/src/middleware` y entiende cómo fluye la autenticación". Cuanto más acotado, más eficiente.
+
+Si vas a hacer exploraciones más amplias, considera usar subagentes para que esa lectura de archivos no sature tu conversación principal.
+
+## Lleva el modo plan más lejos con una skill
+
+El modo plan ya de por sí mejora el flujo, pero puedes hacerlo aún más poderoso creando una **skill** que encapsule ese proceso de planificación como un workflow reutilizable.
+
+Una skill es un archivo `SKILL.md` que vive en `.claude/skills/` dentro de tu proyecto. Claude la carga automáticamente cuando es relevante, o puedes invocarla manualmente con un comando como `/plan-feature`. La idea es darle a Claude una receta clara y repetible en vez de explicarle cada vez qué esperas del proceso.
+
+### Cómo crear la skill paso a paso
+
+**1. Crea la carpeta de la skill**
+
+```bash
+mkdir -p .claude/skills/plan-feature
+```
+
+**2. Crea el archivo `SKILL.md`**
+
+```bash
+touch .claude/skills/plan-feature/SKILL.md
+```
+
+**3. Define el frontmatter y el workflow**
+
+Este es el contenido del archivo. El `name` es el comando con el que la invocas, la `description` le dice a Claude cuándo aplicarla de forma automática, y el cuerpo es la lista de tareas que debe seguir:
+
+```markdown
+---
+name: plan-feature
+description: Planifica la implementación de una nueva funcionalidad explorando el código antes de proponer cambios
+disable-model-invocation: true
+---
+Planifica la implementación de: $ARGUMENTS.
+
+1. Entra en modo plan (Shift+Tab) antes de hacer cualquier cosa
+2. Lee los archivos relevantes para entender el contexto actual
+3. Identifica qué archivos necesitan cambios y por qué
+4. Detecta posibles conflictos con el código existente
+5. Diseña el enfoque de implementación con los pasos concretos
+6. Escribe el plan en un archivo markdown en `.claude/plans/`
+7. Presenta el plan al usuario para revisión y aprobación antes de continuar
+```
+
+El flag `disable-model-invocation: true` es importante: evita que Claude active esta skill por su cuenta. Al ser un workflow con implicaciones de planificación, conviene que lo inicies tú explícitamente.
+
+**4. Invócala desde tu sesión de Claude Code**
+
+```
+/plan-feature añadir autenticación con Google OAuth
+```
+
+Claude entrará en modo plan, explorará el código relevante siguiendo los pasos del workflow y te presentará un plan concreto antes de tocar nada.
+
+### Por qué tiene sentido combinar skill + modo plan
+
+Sin la skill, cada vez que quieras planificar algo tienes que recordar activar el modo plan, pedir a Claude que lea los archivos correctos, pedir el plan, editarlo, etc. Con la skill, ese proceso queda documentado y es reproducible.
+
+Además, al tener los pasos escritos en el `SKILL.md`, puedes refinarlo con el tiempo. Si descubres que Claude suele saltarse revisar los tests existentes antes de planificar, lo añades como paso 3. Si trabajas en equipo, todos tienen el mismo proceso porque está en el repositorio.
+
+Es básicamente la diferencia entre tener un proceso ad hoc y tener uno consistente.
+
+## En resumen
+
+El modo plan de Claude Code es una forma efectiva de separar la exploración de la ejecución. Funciona por diseño de prompts más que por restricciones técnicas rígidas, lo que significa que su valor real está en el flujo de trabajo que construyes alrededor de él.
+
+Actívalo cuando el cambio sea lo suficientemente significativo como para que valga la pena entenderlo antes de ejecutarlo. Úsalo para producir un plan que puedas revisar y editar. Y luego dale luz verde a Claude para que trabaje con ese contexto claro.
+
+El resultado suele ser código más cercano a lo que tenías en mente, con menos sorpresas en el camino.
+
+## Referencias
+
+- [Mejores prácticas para Claude Code](https://code.claude.com/docs/es/best-practices)
+- [What Actually Is Claude Code's Plan Mode? — Armin Ronacher](https://lucumr.pocoo.org/2025/12/17/what-is-plan-mode/)
+- [Guía práctica de Claude Code: Skills, Subagentes, Hooks y más — Platzi](https://platzi.com/blog/guia-practica-de-claude-code-skills-subagentes-hooks/)
