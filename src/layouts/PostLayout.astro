@@ -2,6 +2,7 @@
 import BaseLayout from './BaseLayout.astro';
 import HostingerAffiliate from '../components/HostingerAffiliate.astro';
 import CalBooking from '../components/CalBooking.astro';
+import PostCard from '../components/PostCard.astro';
 
 interface Props {
   frontmatter: {
@@ -22,6 +23,55 @@ const formattedDate = new Date(frontmatter.date).toLocaleDateString('es-ES', {
   month: 'long',
   day: 'numeric'
 });
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImage = frontmatter.image ? new URL(frontmatter.image, Astro.site).toString() : undefined;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  headline: frontmatter.title,
+  description: frontmatter.description,
+  datePublished: new Date(frontmatter.date).toISOString(),
+  author: {
+    '@type': 'Person',
+    name: 'Eduardo López',
+    url: 'https://spokelopez.com/sobre-mi',
+  },
+  publisher: {
+    '@type': 'Person',
+    name: 'Eduardo López',
+    url: 'https://spokelopez.com',
+  },
+  url: canonicalURL.toString(),
+  ...(ogImage && { image: ogImage }),
+};
+
+// Artículos relacionados
+const allPostModules = import.meta.glob('../pages/blog/*.mdx', { eager: true });
+const allPosts = Object.entries(allPostModules).map(([path, mod]: [string, any]) => ({
+  ...mod,
+  slug: path.split('/').pop()?.replace('.mdx', '') ?? '',
+}));
+
+const currentTags = (frontmatter.tags ?? []).map((t: string) => t.toLowerCase());
+const currentSlug = Astro.url.pathname.replace(/^\/blog\//, '').replace(/\/$/, '');
+
+// Posts con al menos un tag en común, excluyendo el actual
+const byTags = allPosts
+  .filter((p) => {
+    if (p.slug === currentSlug) return false;
+    const postTags = (p.frontmatter.tags ?? []).map((t: string) => t.toLowerCase());
+    return postTags.some((t: string) => currentTags.includes(t));
+  })
+  .sort((a: any, b: any) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime());
+
+// Si no hay suficientes por tags, completar con los más recientes
+const recent = allPosts
+  .filter((p) => p.slug !== currentSlug && !byTags.includes(p))
+  .sort((a: any, b: any) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime());
+
+const relatedPosts = [...byTags, ...recent].slice(0, 2);
 
   const tagColors: Record<string, string> = {
     css: 'tag-css',
@@ -47,7 +97,13 @@ const formattedDate = new Date(frontmatter.date).toLocaleDateString('es-ES', {
 };
 ---
 
-<BaseLayout title={`${frontmatter.title} | DevTips`} description={frontmatter.description}>
+<BaseLayout
+  title={`${frontmatter.title} | SpokeLopez`}
+  description={frontmatter.description}
+  image={frontmatter.image}
+  type="article"
+>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <div class="post-layout">
   <article class="post">
     <header class="post-header">
@@ -93,6 +149,40 @@ const formattedDate = new Date(frontmatter.date).toLocaleDateString('es-ES', {
     <div class="post-content">
       <slot />
     </div>
+
+    <div class="post-author" aria-label="Sobre el autor">
+      <img
+        class="post-author__avatar"
+        src="/images/eduardo-profile.jpeg"
+        alt="Foto de Eduardo López"
+        width="48"
+        height="48"
+        loading="lazy"
+      />
+      <div class="post-author__info">
+        <span class="post-author__label">Escrito por</span>
+        <a href="/sobre-mi" class="post-author__name">Eduardo López</a>
+        <span class="post-author__role">Software Engineer &amp; eCommerce Developer</span>
+      </div>
+    </div>
+
+    {relatedPosts.length > 0 && (
+      <section class="post-related" aria-label="Artículos relacionados">
+        <h2 class="post-related__title">También te puede interesar</h2>
+        <div class="post-related__grid">
+          {relatedPosts.map((post: any) => (
+            <PostCard
+              title={post.frontmatter.title}
+              description={post.frontmatter.description}
+              date={new Date(post.frontmatter.date)}
+              slug={post.slug}
+              tags={post.frontmatter.tags}
+              readingTime={post.frontmatter.readingTime}
+            />
+          ))}
+        </div>
+      </section>
+    )}
 
     <aside class="post-asides-mobile" aria-label="Enlaces útiles">
       <HostingerAffiliate variant="sidebar" />
@@ -454,9 +544,83 @@ const formattedDate = new Date(frontmatter.date).toLocaleDateString('es-ES', {
     color: var(--color-accent);
   }
 
+  /* Author block */
+  .post-author {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-top: var(--space-2xl);
+    padding: var(--space-lg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background-color: var(--color-bg-card);
+  }
+
+  .post-author__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1px solid var(--color-border);
+  }
+
+  .post-author__info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .post-author__label {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
+  .post-author__name {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-text);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .post-author__name:hover {
+    color: var(--color-accent);
+  }
+
+  .post-author__role {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+  }
+
+  /* Related posts */
+  .post-related {
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-2xl);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .post-related__title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: var(--space-lg);
+    color: var(--color-text);
+  }
+
+  .post-related__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-lg);
+  }
+
   @media (max-width: 640px) {
     .post-title {
       font-size: 1.75rem;
+    }
+
+    .post-related__grid {
+      grid-template-columns: 1fr;
     }
   }
 </style>
