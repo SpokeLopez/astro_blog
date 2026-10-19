@@ -36,7 +36,7 @@ const jsonLd = {
   author: {
     '@type': 'Person',
     name: 'Eduardo López',
-    url: 'https://spokelopez.com/sobre-mi',
+    url: 'https://spokelopez.com',
   },
   publisher: {
     '@type': 'Person',
@@ -104,7 +104,25 @@ const relatedPosts = [...byTags, ...recent].slice(0, 2);
   type="article"
 >
   <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://spokelopez.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Blog',   item: 'https://spokelopez.com/blog' },
+      { '@type': 'ListItem', position: 3, name: frontmatter.title, item: canonicalURL.toString() },
+    ],
+  })} />
   <div class="post-layout">
+  <nav class="post-breadcrumb" aria-label="Ruta de navegación">
+    <ol>
+      <li><a href="/">Inicio</a></li>
+      <li aria-hidden="true">›</li>
+      <li><a href="/blog">Blog</a></li>
+      <li aria-hidden="true">›</li>
+      <li aria-current="page">{frontmatter.title}</li>
+    </ol>
+  </nav>
   <article class="post">
     <header class="post-header">
       <div class="post-meta">
@@ -161,7 +179,7 @@ const relatedPosts = [...byTags, ...recent].slice(0, 2);
       />
       <div class="post-author__info">
         <span class="post-author__label">Escrito por</span>
-        <a href="/sobre-mi" class="post-author__name">Eduardo López</a>
+        <span class="post-author__name">Eduardo López</span>
         <span class="post-author__role">Software Engineer &amp; eCommerce Developer</span>
       </div>
     </div>
@@ -592,6 +610,42 @@ const relatedPosts = [...byTags, ...recent].slice(0, 2);
   .post-author__role {
     font-size: 0.8125rem;
     color: var(--color-text-secondary);
+  }
+
+  /* Breadcrumb */
+  .post-breadcrumb {
+    grid-column: 1 / -1;
+    margin-bottom: var(--space-lg);
+  }
+
+  .post-breadcrumb ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-xs);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+  }
+
+  .post-breadcrumb a {
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .post-breadcrumb a:hover {
+    color: var(--color-accent);
+  }
+
+  .post-breadcrumb [aria-current="page"] {
+    color: var(--color-text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 40ch;
   }
 
   /* Related posts */
