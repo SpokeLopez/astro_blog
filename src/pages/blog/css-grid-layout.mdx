@@ -1,17 +1,17 @@
 ---
 layout: '../../layouts/PostLayout.astro'
 title: 'CSS Grid Layout: guía práctica con ejemplos'
-description: 'Aprende CSS Grid desde cero con este tutorial práctico. Las propiedades más importantes para crear layouts modernos y responsivos sin media queries.'
+description: 'Aprende CSS Grid con ejemplos de tarjetas y layouts de página: columnas, gap, auto-fit, minmax y errores comunes al crear diseños responsivos.'
 date: '2026-03-15'
 tags: ['CSS', 'Tutorial']
 category: 'tutorial'
-readingTime: '5 min'
+readingTime: '8 min'
 
 ---
 
 import CodePen from '../../components/CodePen.astro';
 
-CSS Grid es la forma más poderosa de crear layouts en la web. Aquí te enseño lo esencial para empezar a usarlo hoy.
+CSS Grid sirve para organizar elementos en **filas y columnas**. Es especialmente útil cuando quieres controlar ambas dimensiones, como en una galería de tarjetas o en la estructura de una página. En esta guía vas a construir un ejemplo que puedes copiar y adaptar.
 
 ## Activar Grid
 
@@ -25,27 +25,22 @@ Solo necesitas una línea:
 
 ## Definir columnas y filas
 
+Estas alternativas muestran distintas formas de definir las columnas; usa **una** declaración de `grid-template-columns` a la vez:
+
 ```css
 .container {
   display: grid;
-  
-  /* 3 columnas de 1fr cada una (fracciones iguales) */
-  grid-template-columns: 1fr 1fr 1fr;
-  
-  /* O usando repeat() */
+
+  /* Tres columnas iguales */
   grid-template-columns: repeat(3, 1fr);
-  
-  /* Columnas de diferentes tamaños */
-  grid-template-columns: 200px 1fr 100px;
-  
-  /* Filas */
-  grid-template-rows: auto 1fr auto;
 }
 ```
 
+Si necesitas una columna lateral fija y otra flexible, cambia esa línea por `grid-template-columns: 200px minmax(0, 1fr)`. También puedes definir alturas explícitas con `grid-template-rows`, aunque muchas veces conviene dejar que el contenido determine la altura de cada fila.
+
 ## La unidad `fr`
 
-`fr` significa "fracción del espacio disponible":
+`fr` significa «fracción del espacio disponible» **después** de descontar tamaños fijos y espacios como `gap`:
 
 ```css
 .container {
@@ -72,22 +67,59 @@ Solo necesitas una línea:
 
 ## Grid responsivo automático
 
-Esta es la propiedad mágica para grids responsivos sin media queries:
+Para una galería de tarjetas que se adapte al ancho disponible, combina `repeat()`, `auto-fit` y `minmax()`:
 
 ```css
 .container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
   gap: 20px;
 }
 ```
 
-Esto crea columnas que:
-- Tienen **mínimo 250px** de ancho
-- Se expanden para llenar el espacio (`1fr`)
-- Se ajustan automáticamente según el viewport
+Cada columna intenta medir al menos **250px**, pero `min(100%, 250px)` le permite reducirse si el contenedor es más estrecho. El máximo `1fr` reparte el espacio sobrante. `auto-fit` compacta las columnas vacías, de modo que las tarjetas presentes pueden ocupar el ancho disponible. Esta técnica evita una media query para **esta galería**; no elimina la necesidad de media queries en todos los layouts.
 
-## Demo en vivo
+## Ejemplo propio: tarjetas de artículos
+
+Este HTML y CSS forman una galería completa. Coloca el HTML en una página y el CSS en su hoja de estilos o dentro de una etiqueta `<style>` para probarlos:
+
+```html
+<section class="articulos" aria-label="Artículos recientes">
+  <article class="articulo">
+    <h2>Aprende CSS Grid</h2>
+    <p>Organiza contenido en filas y columnas.</p>
+  </article>
+  <article class="articulo">
+    <h2>Aprende Flexbox</h2>
+    <p>Alinea elementos en una sola dirección.</p>
+  </article>
+  <article class="articulo">
+    <h2>Diseño responsivo</h2>
+    <p>Adapta la interfaz al espacio disponible.</p>
+  </article>
+</section>
+```
+
+```css
+.articulos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+  gap: 1rem;
+}
+
+.articulo {
+  min-width: 0;
+  padding: 1.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.75rem;
+}
+```
+
+Al estrechar la ventana, las tarjetas pasan de varias columnas a una sin cambiar el HTML. El `min-width: 0` permite que el contenido del artículo se reduzca dentro de su celda; si incluyes una URL o una palabra muy larga, añade `overflow-wrap: anywhere` al elemento de texto que la contiene.
+
+## Otra demo en vivo
+
+El siguiente CodePen de Kevin Powell muestra más posibilidades de Grid. El ejemplo de tarjetas anterior es independiente y funciona sin este recurso externo.
 
 <CodePen id="xbEBxOo" user="kevinpowell" title="CSS Grid Layout" height={500} defaultTab="result" />
 
@@ -113,7 +145,7 @@ Puedes controlar dónde va cada elemento:
 ```css
 .page {
   display: grid;
-  grid-template-columns: 250px 1fr;
+  grid-template-columns: 250px minmax(0, 1fr);
   grid-template-rows: auto 1fr auto;
   min-height: 100vh;
 }
@@ -133,7 +165,33 @@ Puedes controlar dónde va cada elemento:
 .footer {
   grid-column: 1 / -1;
 }
+
+/* En pantallas estrechas, la barra lateral pasa arriba del contenido */
+@media (max-width: 700px) {
+  .page {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .header,
+  .footer {
+    grid-column: 1;
+  }
+
+  .sidebar,
+  .main {
+    grid-row: auto;
+  }
+}
 ```
+
+Aquí sí usamos una media query: una barra lateral fija de 250px no siempre cabe junto al contenido principal. En una pantalla estrecha, la cuadrícula se convierte en una sola columna.
+
+## Errores comunes al empezar
+
+- **Aplicar `grid-column` al contenedor:** esta propiedad posiciona un *elemento hijo* dentro de la cuadrícula. En el contenedor defines columnas, filas y `gap`.
+- **Usar `1fr` y ver que una columna se desborda:** el contenido puede imponer un ancho mínimo. Prueba `minmax(0, 1fr)` en la columna flexible y `min-width: 0` en el elemento hijo cuando necesites que se reduzca.
+- **Fijar 250px como mínimo en una pantalla más estrecha:** `minmax(250px, 1fr)` no puede bajar de 250px. Para tarjetas, `minmax(min(100%, 250px), 1fr)` evita ese desbordamiento.
+- **Esperar que Grid reorganice el significado del contenido:** el orden visual no reemplaza al orden lógico del HTML. Escribe primero un documento que tenga sentido al leerse de arriba abajo.
 
 ## Cheatsheet rápido
 
@@ -148,4 +206,4 @@ Puedes controlar dónde va cada elemento:
 
 ---
 
-Con estas propiedades básicas puedes crear el 90% de los layouts que necesites. ¡A practicar!
+Si quieres profundizar en líneas, áreas e inserción automática, consulta la [guía de CSS Grid de MDN](https://developer.mozilla.org/es/docs/Web/CSS/Guides/Grid_layout). Empieza copiando la galería de tarjetas y cambia el ancho mínimo para ver cuándo se crea o desaparece una columna.

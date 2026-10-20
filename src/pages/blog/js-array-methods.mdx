@@ -1,17 +1,21 @@
 ---
 layout: '../../layouts/PostLayout.astro'
 title: '3 métodos de Array que debes dominar'
-description: 'Filter, map y reduce son los métodos más potentes de JavaScript. Aprende a usarlos con ejemplos prácticos y casos de uso reales.'
+description: 'Aprende a usar filter, map y reduce en JavaScript con ejemplos de productos, un caso completo de carrito y errores comunes al encadenar métodos.'
 date: '2026-03-18'
 tags: ['JavaScript', 'Tutorial']
 category: 'tutorial'
-readingTime: '5 min'
+readingTime: '7 min'
 
 ---
 
-import CodePen from '../../components/CodePen.astro';
+Cuando trabajas con listas en JavaScript, tres preguntas aparecen con frecuencia: **¿qué elementos conservo?**, **¿cómo transformo cada uno?** y **¿cómo obtengo un resultado a partir de todos?** `filter()`, `map()` y `reduce()` responden a esas preguntas. Los tres recorren un array, pero cada uno devuelve algo diferente.
 
-Si quieres escribir JavaScript moderno y limpio, necesitas dominar estos tres métodos de Array: **filter**, **map** y **reduce**.
+| Método | Pregunta | Resultado |
+| --- | --- | --- |
+| `filter()` | ¿Cuáles cumplen la condición? | Un array con cero o más elementos originales |
+| `map()` | ¿En qué convierto cada elemento? | Un array con el resultado de cada transformación |
+| `reduce()` | ¿Qué valor acumulo al recorrerlos? | El acumulador final: número, objeto, array u otro valor |
 
 ## 1. Filter - Filtrar elementos
 
@@ -35,6 +39,8 @@ const activos = usuarios.filter(user => user.activo);
 // [{ nombre: 'Ana', activo: true }, { nombre: 'María', activo: true }]
 ```
 
+El array `usuarios` conserva sus tres elementos. `filter()` devuelve un array nuevo, aunque ninguna persona cumpla la condición; en ese caso obtienes `[]`.
+
 ## 2. Map - Transformar elementos
 
 `map()` crea un nuevo array transformando cada elemento.
@@ -57,9 +63,11 @@ const nombres = usuarios.map(user => user.nombre);
 console.log(nombres); // ['Ana', 'Luis', 'María']
 ```
 
+`map()` conserva la cantidad de posiciones del array original. Si solo quieres algunos elementos, usa `filter()` antes o después de transformar, según lo que resulte más claro.
+
 ## 3. Reduce - Acumular valores
 
-`reduce()` reduce el array a un solo valor.
+`reduce()` combina los elementos en un **acumulador**. Ese resultado puede ser un número, pero también un objeto, como en el conteo de frutas:
 
 ```javascript
 const numeros = [1, 2, 3, 4, 5];
@@ -80,9 +88,11 @@ console.log(conteo);
 // { manzana: 3, banana: 2, naranja: 1 }
 ```
 
-## Combinándolos
+El `0` de la suma y el `{}` del conteo son los **valores iniciales**. Inclúyelos para que el resultado sea predecible incluso si el array está vacío: `[].reduce((total, numero) => total + numero, 0)` devuelve `0`. Sin valor inicial, `reduce()` lanza un error al recibir `[]`.
 
-La magia está en encadenarlos:
+## Caso práctico: productos de una tienda
+
+Imagina que quieres mostrar los nombres de los productos disponibles y calcular el valor total del inventario visible. Partimos de una lista pequeña; en una tienda real, cada objeto podría llegar de una API.
 
 ```javascript
 const productos = [
@@ -92,13 +102,55 @@ const productos = [
   { nombre: 'Monitor', precio: 300, enStock: true }
 ];
 
-// Total de productos en stock
+const disponibles = productos.filter(producto => producto.enStock);
+const nombres = disponibles.map(producto => producto.nombre);
+const totalEnStock = disponibles.reduce(
+  (total, producto) => total + producto.precio,
+  0
+);
+
+console.log(nombres); // ['Laptop', 'Teclado', 'Monitor']
+console.log(totalEnStock); // 1375
+```
+
+Guardar `disponibles` evita repetir el filtro y hace visible cada paso. Cuando solo necesitas el total, puedes encadenar las operaciones:
+
+```javascript
 const totalEnStock = productos
-  .filter(p => p.enStock)           // Solo en stock
-  .map(p => p.precio)               // Obtener precios
-  .reduce((sum, precio) => sum + precio, 0); // Sumar
+  .filter(producto => producto.enStock)
+  .map(producto => producto.precio)
+  .reduce((total, precio) => total + precio, 0);
 
 console.log(totalEnStock); // 1375
 ```
 
-Practica estos métodos y verás cómo tu código se vuelve más limpio y expresivo.
+No hace falta incluir `map()` siempre: el primer ejemplo suma directamente `producto.precio` en `reduce()`. Elige la versión que se entienda mejor en tu caso.
+
+### Un acumulador con más de un dato
+
+Si además del total necesitas saber cuántos productos hay disponibles, puedes reunir ambos resultados en un solo objeto. Este ejemplo es independiente y usa el mismo array `productos`:
+
+```javascript
+const resumen = productos
+  .filter(producto => producto.enStock)
+  .reduce(
+    (acumulado, producto) => ({
+      cantidad: acumulado.cantidad + 1,
+      total: acumulado.total + producto.precio
+    }),
+    { cantidad: 0, total: 0 }
+  );
+
+console.log(resumen); // { cantidad: 3, total: 1375 }
+```
+
+Aquí el valor inicial tiene la misma forma que el resultado final. Si la lista está vacía, el resultado será `{ cantidad: 0, total: 0 }`.
+
+## Errores comunes
+
+- **Usar `map()` para filtrar:** `map()` devuelve un resultado por cada posición; para descartar elementos, usa `filter()`.
+- **Olvidar el `return` con llaves en una función flecha:** `map(producto => { nombre: producto.nombre })` no devuelve el objeto esperado. Escribe `map(producto => ({ nombre: producto.nombre }))` o usa `return` explícito.
+- **Omitir el valor inicial de `reduce()`:** una lista vacía provocará un `TypeError`. Elige `0`, `{}` o el valor que corresponda al resultado.
+- **Encadenar por costumbre:** si una cadena larga oculta lo que ocurre, guarda pasos intermedios con nombres como `disponibles` o usa un bucle claro.
+
+Para consultar todos los parámetros y casos límite, revisa la documentación de MDN para [filter()](https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Array/filter), [map()](https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Array/map) y [reduce()](https://developer.mozilla.org/es/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce).
