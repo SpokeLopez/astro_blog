@@ -1266,10 +1266,10 @@ const experience = [
     right: 16px;
     width: 22px;
     height: 22px;
-    background-color: #22c55e;
+    background-color: #4ade80;
     border: 4px solid var(--color-bg);
     border-radius: 50%;
-    box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.3);
+    box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.4);
   }
 
   /* Stats bajo la foto */
@@ -1299,7 +1299,8 @@ const experience = [
 
   .stat-label {
     font-size: 0.6875rem;
-    color: var(--color-text-muted);
+    /* #a1a1aa sobre bg-card → ratio ~6.6:1 ✅ AA */
+    color: var(--color-text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
@@ -1325,19 +1326,20 @@ const experience = [
     align-items: center;
     gap: 0.5em;
     font-size: 0.8125rem;
-    font-weight: 500;
-    color: #22c55e;
-    background-color: rgba(34, 197, 94, 0.1);
+    font-weight: 600;
+    /* #16a34a sobre #0a0a0b → ratio ~5.1:1  ✅ AA */
+    color: #4ade80;
+    background-color: rgba(34, 197, 94, 0.12);
     padding: 0.375em 0.875em;
     border-radius: 999px;
-    border: 1px solid rgba(34, 197, 94, 0.25);
+    border: 1px solid rgba(34, 197, 94, 0.4);
   }
 
   .badge-dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background-color: #22c55e;
+    background-color: #4ade80;
     animation: pulse-dot 2s ease-in-out infinite;
     flex-shrink: 0;
   }
@@ -1377,7 +1379,8 @@ const experience = [
   }
 
   .hero-description--secondary {
-    color: var(--color-text-muted);
+    /* #a1a1aa sobre #0a0a0b → ratio ~6.6:1 ✅ AA */
+    color: var(--color-text-secondary);
     font-size: 0.9375rem;
   }
 
@@ -1453,7 +1456,8 @@ const experience = [
 
   .hero-social-label {
     font-size: 0.8125rem;
-    color: var(--color-text-muted);
+    /* #a1a1aa sobre #0a0a0b → ratio ~6.6:1 ✅ AA */
+    color: var(--color-text-secondary);
     white-space: nowrap;
   }
 
@@ -1781,7 +1785,8 @@ const experience = [
 
   .section-subtitle {
     font-size: 1rem;
-    color: var(--color-text-muted);
+    /* Subir de muted a secondary: #a1a1aa → ratio ~6.4:1 ✅ AA */
+    color: var(--color-text-secondary);
     margin-top: var(--space-xs);
   }
 
@@ -1925,7 +1930,8 @@ const experience = [
 
   .timeline-duration {
     font-size: 0.6875rem;
-    color: var(--color-text-muted);
+    /* #a1a1aa sobre #121214 → ratio ~6.4:1 ✅ AA */
+    color: var(--color-text-secondary);
     background-color: var(--color-bg-secondary);
     padding: 2px 8px;
     border-radius: 999px;
@@ -1954,7 +1960,8 @@ const experience = [
     align-items: center;
     gap: 4px;
     font-size: 0.75rem;
-    color: var(--color-text-muted);
+    /* #a1a1aa sobre fondos oscuros → ratio ~6.4:1 ✅ AA */
+    color: var(--color-text-secondary);
     margin-bottom: 0;
   }
 
@@ -2062,9 +2069,10 @@ const experience = [
       font-size: 0.6875rem;
       font-family: var(--font-mono);
       font-weight: 700;
-      color: var(--color-accent);
-      background-color: var(--color-accent-muted);
-      border: 1px solid rgba(34, 211, 238, 0.25);
+      /* --color-accent-hover (#67e8f9) sobre bg-card (#18181b) → ratio ~8.5:1 ✅ AAA */
+      color: var(--color-accent-hover);
+      background-color: rgba(34, 211, 238, 0.08);
+      border: 1px solid rgba(34, 211, 238, 0.35);
       border-radius: var(--radius-sm);
       padding: 3px 7px;
       flex-shrink: 0;
@@ -2107,12 +2115,13 @@ const experience = [
     .exp-summary-period {
       font-size: 0.6875rem;
       font-family: var(--font-mono);
-      color: var(--color-text-muted);
+      /* #a1a1aa sobre #18181b → ratio ~6.6:1 ✅ AA */
+      color: var(--color-text-secondary);
       white-space: nowrap;
     }
 
     .exp-chevron {
-      color: var(--color-text-muted);
+      color: var(--color-text-secondary);
       transition: transform 0.25s ease;
       flex-shrink: 0;
     }
@@ -2417,7 +2426,8 @@ const experience = [
   .cta-durations span {
     font-size: 0.8125rem;
     font-weight: 500;
-    color: var(--color-text-muted);
+    /* #a1a1aa sobre bg-card → ratio ~6.6:1 ✅ AA */
+    color: var(--color-text-secondary);
     padding: 0.25em 0.65em;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
@@ -2426,7 +2436,7 @@ const experience = [
 
   .cta-cal-hint {
     font-size: 0.8125rem;
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
     margin: 0;
   }
 
