@@ -170,6 +170,15 @@ const experience = [
 ---
 
 <BaseLayout title="SpokeLopez | Software Engineer">
+  <!-- Preload de la imagen LCP (avatar del hero, visible above the fold en móvil) -->
+  <link
+    slot="head"
+    rel="preload"
+    as="image"
+    href="/images/eduardo-profile.webp"
+    fetchpriority="high"
+    type="image/webp"
+  />
   <!-- Hero Section -->
   <section class="hero">
     <div class="hero-inner">
@@ -178,11 +187,14 @@ const experience = [
         <div class="hero-avatar">
           <div class="avatar-ring"></div>
           <img
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/50b61091-d56f-4231-bb3c-461d6305c0a3-2OfMZjXhHThrCYvp78HVQi21MZHLPp.jpeg"
+            src="/images/eduardo-profile.webp"
             alt="Eduardo Lopez - SpokeLopez"
             class="avatar-image"
             width="280"
             height="280"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
           />
           <span class="status-badge" aria-label="Disponible para proyectos"></span>
         </div>

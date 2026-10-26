@@ -1,0 +1,86 @@
+---
+layout: '../../layouts/PostLayout.astro'
+title: 'Cómo crear una plantilla editable en Shopify con Liquid'
+description: 'Crea una sección Liquid con título y texto editables, añádela a una plantilla JSON y personalízala desde el editor de temas de Shopify.'
+date: '2026-10-22'
+tags: ['Shopify', 'Liquid', 'Ecommerce']
+category: 'tutorial'
+readingTime: '5 min'
+image: '/images/blog/covers/shopify-liquid-propuesta.webp'
+imageAlt: 'Logotipos de Shopify y Liquid conectados por llaves de plantilla sobre un fondo oscuro'
+---
+
+En la [introducción a Liquid](/blog/introduccion-plantillas-liquid/) vimos cómo mostrar datos y usar etiquetas. Después revisamos los [objetos y propiedades](/blog/objetos-propiedades-liquid/). El siguiente paso es permitir que alguien cambie el contenido de una página **sin editar código**.
+
+En un tema habitual de Shopify, la forma más directa de hacerlo es combinar una **plantilla JSON** con una **sección Liquid**. La plantilla decide qué secciones aparecen; la sección define el HTML y los campos que se muestran en el editor de temas. Shopify permite añadir y ordenar secciones en las [plantillas JSON](https://shopify.dev/docs/storefronts/themes/architecture/templates/json-templates).
+
+## 1. Crear una sección con campos editables
+
+Dentro del tema, crea `sections/intro-editable.liquid`:
+
+```liquid
+<section class="intro-editable">
+  {% if section.settings.heading != blank %}
+    <h2>{{ section.settings.heading | escape }}</h2>
+  {% endif %}
+
+  {% if section.settings.body != blank %}
+    <div class="intro-editable__body">{{ section.settings.body }}</div>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.editable_intro.name",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:sections.editable_intro.heading_label",
+      "default": "t:sections.editable_intro.heading_default"
+    },
+    {
+      "type": "richtext",
+      "id": "body",
+      "label": "t:sections.editable_intro.body_label",
+      "default": "t:sections.editable_intro.body_default"
+    }
+  ],
+  "presets": [
+    { "name": "t:sections.editable_intro.name" }
+  ]
+}
+{% endschema %}
+```
+
+`section.settings.heading` y `section.settings.body` leen lo que se guarde en el editor. Usamos `h2` porque la sección principal de la página normalmente ya muestra su título como `h1`. El bloque `{% schema %}` define los campos editables; `presets` hace que la sección aparezca en **Añadir sección**. La [referencia del schema de secciones](https://shopify.dev/docs/storefronts/themes/architecture/sections/section-schema) explica las demás opciones disponibles.
+
+Las claves que empiezan por `t:` deben existir en el archivo de traducciones de schema predeterminado del tema. Por ejemplo, si tu tema usa español como idioma predeterminado, añade estas entradas a `locales/es.default.schema.json` **sin borrar las que ya tenga**:
+
+```json
+{
+  "sections": {
+    "editable_intro": {
+      "name": "Introducción editable",
+      "heading_label": "Título",
+      "heading_default": "Conoce nuestra tienda",
+      "body_label": "Descripción",
+      "body_default": "<p>Cuenta aquí qué hace especial a tu tienda.</p>"
+    }
+  }
+}
+```
+
+Si el idioma predeterminado es otro, agrega las mismas claves a su archivo `*.default.schema.json` con textos en ese idioma. Los valores escritos por el comerciante en `text` y `richtext` se gestionan por separado de las etiquetas del editor. Shopify documenta esta distinción en [traducciones de schema](https://shopify.dev/docs/storefronts/themes/architecture/locales/schema-locale-files).
+
+## 2. Añadirla a una plantilla de página
+
+En **Tienda online → Temas → Personalizar**, abre el selector de páginas y crea una plantilla nueva de tipo **Página**. Ponle, por ejemplo, `presentacion`. Desde **Añadir sección**, selecciona **Introducción editable**, cambia el título y la descripción y guarda. Después asigna esa plantilla a una página desde el administrador de Shopify.
+
+Shopify guardará la composición en una plantilla como `templates/page.presentacion.json`. No necesitas escribir el JSON a mano para este primer ejemplo: el editor lo genera cuando añades la sección. El contenido y los ajustes se pueden cambiar más tarde desde el mismo editor.
+
+## ¿Y el tag `{% block %}`?
+
+La referencia de [`{% block %}`](https://shopify.dev/docs/api/liquid/tags/block) que compartiste muestra otra forma de componer páginas: invocar directamente un archivo de `blocks/` desde una plantilla Liquid. **No es el mismo mecanismo** que añadir una sección a una plantilla JSON. Shopify lo presentó dentro de la [vista previa Liquid de julio de 2026](https://shopify.dev/changelog/posts/developer-preview-liquid-block-and-partial-tags), así que comprueba que tu tienda de desarrollo tenga esa vista previa antes de usarlo.
+
+La [guía general de etiquetas de plantilla de Liquid](https://shopify.github.io/liquid/tags/template/) explica etiquetas como `render` y `raw`. Es útil para entender cómo se relacionan los archivos Liquid, pero `render` por sí solo no crea campos editables en el editor de temas. Para empezar con una plantilla editable en un tema habitual, **sección + schema + plantilla JSON** es el camino más claro.

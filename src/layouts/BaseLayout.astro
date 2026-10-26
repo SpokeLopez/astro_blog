@@ -15,7 +15,7 @@ interface Props {
 const {
   title,
   description = 'SpokeLopez - Software Engineer & Content Creator. Tutoriales de programación, tips de desarrollo web y contenido tech en TikTok y YouTube.',
-  image = '/images/eduardo-profile.jpeg',
+  image = '/images/eduardo-profile.webp',
   type = 'website',
 } = Astro.props;
 
@@ -49,6 +49,7 @@ const ogImage = new URL(image, Astro.site);
     <meta name="twitter:image" content={ogImage} />
 
     <title>{title}</title>
+    <!-- Slot para preloads y meta adicional por página (p.ej. preload LCP image) -->
     <slot name="head" />
     <script is:inline>
       (function() {

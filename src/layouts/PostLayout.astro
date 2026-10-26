@@ -103,6 +103,15 @@ const relatedPosts = [...byTags, ...recent].slice(0, 2);
   image={frontmatter.image}
   type="article"
 >
+  {frontmatter.image && (
+    <link
+      slot="head"
+      rel="preload"
+      as="image"
+      href={frontmatter.image}
+      fetchpriority="high"
+    />
+  )}
   <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <script slot="head" type="application/ld+json" set:html={JSON.stringify({
     '@context': 'https://schema.org',
@@ -150,6 +159,8 @@ const relatedPosts = [...byTags, ...recent].slice(0, 2);
           width="1200"
           height="630"
           loading="eager"
+          fetchpriority="high"
+          decoding="async"
         />
       )}
       
@@ -171,7 +182,7 @@ const relatedPosts = [...byTags, ...recent].slice(0, 2);
     <div class="post-author" aria-label="Sobre el autor">
       <img
         class="post-author__avatar"
-        src="/images/eduardo-profile.jpeg"
+        src="/images/eduardo-profile.webp"
         alt="Foto de Eduardo López"
         width="48"
         height="48"

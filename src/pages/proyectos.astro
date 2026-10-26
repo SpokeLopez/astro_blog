@@ -182,7 +182,7 @@ const categories = ['Todos', ...new Set(projects.map(p => p.category))];
         {projects.map((project) => (
           <article class="project-card" data-category={project.category}>
             <div class="project-image">
-              <img src={project.image} alt={project.title} loading="lazy" />
+              <img src={project.image} alt={project.title} loading="lazy" width="800" height="500" />
               <div class="project-overlay">
                 <div class="project-links">
                   {project.link && project.link !== '#' && (
