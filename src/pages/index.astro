@@ -1239,6 +1239,8 @@ const experience = [
     );
     animation: ring-spin 8s linear infinite;
     opacity: 0.6;
+    /* Promueve el elemento a su propio compositor layer: evita repaints del layout */
+    will-change: transform;
   }
 
   @keyframes ring-spin {
@@ -1796,6 +1798,8 @@ const experience = [
   .timeline-container {
     position: relative;
     padding: var(--space-lg) 0;
+    /* Aísla reflows: cambios internos no afectan al layout externo */
+    contain: layout style;
   }
 
   /* Línea central */
