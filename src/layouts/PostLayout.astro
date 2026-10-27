@@ -118,7 +118,7 @@ const relatedPosts = [...byTags, ...recent].slice(0, 2);
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Inicio', item: 'https://spokelopez.com/' },
-      { '@type': 'ListItem', position: 2, name: 'Blog',   item: 'https://spokelopez.com/blog' },
+      { '@type': 'ListItem', position: 2, name: 'Blog',   item: 'https://spokelopez.com/blog/' },
       { '@type': 'ListItem', position: 3, name: frontmatter.title, item: canonicalURL.toString() },
     ],
   })} />
@@ -127,7 +127,7 @@ const relatedPosts = [...byTags, ...recent].slice(0, 2);
     <ol>
       <li><a href="/">Inicio</a></li>
       <li aria-hidden="true">›</li>
-      <li><a href="/blog">Blog</a></li>
+      <li><a href="/blog/">Blog</a></li>
       <li aria-hidden="true">›</li>
       <li aria-current="page">{frontmatter.title}</li>
     </ol>
@@ -246,7 +246,7 @@ const relatedPosts = [...byTags, ...recent].slice(0, 2);
         </div>
       </div>
 
-      <a href="/blog" class="back-link">
+      <a href="/blog/" class="back-link">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="19" y1="12" x2="5" y2="12"></line>
           <polyline points="12 19 5 12 12 5"></polyline>
