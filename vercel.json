@@ -1,5 +1,17 @@
 {
   "trailingSlash": true,
+  "redirects": [
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/:path*/index.html",
+      "destination": "/:path*/",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
